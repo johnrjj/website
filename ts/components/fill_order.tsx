@@ -530,7 +530,7 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
         let globalErrMsg = '';
 
         if (_.isUndefined(takerFillAmount)) {
-            globalErrMsg = 'You must specify the fill amount';
+            globalErrMsg = 'You must specify a fill amount';
         }
 
         const signedOrder = this.props.blockchain.portalOrderToSignedOrder(
