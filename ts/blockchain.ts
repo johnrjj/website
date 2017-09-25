@@ -259,7 +259,7 @@ export class Blockchain {
         const receipt = await this.showEtherScanLinkAndAwaitTransactionMinedAsync(txHash);
         const logs: LogWithDecodedArgs[] = receipt.logs as any;
         this.zeroEx.exchange.throwLogErrorsAsErrors(logs);
-        const logCancel = _.find(logs, {event: 'LogCancel'});
+        const logCancel = _.find(logs, {event: ExchangeEvents.LogCancel});
         const args = logCancel.args as any as LogCancelContractEventArgs;
         const cancelledTakerTokenAmount = args.cancelledTakerTokenAmount;
         return cancelledTakerTokenAmount;
