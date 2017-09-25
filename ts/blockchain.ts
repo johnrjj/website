@@ -282,12 +282,6 @@ export class Blockchain {
             [ZeroExError.InvalidSignature]: 'Order signature is not valid',
             [ZeroExError.ContractNotDeployedOnNetwork]: 'Contract is not deployed on the detected network',
             [ZeroExError.ZrxNotInTokenRegistry]: 'ZRX token not found in the token registry',
-            [ZeroExError.InsufficientAllowanceForTransfer]:
-            'User doesn\'t have sufficient allowance to perform the transfer',
-            [ZeroExError.InsufficientBalanceForTransfer]:
-            'User doesn\'t have sufficient balance to perform the transfer',
-            [ZeroExError.InsufficientEthBalanceForDeposit]: 'User doesn\'t have enough ETH balance for deposit',
-            [ZeroExError.InsufficientWEthBalanceForWithdrawal]: 'User doesn\'t have enough WETH balance for withdrawal',
             [ZeroExError.InvalidJump]: 'Invalid jump occured while executing the transaction',
             [ZeroExError.OutOfGas]: 'Transaction ran out of gas',
             [ZeroExError.NoNetworkId]: 'No network id detected',
@@ -317,16 +311,8 @@ export class Blockchain {
             [ExchangeContractErrs.InsufficientMakerFeeAllowance]:
             'Maker no longer has a sufficient allowance to pay fees',
             [ExchangeContractErrs.TransactionSenderIsNotFillOrderTaker]: 'This order can only be filled by the taker',
-            [ExchangeContractErrs.MultipleMakersInSingleCancelBatchDisallowed]:
-            'All orders in a single cancel batch should have the same maker',
             [ExchangeContractErrs.InsufficientRemainingFillAmount]:
             'Insufficient remaining fill amount',
-            [ExchangeContractErrs.MultipleTakerTokensInFillUpToDisallowed]:
-            'All orders in fillUpTo should have the same taker token',
-            [ExchangeContractErrs.BatchOrdersMustHaveSameExchangeAddress]:
-            'All orders in a batch operation should have the same exchange address',
-            [ExchangeContractErrs.BatchOrdersMustHaveAtLeastOneItem]:
-            'Batch operations should include at least one order',
         };
         const humanReadableErrorMsg = exchangeContractErrorToHumanReadableError[error] ||
                                       ZeroExErrorToHumanReadableError[error];
