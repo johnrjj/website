@@ -273,7 +273,7 @@ export class Blockchain {
     public getExchangeContractAddressIfExists() {
         return this.exchangeAddress;
     }
-    public toHumanReadableErrorMsg(error: ZeroExError|ExchangeContractErrs): string {
+    public toHumanReadableErrorMsg(error: ZeroExError|ExchangeContractErrs, takerAddress: string): string {
         const ZeroExErrorToHumanReadableError = {
             [ZeroExError.ContractDoesNotExist]: 'Contract does not exist',
             [ZeroExError.ExchangeContractDoesNotExist]: 'Exchange contract does not exist',
@@ -310,7 +310,8 @@ export class Blockchain {
             [ExchangeContractErrs.InsufficientMakerFeeBalance]: 'Maker no longer has a sufficient balance to pay fees',
             [ExchangeContractErrs.InsufficientMakerFeeAllowance]:
             'Maker no longer has a sufficient allowance to pay fees',
-            [ExchangeContractErrs.TransactionSenderIsNotFillOrderTaker]: 'This order can only be filled by the taker',
+            [ExchangeContractErrs.TransactionSenderIsNotFillOrderTaker]:
+            `This order can only be filled by ${takerAddress}`,
             [ExchangeContractErrs.InsufficientRemainingFillAmount]:
             'Insufficient remaining fill amount',
         };
