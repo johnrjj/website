@@ -274,9 +274,63 @@ export class Blockchain {
         return this.exchangeAddress;
     }
     public toHumanReadableErrorMsg(error: ZeroExError|ExchangeContractErrs): string {
-        const words = error.toLowerCase().split('_');
-        const humanreadableErrorMsg = [_.capitalize(words[0]), ...words.slice(1)].join(' ');
-        return humanreadableErrorMsg;
+        const ZeroExErrorToHumanReadableError = {
+            [ZeroExError.ContractDoesNotExist]: 'Contract does not exist',
+            [ZeroExError.ExchangeContractDoesNotExist]: 'Exchange contract does not exist',
+            [ZeroExError.UnhandledError]: ' Unhandled error occured',
+            [ZeroExError.UserHasNoAssociatedAddress]: 'User has no addresses available',
+            [ZeroExError.InvalidSignature]: 'Order signature is not valid',
+            [ZeroExError.ContractNotDeployedOnNetwork]: 'Contract is not deployed on the detected network',
+            [ZeroExError.ZrxNotInTokenRegistry]: 'ZRX token not found in the token registry',
+            [ZeroExError.InsufficientAllowanceForTransfer]:
+            'User doesn\'t have sufficient allowance to perform the transfer',
+            [ZeroExError.InsufficientBalanceForTransfer]:
+            'User doesn\'t have sufficient balance to perform the transfer',
+            [ZeroExError.InsufficientEthBalanceForDeposit]: 'User doesn\'t have enough ETH balance for deposit',
+            [ZeroExError.InsufficientWEthBalanceForWithdrawal]: 'User doesn\'t have enough WETH balance for withdrawal',
+            [ZeroExError.InvalidJump]: 'Invalid jump occured while executing the transaction',
+            [ZeroExError.OutOfGas]: 'Transaction ran out of gas',
+            [ZeroExError.NoNetworkId]: 'No network id detected',
+        };
+        const exchangeContractErrorToHumanReadableError = {
+            [ExchangeContractErrs.OrderFillExpired]: 'This order has expired',
+            [ExchangeContractErrs.OrderCancelExpired]: 'This order has expired',
+            [ExchangeContractErrs.OrderCancelAmountZero]: 'Order cancel amount can\'t be 0',
+            [ExchangeContractErrs.OrderAlreadyCancelledOrFilled]:
+            'This order has already been completely filled or cancelled',
+            [ExchangeContractErrs.OrderFillAmountZero]: 'Order fill amount can\'t be 0',
+            [ExchangeContractErrs.OrderRemainingFillAmountZero]:
+            'This order has already been completely filled or cancelled',
+            [ExchangeContractErrs.OrderFillRoundingError]: 'Rounding error will occur when filling this order',
+            [ExchangeContractErrs.InsufficientTakerBalance]:
+            'Taker no longer has a sufficient balance to complete this order',
+            [ExchangeContractErrs.InsufficientTakerAllowance]:
+            'Taker no longer has a sufficient allowance to complete this order',
+            [ExchangeContractErrs.InsufficientMakerBalance]:
+            'Maker no longer has a sufficient balance to complete this order',
+            [ExchangeContractErrs.InsufficientMakerAllowance]:
+            'Maker no longer has a sufficient allowance to complete this order',
+            [ExchangeContractErrs.InsufficientTakerFeeBalance]: 'Taker no longer has a sufficient balance to pay fees',
+            [ExchangeContractErrs.InsufficientTakerFeeAllowance]:
+            'Taker no longer has a sufficient allowance to pay fees',
+            [ExchangeContractErrs.InsufficientMakerFeeBalance]: 'Maker no longer has a sufficient balance to pay fees',
+            [ExchangeContractErrs.InsufficientMakerFeeAllowance]:
+            'Maker no longer has a sufficient allowance to pay fees',
+            [ExchangeContractErrs.TransactionSenderIsNotFillOrderTaker]: 'This order can only be filled by the taker',
+            [ExchangeContractErrs.MultipleMakersInSingleCancelBatchDisallowed]:
+            'All orders in a single cancel batch should have the same maker',
+            [ExchangeContractErrs.InsufficientRemainingFillAmount]:
+            'Insufficient remaining fill amount',
+            [ExchangeContractErrs.MultipleTakerTokensInFillUpToDisallowed]:
+            'All orders in fillUpTo should have the same taker token',
+            [ExchangeContractErrs.BatchOrdersMustHaveSameExchangeAddress]:
+            'All orders in a batch operation should have the same exchange address',
+            [ExchangeContractErrs.BatchOrdersMustHaveAtLeastOneItem]:
+            'Batch operations should include at least one order',
+        };
+        const humanReadableErrorMsg = exchangeContractErrorToHumanReadableError[error] ||
+                                      ZeroExErrorToHumanReadableError[error];
+        return humanReadableErrorMsg;
     }
     public async validateFillOrderThrowIfInvalidAsync(signedOrder: SignedOrder,
                                                       fillTakerTokenAmount: BigNumber.BigNumber,
