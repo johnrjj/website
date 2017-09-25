@@ -30,6 +30,7 @@ import {Identicon} from 'ts/components/ui/identicon';
 import {EthereumAddress} from 'ts/components/ui/ethereum_address';
 import {TokenAmountInput} from 'ts/components/inputs/token_amount_input';
 import {FillWarningDialog} from 'ts/components/fill_warning_dialog';
+import {FillOrderJSON} from 'ts/components/fill_order_json';
 import {VisualOrder} from 'ts/components/visual_order';
 import {SchemaValidator} from 'ts/schemas/validator';
 import {orderSchema} from 'ts/schemas/order_schema';
@@ -62,11 +63,13 @@ interface FillOrderState {
     orderJSONErrMsg: string;
     parsedOrder: Order;
     didFillOrderSucceed: boolean;
+    didCancelOrderSucceed: boolean;
     unavailableTakerAmount: BigNumber.BigNumber;
     isMakerTokenAddressInRegistry: boolean;
     isTakerTokenAddressInRegistry: boolean;
     isFillWarningDialogOpen: boolean;
     isFilling: boolean;
+    isCancelling: boolean;
     isConfirmingTokenTracking: boolean;
     tokensToTrack: Token[];
 }
@@ -80,6 +83,7 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
             didOrderValidationRun: false,
             areAllInvolvedTokensTracked: false,
             didFillOrderSucceed: false,
+            didCancelOrderSucceed: false,
             orderJSON: _.isUndefined(this.props.initialOrder) ? '' : JSON.stringify(this.props.initialOrder),
             orderJSONErrMsg: '',
             parsedOrder: this.props.initialOrder,
@@ -88,6 +92,7 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
             isTakerTokenAddressInRegistry: false,
             isFillWarningDialogOpen: false,
             isFilling: false,
+            isCancelling: false,
             isConfirmingTokenTracking: false,
             tokensToTrack: [],
         };
@@ -113,7 +118,13 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
                                 Paste an order JSON snippet below to begin
                             </div>
                             <div className="pb2">Order JSON</div>
-                            {this.renderOrderJson()}
+                            <FillOrderJSON
+                                blockchain={this.props.blockchain}
+                                tokenByAddress={this.props.tokenByAddress}
+                                networkId={this.props.networkId}
+                                orderJSON={this.state.orderJSON}
+                                onFillOrderJSONChanged={this.onFillOrderJSONChanged.bind(this)}
+                            />
                             {this.renderOrderJsonNotices()}
                         </div>
                     }
@@ -132,7 +143,13 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
                                     showExpandableButton={true}
                                 />
                                 <CardText expandable={true}>
-                                    {this.renderOrderJson()}
+                                    <FillOrderJSON
+                                        blockchain={this.props.blockchain}
+                                        tokenByAddress={this.props.tokenByAddress}
+                                        networkId={this.props.networkId}
+                                        orderJSON={this.state.orderJSON}
+                                        onFillOrderJSONChanged={this.onFillOrderJSONChanged.bind(this)}
+                                    />
                                 </CardText>
                             </Card>
                             {this.renderOrderJsonNotices()}
@@ -173,52 +190,6 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
             </div>
         );
     }
-    private renderOrderJson() {
-        const addresses = _.keys(this.props.tokenByAddress);
-        const exchangeContract = this.props.blockchain.getExchangeContractAddressIfExists();
-        const hintSideToAssetToken = {
-            [Side.deposit]: {
-                amount: new BigNumber(35),
-                address: addresses[0],
-            },
-            [Side.receive]: {
-                amount: new BigNumber(89),
-                address: addresses[1],
-            },
-        };
-        const hintOrderExpiryTimestamp = utils.initialOrderExpiryUnixTimestampSec();
-        const hintSignatureData = {
-            hash: '0xf965a9978a0381ab58f5a2408ad967c...',
-            r: '0xf01103f759e2289a28593eaf22e5820032...',
-            s: '937862111edcba395f8a9e0cc1b2c5e12320...',
-            v: 27,
-        };
-        const hintSalt = ZeroEx.generatePseudoRandomSalt();
-        const hintOrder = utils.generateOrder(this.props.networkId, exchangeContract, hintSideToAssetToken,
-                                              hintOrderExpiryTimestamp, '', '', constants.MAKER_FEE,
-                                              constants.TAKER_FEE, constants.FEE_RECIPIENT_ADDRESS,
-                                              hintSignatureData, this.props.tokenByAddress, hintSalt);
-        const hintOrderJSON = `${JSON.stringify(hintOrder, null, '\t').substring(0, 500)}...`;
-        return (
-            <div>
-                <Paper className="p1 overflow-hidden" style={{height: 164}}>
-                    <TextField
-                        id="orderJSON"
-                        hintStyle={{bottom: 0, top: 0}}
-                        fullWidth={true}
-                        value={this.state.orderJSON}
-                        onChange={this.onFillOrderChanged.bind(this)}
-                        hintText={hintOrderJSON}
-                        multiLine={true}
-                        rows={6}
-                        rowsMax={6}
-                        underlineStyle={{display: 'none'}}
-                        textareaStyle={{marginTop: 0}}
-                    />
-                </Paper>
-            </div>
-        );
-    }
     private renderVisualOrder() {
         const takerTokenAddress = this.state.parsedOrder.taker.token.address;
         const takerToken = this.props.tokenByAddress[takerTokenAddress];
@@ -250,7 +221,8 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
             const orderReceiveAmountBigNumber = exchangeRate.mul(this.props.orderFillAmount);
             orderReceiveAmount = this.formatCurrencyAmount(orderReceiveAmountBigNumber, makerToken.decimals);
         }
-
+        const isUserMaker = !_.isUndefined(this.state.parsedOrder) &&
+                          this.state.parsedOrder.maker.address === this.props.userAddress;
         const expiryDate = utils.convertToReadableDateTimeFromUnixTimestamp(parsedOrderExpiration);
         return (
             <div className="pt3 pb1">
@@ -293,47 +265,67 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
                         </div>
                     </div>
                 </div>
-                <div className="clearfix mx-auto" style={{width: 355, height: 108}}>
-                   <div className="col col-7" style={{maxWidth: 235}}>
-                       <TokenAmountInput
-                           label="Fill amount"
-                           onChange={this.onFillAmountChange.bind(this)}
-                           shouldShowIncompleteErrs={false}
-                           token={fillToken}
-                           tokenState={fillTokenState}
-                           amount={fillAssetToken.amount}
-                           shouldCheckBalance={true}
-                           shouldCheckAllowance={true}
-                       />
-                   </div>
-                   <div
-                       className="col col-5 pl1"
-                       style={{color: CUSTOM_LIGHT_GRAY, paddingTop: 39}}
-                   >
-                       = {accounting.formatNumber(orderReceiveAmount, 6)} {makerToken.symbol}
-                   </div>
-                </div>
+                {!isUserMaker &&
+                    <div className="clearfix mx-auto" style={{width: 315, height: 108}}>
+                       <div className="col col-7" style={{maxWidth: 235}}>
+                           <TokenAmountInput
+                               label="Fill amount"
+                               onChange={this.onFillAmountChange.bind(this)}
+                               shouldShowIncompleteErrs={false}
+                               token={fillToken}
+                               tokenState={fillTokenState}
+                               amount={fillAssetToken.amount}
+                               shouldCheckBalance={true}
+                               shouldCheckAllowance={true}
+                           />
+                       </div>
+                       <div
+                           className="col col-5 pl1"
+                           style={{color: CUSTOM_LIGHT_GRAY, paddingTop: 39}}
+                       >
+                           = {accounting.formatNumber(orderReceiveAmount, 6)} {makerToken.symbol}
+                       </div>
+                    </div>
+                }
                 <div>
-                    <RaisedButton
-                        style={{width: '100%'}}
-                        disabled={this.state.isFilling}
-                        label={this.state.isFilling ? 'Filling order...' : 'Fill order'}
-                        onClick={this.onFillOrderClick.bind(this)}
-                    />
-                    {!_.isEmpty(this.state.globalErrMsg) &&
-                        <Alert type={AlertTypes.ERROR} message={this.state.globalErrMsg} />
-                    }
-                    {this.state.didFillOrderSucceed &&
-                        <Alert
-                            type={AlertTypes.SUCCESS}
-                            message={this.renderSuccessMsg()}
-                        />
+                    {isUserMaker ?
+                        <div>
+                            <RaisedButton
+                                style={{width: '100%'}}
+                                disabled={this.state.isCancelling}
+                                label={this.state.isCancelling ? 'Cancelling order...' : 'Cancel order'}
+                                onClick={this.onCancelOrderClickFireAndForgetAsync.bind(this)}
+                            />
+                            {this.state.didCancelOrderSucceed &&
+                                <Alert
+                                    type={AlertTypes.SUCCESS}
+                                    message={this.renderCancelSuccessMsg()}
+                                />
+                            }
+                        </div> :
+                        <div>
+                            <RaisedButton
+                                style={{width: '100%'}}
+                                disabled={this.state.isFilling}
+                                label={this.state.isFilling ? 'Filling order...' : 'Fill order'}
+                                onClick={this.onFillOrderClick.bind(this)}
+                            />
+                            {!_.isEmpty(this.state.globalErrMsg) &&
+                                <Alert type={AlertTypes.ERROR} message={this.state.globalErrMsg} />
+                            }
+                            {this.state.didFillOrderSucceed &&
+                                <Alert
+                                    type={AlertTypes.SUCCESS}
+                                    message={this.renderFillSuccessMsg()}
+                                />
+                            }
+                        </div>
                     }
                 </div>
             </div>
         );
     }
-    private renderSuccessMsg() {
+    private renderFillSuccessMsg() {
         return (
             <div>
                 Order successfully filled. See the trade details in your{' '}
@@ -343,6 +335,13 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
                 >
                     trade history
                 </Link>
+            </div>
+        );
+    }
+    private renderCancelSuccessMsg() {
+        return (
+            <div>
+                Order successfully cancelled.
             </div>
         );
     }
@@ -366,8 +365,8 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
     private onFillAmountChange(isValid: boolean, amount?: BigNumber.BigNumber) {
         this.props.dispatcher.updateOrderFillAmount(amount);
     }
-    private onFillOrderChanged(e: any) {
-        const orderJSON = e.target.value;
+    private onFillOrderJSONChanged(event: any) {
+        const orderJSON = event.target.value;
         this.setState({
             didOrderValidationRun: _.isEmpty(orderJSON) && _.isEmpty(this.state.orderJSONErrMsg),
             didFillOrderSucceed: false,
@@ -516,65 +515,44 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
         });
 
         const parsedOrder = this.state.parsedOrder;
-        const makerTokenAddress = parsedOrder.maker.token.address;
-        const takerTokenAddress = parsedOrder.taker.token.address;
-        const depositAssetToken = {
-            address: makerTokenAddress,
-            amount: new BigNumber(parsedOrder.maker.amount),
-        };
-        const receiveAssetToken = {
-            address: takerTokenAddress,
-            amount: new BigNumber(parsedOrder.taker.amount),
-        };
-        const parsedOrderExpiration = new BigNumber(this.state.parsedOrder.expiration);
         const orderHash = parsedOrder.signature.hash;
         const unavailableTakerAmount = await this.props.blockchain.getUnavailableTakerAmountAsync(orderHash);
-        const amountLeftToFill = receiveAssetToken.amount.minus(unavailableTakerAmount);
-        const specifiedTakerAddressIfExists = parsedOrder.taker.address.toLowerCase();
         const takerFillAmount = this.props.orderFillAmount;
-        const makerFillAmount = takerFillAmount.times(depositAssetToken.amount).div(receiveAssetToken.amount);
-        const takerAddress = this.props.userAddress;
-        const takerToken = this.props.tokenByAddress[takerTokenAddress];
-        const takerTokenState = this.props.tokenStateByAddress[takerTokenAddress];
-        let isValidSignature = false;
-        const signatureData = parsedOrder.signature;
-        isValidSignature = ZeroEx.isValidSignature(signatureData.hash, signatureData, parsedOrder.maker.address);
 
-        if (_.isUndefined(takerAddress)) {
+        if (_.isUndefined(this.props.userAddress)) {
             this.props.dispatcher.updateShouldBlockchainErrDialogBeOpen(true);
             this.setState({
                 isFilling: false,
             });
             return;
         }
-
-        const [
-          makerBalance,
-          makerAllowance,
-        ] = await this.props.blockchain.getTokenBalanceAndAllowanceAsync(parsedOrder.maker.address,
-                                                                         parsedOrder.maker.token.address);
-        const currentUnixTimestamp = moment().unix();
         let globalErrMsg = '';
+
         if (_.isUndefined(takerFillAmount)) {
             globalErrMsg = 'You must specify a fill amount';
-        } else if (takerFillAmount.lte(0) || takerFillAmount.gt(takerTokenState.balance) ||
-            takerFillAmount.gt(takerTokenState.allowance)) {
-            globalErrMsg = 'You must fix the above errors in order to fill this order';
-        } else if (!_.isEmpty(specifiedTakerAddressIfExists) && specifiedTakerAddressIfExists !== takerAddress) {
-            globalErrMsg = `This order can only be filled by ${specifiedTakerAddressIfExists}`;
-        } else if (parsedOrderExpiration.lt(currentUnixTimestamp)) {
-            globalErrMsg = `This order has expired`;
-        } else if (amountLeftToFill.eq(0)) {
-            globalErrMsg = 'This order has already been completely filled';
-        } else if (takerFillAmount.gt(amountLeftToFill)) {
-            const amountLeftToFillInUnits = ZeroEx.toUnitAmount(amountLeftToFill, parsedOrder.taker.token.decimals);
-            globalErrMsg = `Cannot fill more then remaining ${amountLeftToFillInUnits} ${takerToken.symbol}`;
-        } else if (makerBalance.lt(makerFillAmount)) {
-            globalErrMsg = 'Maker no longer has a sufficient balance to complete this order';
-        } else if (makerAllowance.lt(makerFillAmount)) {
-            globalErrMsg = 'Maker does not have a high enough allowance set to complete this order';
-        } else if (!isValidSignature) {
-            globalErrMsg = 'Order signature is not valid';
+        }
+
+        const signedOrder = this.props.blockchain.portalOrderToSignedOrder(
+            parsedOrder.maker.address,
+            parsedOrder.taker.address,
+            parsedOrder.maker.token.address,
+            parsedOrder.taker.token.address,
+            new BigNumber(parsedOrder.maker.amount),
+            new BigNumber(parsedOrder.taker.amount),
+            new BigNumber(parsedOrder.maker.feeAmount),
+            new BigNumber(parsedOrder.taker.feeAmount),
+            new BigNumber(this.state.parsedOrder.expiration),
+            parsedOrder.feeRecipient,
+            parsedOrder.signature,
+            new BigNumber(parsedOrder.salt),
+        );
+        if (_.isEmpty(globalErrMsg)) {
+            try {
+                await this.props.blockchain.validateFillOrderThrowIfInvalidAsync(
+                    signedOrder, takerFillAmount, this.props.userAddress);
+            } catch (err) {
+                globalErrMsg = this.props.blockchain.toHumanReadableErrorMsg(err.message, parsedOrder.taker.address);
+            }
         }
         if (!_.isEmpty(globalErrMsg)) {
             this.setState({
@@ -583,28 +561,13 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
             });
             return;
         }
-
-        const parsedOrderSalt = new BigNumber(parsedOrder.salt);
-        const parsedMakerFee = new BigNumber(parsedOrder.maker.feeAmount);
-        const parsedTakerFee = new BigNumber(parsedOrder.taker.feeAmount);
         try {
             const orderFilledAmount: BigNumber.BigNumber = await this.props.blockchain.fillOrderAsync(
-                                                       parsedOrder.maker.address,
-                                                       parsedOrder.taker.address,
-                                                       this.props.tokenByAddress[makerTokenAddress].address,
-                                                       this.props.tokenByAddress[takerTokenAddress].address,
-                                                       depositAssetToken.amount,
-                                                       receiveAssetToken.amount,
-                                                       parsedMakerFee,
-                                                       parsedTakerFee,
-                                                       parsedOrderExpiration,
-                                                       parsedOrder.feeRecipient,
-                                                       this.props.orderFillAmount,
-                                                       parsedOrder.signature,
-                                                       parsedOrderSalt,
-                                                   );
+                signedOrder, this.props.orderFillAmount,
+            );
             // After fill completes, let's update the token balances
-            const makerToken = this.props.tokenByAddress[makerTokenAddress];
+            const makerToken = this.props.tokenByAddress[parsedOrder.maker.token.address];
+            const takerToken = this.props.tokenByAddress[parsedOrder.taker.token.address];
             const tokens = [makerToken, takerToken];
             await this.props.blockchain.updateTokenBalancesAndAllowancesAsync(tokens);
             this.setState({
@@ -623,9 +586,89 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
                 return;
             }
             globalErrMsg = 'Failed to fill order, please refresh and try again';
-            if (_.includes(errMsg, ExchangeContractErrs.OrderFillRoundingError)) {
-                globalErrMsg = 'The rounding error was too large when filling this order';
+            utils.consoleLog(`${err}`);
+            await errorReporter.reportAsync(err);
+            this.setState({
+                globalErrMsg,
+            });
+            return;
+        }
+    }
+    private async onCancelOrderClickFireAndForgetAsync(): Promise<void> {
+        if (!_.isEmpty(this.props.blockchainErr) || _.isEmpty(this.props.userAddress)) {
+            this.props.dispatcher.updateShouldBlockchainErrDialogBeOpen(true);
+            return;
+        }
+
+        this.setState({
+            isCancelling: true,
+            didCancelOrderSucceed: false,
+        });
+
+        const parsedOrder = this.state.parsedOrder;
+        const orderHash = parsedOrder.signature.hash;
+        const takerAddress = this.props.userAddress;
+
+        if (_.isUndefined(takerAddress)) {
+            this.props.dispatcher.updateShouldBlockchainErrDialogBeOpen(true);
+            this.setState({
+                isFilling: false,
+            });
+            return;
+        }
+        let globalErrMsg = '';
+
+        const takerTokenAmount = new BigNumber(parsedOrder.taker.amount);
+
+        const signedOrder = this.props.blockchain.portalOrderToSignedOrder(
+            parsedOrder.maker.address,
+            parsedOrder.taker.address,
+            parsedOrder.maker.token.address,
+            parsedOrder.taker.token.address,
+            new BigNumber(parsedOrder.maker.amount),
+            takerTokenAmount,
+            new BigNumber(parsedOrder.maker.feeAmount),
+            new BigNumber(parsedOrder.taker.feeAmount),
+            new BigNumber(this.state.parsedOrder.expiration),
+            parsedOrder.feeRecipient,
+            parsedOrder.signature,
+            new BigNumber(parsedOrder.salt),
+        );
+        const unavailableTakerAmount = await this.props.blockchain.getUnavailableTakerAmountAsync(orderHash);
+        const availableTakerTokenAmount = takerTokenAmount.minus(unavailableTakerAmount);
+        try {
+            await this.props.blockchain.validateCancelOrderThrowIfInvalidAsync(
+                signedOrder, availableTakerTokenAmount);
+        } catch (err) {
+            globalErrMsg = this.props.blockchain.toHumanReadableErrorMsg(err.message, parsedOrder.taker.address);
+        }
+        if (!_.isEmpty(globalErrMsg)) {
+            this.setState({
+                isCancelling: false,
+                globalErrMsg,
+            });
+            return;
+        }
+        try {
+            await this.props.blockchain.cancelOrderAsync(
+                signedOrder, availableTakerTokenAmount,
+            );
+            this.setState({
+                isCancelling: false,
+                didCancelOrderSucceed: true,
+                globalErrMsg: '',
+                unavailableTakerAmount: takerTokenAmount,
+            });
+            return;
+        } catch (err) {
+            this.setState({
+                isCancelling: false,
+            });
+            const errMsg = `${err}`;
+            if (_.includes(errMsg, 'User denied transaction signature')) {
+                return;
             }
+            globalErrMsg = 'Failed to cancel order, please refresh and try again';
             utils.consoleLog(`${err}`);
             await errorReporter.reportAsync(err);
             this.setState({
