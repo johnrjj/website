@@ -640,7 +640,7 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
             await this.props.blockchain.validateCancelOrderThrowIfInvalidAsync(
                 signedOrder, availableTakerTokenAmount);
         } catch (err) {
-            globalErrMsg = this.props.blockchain.toHumanReadableErrorMsg(err.message);
+            globalErrMsg = this.props.blockchain.toHumanReadableErrorMsg(err.message, parsedOrder.taker.address);
         }
         if (!_.isEmpty(globalErrMsg)) {
             this.setState({
