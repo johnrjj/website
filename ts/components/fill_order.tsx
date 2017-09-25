@@ -518,9 +518,8 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
         const orderHash = parsedOrder.signature.hash;
         const unavailableTakerAmount = await this.props.blockchain.getUnavailableTakerAmountAsync(orderHash);
         const takerFillAmount = this.props.orderFillAmount;
-        const takerAddress = this.props.userAddress;
 
-        if (_.isUndefined(takerAddress)) {
+        if (_.isUndefined(this.props.userAddress)) {
             this.props.dispatcher.updateShouldBlockchainErrDialogBeOpen(true);
             this.setState({
                 isFilling: false,
@@ -550,7 +549,7 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
         if (_.isEmpty(globalErrMsg)) {
             try {
                 await this.props.blockchain.validateFillOrderThrowIfInvalidAsync(
-                    signedOrder, takerFillAmount, takerAddress);
+                    signedOrder, takerFillAmount, this.props.userAddress);
             } catch (err) {
                 globalErrMsg = this.props.blockchain.toHumanReadableErrorMsg(err.message);
             }
