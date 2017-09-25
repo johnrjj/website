@@ -221,7 +221,7 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
             const orderReceiveAmountBigNumber = exchangeRate.mul(this.props.orderFillAmount);
             orderReceiveAmount = this.formatCurrencyAmount(orderReceiveAmountBigNumber, makerToken.decimals);
         }
-        const canCancel = !_.isUndefined(this.state.parsedOrder) &&
+        const isUserMaker = !_.isUndefined(this.state.parsedOrder) &&
                           this.state.parsedOrder.maker.address === this.props.userAddress;
         const expiryDate = utils.convertToReadableDateTimeFromUnixTimestamp(parsedOrderExpiration);
         return (
@@ -265,7 +265,7 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
                         </div>
                     </div>
                 </div>
-                {!canCancel &&
+                {!isUserMaker &&
                     <div className="clearfix mx-auto" style={{width: 315, height: 108}}>
                        <div className="col col-7" style={{maxWidth: 235}}>
                            <TokenAmountInput
@@ -288,7 +288,7 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
                     </div>
                 }
                 <div>
-                    {canCancel ?
+                    {isUserMaker ?
                         <div>
                             <RaisedButton
                                 style={{width: '100%'}}
