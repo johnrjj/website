@@ -2,15 +2,20 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import {
     ZeroEx,
+    ZeroExError,
+    ExchangeContractErrs,
     ExchangeEvents,
     SubscriptionOpts,
     IndexedFilterValues,
     ContractEvent,
     ContractEventEmitter,
     LogFillContractEventArgs,
+    LogCancelContractEventArgs,
     Token as ZeroExToken,
     LogWithDecodedArgs,
     TransactionReceiptWithDecodedLogs,
+    SignedOrder,
+    Order,
 } from '0x.js';
 import * as BigNumber from 'bignumber.js';
 import Web3 = require('web3');
@@ -203,17 +208,15 @@ export class Blockchain {
             amountInBaseUnits,
         }));
     }
-    public async fillOrderAsync(maker: string, taker: string, makerTokenAddress: string,
-                                takerTokenAddress: string, makerTokenAmount: BigNumber.BigNumber,
-                                takerTokenAmount: BigNumber.BigNumber, makerFee: BigNumber.BigNumber,
-                                takerFee: BigNumber.BigNumber, expirationUnixTimestampSec: BigNumber.BigNumber,
-                                feeRecipient: string, fillTakerTokenAmount: BigNumber.BigNumber,
-                                signatureData: SignatureData, salt: BigNumber.BigNumber): Promise<BigNumber.BigNumber> {
-        utils.assert(this.doesUserAddressExist(), BlockchainCallErrs.USER_HAS_NO_ASSOCIATED_ADDRESSES);
-
-        taker = taker === '' ? constants.NULL_ADDRESS : taker;
+    public portalOrderToSignedOrder(maker: string, taker: string, makerTokenAddress: string,
+                                    takerTokenAddress: string, makerTokenAmount: BigNumber.BigNumber,
+                                    takerTokenAmount: BigNumber.BigNumber, makerFee: BigNumber.BigNumber,
+                                    takerFee: BigNumber.BigNumber, expirationUnixTimestampSec: BigNumber.BigNumber,
+                                    feeRecipient: string,
+                                    signatureData: SignatureData, salt: BigNumber.BigNumber): SignedOrder {
         const ecSignature = signatureData;
         const exchangeContractAddress = this.getExchangeContractAddressIfExists();
+        taker = _.isEmpty(taker) ? constants.NULL_ADDRESS : taker;
         const signedOrder = {
             ecSignature,
             exchangeContractAddress,
@@ -229,6 +232,12 @@ export class Blockchain {
             takerTokenAddress,
             takerTokenAmount,
         };
+        return signedOrder;
+    }
+    public async fillOrderAsync(signedOrder: SignedOrder,
+                                fillTakerTokenAmount: BigNumber.BigNumber): Promise<BigNumber.BigNumber> {
+        utils.assert(this.doesUserAddressExist(), BlockchainCallErrs.USER_HAS_NO_ASSOCIATED_ADDRESSES);
+
         const shouldThrowOnInsufficientBalanceOrAllowance = true;
 
         const txHash = await this.zeroEx.exchange.fillOrderAsync(
@@ -238,8 +247,22 @@ export class Blockchain {
         const logs: LogWithDecodedArgs[] = receipt.logs as any;
         this.zeroEx.exchange.throwLogErrorsAsErrors(logs);
         const logFill = _.find(logs, {event: 'LogFill'});
-        const filledTakerTokenAmount = new BigNumber(logFill.args.filledTakerTokenAmount);
+        const args = logFill.args as any as LogFillContractEventArgs;
+        const filledTakerTokenAmount = args.filledTakerTokenAmount;
         return filledTakerTokenAmount;
+    }
+    public async cancelOrderAsync(signedOrder: SignedOrder,
+                                  cancelTakerTokenAmount: BigNumber.BigNumber): Promise<BigNumber.BigNumber> {
+        const txHash = await this.zeroEx.exchange.cancelOrderAsync(
+            signedOrder, cancelTakerTokenAmount,
+        );
+        const receipt = await this.showEtherScanLinkAndAwaitTransactionMinedAsync(txHash);
+        const logs: LogWithDecodedArgs[] = receipt.logs as any;
+        this.zeroEx.exchange.throwLogErrorsAsErrors(logs);
+        const logCancel = _.find(logs, {event: ExchangeEvents.LogCancel});
+        const args = logCancel.args as any as LogCancelContractEventArgs;
+        const cancelledTakerTokenAmount = args.cancelledTakerTokenAmount;
+        return cancelledTakerTokenAmount;
     }
     public async getUnavailableTakerAmountAsync(orderHash: string): Promise<BigNumber.BigNumber> {
         utils.assert(ZeroEx.isValidOrderHash(orderHash), 'Must be valid orderHash');
@@ -249,6 +272,62 @@ export class Blockchain {
     }
     public getExchangeContractAddressIfExists() {
         return this.exchangeAddress;
+    }
+    public toHumanReadableErrorMsg(error: ZeroExError|ExchangeContractErrs, takerAddress: string): string {
+        const ZeroExErrorToHumanReadableError = {
+            [ZeroExError.ContractDoesNotExist]: 'Contract does not exist',
+            [ZeroExError.ExchangeContractDoesNotExist]: 'Exchange contract does not exist',
+            [ZeroExError.UnhandledError]: ' Unhandled error occured',
+            [ZeroExError.UserHasNoAssociatedAddress]: 'User has no addresses available',
+            [ZeroExError.InvalidSignature]: 'Order signature is not valid',
+            [ZeroExError.ContractNotDeployedOnNetwork]: 'Contract is not deployed on the detected network',
+            [ZeroExError.ZrxNotInTokenRegistry]: 'ZRX token not found in the token registry',
+            [ZeroExError.InvalidJump]: 'Invalid jump occured while executing the transaction',
+            [ZeroExError.OutOfGas]: 'Transaction ran out of gas',
+            [ZeroExError.NoNetworkId]: 'No network id detected',
+        };
+        const exchangeContractErrorToHumanReadableError = {
+            [ExchangeContractErrs.OrderFillExpired]: 'This order has expired',
+            [ExchangeContractErrs.OrderCancelExpired]: 'This order has expired',
+            [ExchangeContractErrs.OrderCancelAmountZero]: 'Order cancel amount can\'t be 0',
+            [ExchangeContractErrs.OrderAlreadyCancelledOrFilled]:
+            'This order has already been completely filled or cancelled',
+            [ExchangeContractErrs.OrderFillAmountZero]: 'Order fill amount can\'t be 0',
+            [ExchangeContractErrs.OrderRemainingFillAmountZero]:
+            'This order has already been completely filled or cancelled',
+            [ExchangeContractErrs.OrderFillRoundingError]: 'Rounding error will occur when filling this order',
+            [ExchangeContractErrs.InsufficientTakerBalance]:
+            'Taker no longer has a sufficient balance to complete this order',
+            [ExchangeContractErrs.InsufficientTakerAllowance]:
+            'Taker no longer has a sufficient allowance to complete this order',
+            [ExchangeContractErrs.InsufficientMakerBalance]:
+            'Maker no longer has a sufficient balance to complete this order',
+            [ExchangeContractErrs.InsufficientMakerAllowance]:
+            'Maker no longer has a sufficient allowance to complete this order',
+            [ExchangeContractErrs.InsufficientTakerFeeBalance]: 'Taker no longer has a sufficient balance to pay fees',
+            [ExchangeContractErrs.InsufficientTakerFeeAllowance]:
+            'Taker no longer has a sufficient allowance to pay fees',
+            [ExchangeContractErrs.InsufficientMakerFeeBalance]: 'Maker no longer has a sufficient balance to pay fees',
+            [ExchangeContractErrs.InsufficientMakerFeeAllowance]:
+            'Maker no longer has a sufficient allowance to pay fees',
+            [ExchangeContractErrs.TransactionSenderIsNotFillOrderTaker]:
+            `This order can only be filled by ${takerAddress}`,
+            [ExchangeContractErrs.InsufficientRemainingFillAmount]:
+            'Insufficient remaining fill amount',
+        };
+        const humanReadableErrorMsg = exchangeContractErrorToHumanReadableError[error] ||
+                                      ZeroExErrorToHumanReadableError[error];
+        return humanReadableErrorMsg;
+    }
+    public async validateFillOrderThrowIfInvalidAsync(signedOrder: SignedOrder,
+                                                      fillTakerTokenAmount: BigNumber.BigNumber,
+                                                      takerAddress: string): Promise<void> {
+        await this.zeroEx.exchange.validateFillOrderThrowIfInvalidAsync(
+            signedOrder, fillTakerTokenAmount, takerAddress);
+    }
+    public async validateCancelOrderThrowIfInvalidAsync(order: Order,
+                                                        cancelTakerTokenAmount: BigNumber.BigNumber): Promise<void> {
+        await this.zeroEx.exchange.validateCancelOrderThrowIfInvalidAsync(order, cancelTakerTokenAmount);
     }
     public isValidAddress(address: string): boolean {
         const lowercaseAddress = address.toLowerCase();
