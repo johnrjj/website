@@ -41,50 +41,66 @@ export function Type(props: TypeProps): any {
     const isReference = type.type === TypeDocTypes.reference;
     const isArray = type.type === TypeDocTypes.array;
     const isStringLiteral = type.type === TypeDocTypes.stringLiteral;
+    let typeNameColor = 'inherit';
     let typeName: string|React.ReactNode;
-    if (isIntrinsic || isReference) {
-        typeName = type.name;
-    } else if (isStringLiteral) {
-        typeName = `'${type.value}'`;
-    } else if (isArray) {
-        typeName = type.elementType.name;
-    }
     let typeArgs: React.ReactNode[] = [];
-    if (type.typeArguments) {
-        typeArgs = _.map(type.typeArguments, arg => {
-            if (arg.type === TypeDocTypes.array) {
-                return (
-                    <span>
+    switch (type.type) {
+        case TypeDocTypes.intrinsic:
+            typeName = type.name;
+            typeNameColor = BUILT_IN_TYPE_COLOR;
+            break;
+
+        case TypeDocTypes.reference:
+            typeName = type.name;
+            typeArgs = _.map(type.typeArguments, arg => {
+                if (arg.type === TypeDocTypes.array) {
+                    return (
+                        <span>
+                            <Type
+                                key={`type-${arg.elementType.name}-${arg.elementType.value}-${arg.elementType.type}`}
+                                type={arg.elementType}
+                                typeDefinitionByName={props.typeDefinitionByName}
+                            />[]
+                        </span>
+                    );
+                } else {
+                    return (
                         <Type
-                            key={`type-${arg.elementType.name}-${arg.elementType.value}-${arg.elementType.type}`}
-                            type={arg.elementType}
+                            key={`type-${arg.name}-${arg.value}-${arg.type}`}
+                            type={arg}
                             typeDefinitionByName={props.typeDefinitionByName}
-                        />[]
-                    </span>
-                );
-            } else {
+                        />
+                    );
+                }
+            });
+            break;
+
+        case TypeDocTypes.stringLiteral:
+            typeName = `'${type.value}'`;
+            typeNameColor = STRING_LITERAL_COLOR;
+            break;
+
+        case TypeDocTypes.array:
+            typeName = type.elementType.name;
+            break;
+
+        case TypeDocTypes.union:
+            const unionTypes = _.map(type.types, t => {
                 return (
                     <Type
-                        key={`type-${arg.name}-${arg.value}-${arg.type}`}
-                        type={arg}
+                        key={`type-${t.name}-${t.value}-${t.type}`}
+                        type={t}
                         typeDefinitionByName={props.typeDefinitionByName}
                     />
                 );
-            }
-        });
-    } else if (type.type === TypeDocTypes.union) {
-        const unionTypes = _.map(type.types, t => {
-            return (
-                <Type
-                    key={`type-${t.name}-${t.value}-${t.type}`}
-                    type={t}
-                    typeDefinitionByName={props.typeDefinitionByName}
-                />
-            );
-        });
-        typeName = _.reduce(unionTypes, (prev: React.ReactNode, curr: React.ReactNode) => {
-            return [prev, '|', curr];
-        });
+            });
+            typeName = _.reduce(unionTypes, (prev: React.ReactNode, curr: React.ReactNode) => {
+                return [prev, '|', curr];
+            });
+            break;
+
+        default:
+            throw utils.spawnSwitchErr('type.type', type.type);
     }
     const commaSeparatedTypeArgs = _.reduce(typeArgs, (prev: React.ReactNode, curr: React.ReactNode) => {
         return [prev, ', ', curr];
@@ -145,12 +161,6 @@ export function Type(props: TypeProps): any {
             }
             </ScrollLink>
         );
-    }
-    let typeNameColor = 'inherit';
-    if (isIntrinsic) {
-        typeNameColor = BUILT_IN_TYPE_COLOR;
-    } else if (isStringLiteral) {
-        typeNameColor = STRING_LITERAL_COLOR;
     }
     return (
         <span>
