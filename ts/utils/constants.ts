@@ -151,6 +151,7 @@ export const constants = {
         'LogWithDecodedArgs',
         'DecodedLogArgs',
         'MethodOpts',
+        'ValidateOrderFillableOpts',
     ],
     menu0xjs: {
         introduction: [
