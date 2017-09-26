@@ -102,6 +102,11 @@ export function Type(props: TypeProps): any {
         default:
             throw utils.spawnSwitchErr('type.type', type.type);
     }
+    // HACK: Normalize BigNumber.BigNumber to simply BigNumber. For some reason the type
+    // name is unpredictably one or the other.
+    if (typeName === 'BigNumber.BigNumber') {
+        typeName = 'BigNumber';
+    }
     const commaSeparatedTypeArgs = _.reduce(typeArgs, (prev: React.ReactNode, curr: React.ReactNode) => {
         return [prev, ', ', curr];
     });
