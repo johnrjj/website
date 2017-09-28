@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import {constants} from 'ts/utils/constants';
 import {utils} from 'ts/utils/utils';
-import {KindString, TypeDocNode, TypeDocTypes} from 'ts/types';
+import {KindString, CustomType, TypeDocTypes, CustomTypeChild, HeaderSizes} from 'ts/types';
 import {Type} from 'ts/pages/documentation/type';
 import {Interface} from 'ts/pages/documentation/interface';
 import {CustomEnum} from 'ts/pages/documentation/custom_enum';
@@ -15,7 +15,7 @@ import {typeDocUtils} from 'ts/utils/typedoc_utils';
 const KEYWORD_COLOR = '#a81ca6';
 
 interface TypeDefinitionProps {
-    type: TypeDocNode;
+    customType: CustomType;
     shouldAddId?: boolean;
 }
 
@@ -34,19 +34,19 @@ export class TypeDefinition extends React.Component<TypeDefinitionProps, TypeDef
         };
     }
     public render() {
-        const type = this.props.type;
-        if (!typeDocUtils.isPublicType(type.name)) {
+        const customType = this.props.customType;
+        if (!typeDocUtils.isPublicType(customType.name)) {
             return null; // no-op
         }
 
         let typePrefix: string;
         let codeSnippet: React.ReactNode;
-        switch (type.kindString) {
+        switch (customType.kindString) {
             case KindString.Interface:
                 typePrefix = 'Interface';
                 codeSnippet = (
                     <Interface
-                        type={type}
+                        type={customType}
                     />
                 );
                 break;
@@ -55,17 +55,17 @@ export class TypeDefinition extends React.Component<TypeDefinitionProps, TypeDef
                 typePrefix = 'Enum';
                 codeSnippet = (
                     <CustomEnum
-                        type={type}
+                        type={customType}
                     />
                 );
                 break;
 
             case KindString.Enumeration:
                 typePrefix = 'Enum';
-                const enumValues = _.map(type.children, t => {
+                const enumValues = _.map(customType.children, (c: CustomTypeChild) => {
                     return {
-                        name: t.name,
-                        defaultValue: t.defaultValue,
+                        name: c.name,
+                        defaultValue: c.defaultValue,
                     };
                 });
                 codeSnippet = (
@@ -79,11 +79,11 @@ export class TypeDefinition extends React.Component<TypeDefinitionProps, TypeDef
                 typePrefix = 'Type Alias';
                 codeSnippet = (
                     <span>
-                        <span style={{color: KEYWORD_COLOR}}>type</span> {type.name} ={' '}
-                        {type.type.type !== TypeDocTypes.reflection ?
-                            <Type type={type.type} /> :
+                        <span style={{color: KEYWORD_COLOR}}>type</span> {customType.name} ={' '}
+                        {customType.type.typeDocType !== TypeDocTypes.reflection ?
+                            <Type type={customType.type} /> :
                             <MethodSignature
-                                signature={type.type.declaration.signatures[0]}
+                                method={customType.type.method}
                                 shouldHideMethodName={true}
                                 shouldUseArrowSyntax={true}
                             />
@@ -93,10 +93,10 @@ export class TypeDefinition extends React.Component<TypeDefinitionProps, TypeDef
                 break;
 
             default:
-                throw utils.spawnSwitchErr('type.kindString', type.kindString);
+                throw utils.spawnSwitchErr('type.kindString', customType.kindString);
         }
 
-        const typeDefinitionAnchorId = type.name;
+        const typeDefinitionAnchorId = customType.name;
         return (
             <div
                 id={this.props.shouldAddId ? typeDefinitionAnchorId : ''}
@@ -106,8 +106,8 @@ export class TypeDefinition extends React.Component<TypeDefinitionProps, TypeDef
                 onMouseOut={this.setAnchorVisibility.bind(this, false)}
             >
                 <AnchorTitle
-                    headerType="h3"
-                    title={`${typePrefix} ${type.name}`}
+                    headerSize={HeaderSizes.H3}
+                    title={`${typePrefix} ${customType.name}`}
                     id={this.props.shouldAddId ? typeDefinitionAnchorId : ''}
                     shouldShowAnchor={this.state.shouldShowAnchor}
                 />
@@ -118,9 +118,9 @@ export class TypeDefinition extends React.Component<TypeDefinitionProps, TypeDef
                         </code>
                     </pre>
                 </div>
-                {type.comment &&
+                {customType.comment &&
                     <Comment
-                        comment={type.comment.shortText}
+                        comment={customType.comment}
                         className="py2"
                     />
                 }

@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import {utils} from 'ts/utils/utils';
-import {TypeDocNode} from 'ts/types';
+import {CustomType} from 'ts/types';
 
 const STRING_ENUM_CODE_PREFIX = ' strEnum(';
 
 interface CustomEnumProps {
-    type: TypeDocNode;
+    type: CustomType;
 }
 
 // This component renders custom string enums that was a work-around for versions of

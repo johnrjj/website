@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactMarkdown from 'react-markdown';
 import {Chip} from 'material-ui/Chip';
 import {colors} from 'material-ui/styles';
-import {TypeDocNode, Styles, TypeDefinitionByName} from 'ts/types';
+import {TypeDocNode, Styles, TypeDefinitionByName, Method, Parameter, HeaderSizes} from 'ts/types';
 import {utils} from 'ts/utils/utils';
 import {SourceLink} from 'ts/pages/documentation/source_link';
 import {MethodSignature} from 'ts/pages/documentation/method_signature';
@@ -12,11 +12,7 @@ import {Comment} from 'ts/pages/documentation/comment';
 import {typeDocUtils} from 'ts/utils/typedoc_utils';
 
 interface MethodBlockProps {
-    isConstructor: boolean;
-    isStatic: boolean;
-    methodSignature: TypeDocNode;
-    source: TypeDocNode;
-    entity: string;
+    method: Method;
     libraryVersion: string;
     typeDefinitionByName: TypeDefinitionByName;
 }
@@ -45,22 +41,22 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
         };
     }
     public render() {
-        const methodSignature = this.props.methodSignature;
-        if (typeDocUtils.isPrivateOrProtectedProperty(methodSignature.name)) {
+        const method = this.props.method;
+        if (typeDocUtils.isPrivateOrProtectedProperty(method.name)) {
             return null;
         }
 
         return (
             <div
-                id={methodSignature.name}
+                id={method.name}
                 style={{overflow: 'hidden', width: '100%'}}
                 className="pb4"
                 onMouseOver={this.setAnchorVisibility.bind(this, true)}
                 onMouseOut={this.setAnchorVisibility.bind(this, false)}
             >
-                {!this.props.isConstructor &&
+                {!method.isConstructor &&
                     <div className="flex">
-                        {this.props.isStatic &&
+                        {method.isStatic &&
                             <div
                                 className="p1 mr1"
                                 style={styles.chip}
@@ -69,31 +65,30 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                             </div>
                          }
                         <AnchorTitle
-                            headerType="h3"
-                            title={methodSignature.name}
-                            id={methodSignature.name}
+                            headerSize={HeaderSizes.H3}
+                            title={method.name}
+                            id={method.name}
                             shouldShowAnchor={this.state.shouldShowAnchor}
                         />
                     </div>
                 }
                 <code className="hljs">
                     <MethodSignature
-                        signature={methodSignature}
-                        entity={this.props.entity}
+                        method={method}
                         typeDefinitionByName={this.props.typeDefinitionByName}
                     />
                 </code>
                 <SourceLink
                     version={this.props.libraryVersion}
-                    source={this.props.source}
+                    source={method.source}
                 />
-                {methodSignature.comment &&
+                {method.comment &&
                     <Comment
-                        comment={methodSignature.comment.shortText}
+                        comment={method.comment}
                         className="py2"
                     />
                 }
-                {methodSignature.parameters &&
+                {method.parameters &&
                     <div>
                         <h4
                             className="pb1 thin"
@@ -101,10 +96,10 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                         >
                             ARGUMENTS
                         </h4>
-                        {this.renderParameterDescriptions(methodSignature.parameters)}
+                        {this.renderParameterDescriptions(method.parameters)}
                     </div>
                 }
-                {methodSignature.comment && methodSignature.comment.returns &&
+                {method.returnComment &&
                     <div className="pt1 comment">
                         <h4
                             className="pb1 thin"
@@ -113,22 +108,16 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                             RETURNS
                         </h4>
                         <Comment
-                            comment={methodSignature.comment.returns}
+                            comment={method.returnComment}
                         />
                     </div>
                 }
             </div>
         );
     }
-    private renderParameterDescriptions(parameters: TypeDocNode[]) {
+    private renderParameterDescriptions(parameters: Parameter[]) {
         const descriptions = _.map(parameters, parameter => {
-            let comment = '<No comment>';
-            if (parameter.comment && parameter.comment.shortText) {
-                comment = parameter.comment.shortText;
-            } else if (parameter.comment && parameter.comment.text) {
-                comment = parameter.comment.text;
-            }
-            const isOptional = parameter.flags.isOptional;
+            const isOptional = parameter.isOptional;
             return (
                 <div
                     key={`param-description-${parameter.name}`}
@@ -146,7 +135,7 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                     </div>
                     <div className="col lg-col-8 md-col-8 sm-col-12 col-12">
                         <Comment
-                            comment={comment}
+                            comment={parameter.comment}
                         />
                     </div>
                 </div>
