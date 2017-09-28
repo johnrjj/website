@@ -6,11 +6,12 @@ import {AnchorTitle} from 'ts/pages/shared/anchor_title';
 import {utils} from 'ts/utils/utils';
 import {MarkdownCodeBlock} from 'ts/pages/shared/markdown_code_block';
 import RaisedButton from 'material-ui/RaisedButton';
+import {HeaderSizes} from 'ts/types';
 
 interface MarkdownSectionProps {
     sectionName: string;
     markdownContent: string;
-    headerType?: 'h2'|'h3';
+    headerSize?: HeaderSizes;
     githubLink?: string;
 }
 
@@ -20,7 +21,7 @@ interface MarkdownSectionState {
 
 export class MarkdownSection extends React.Component<MarkdownSectionProps, MarkdownSectionState> {
     public static defaultProps: Partial<MarkdownSectionProps> = {
-        headerType: 'h3',
+        headerSize: HeaderSizes.H3,
     };
     constructor(props: MarkdownSectionProps) {
         super(props);
@@ -42,7 +43,7 @@ export class MarkdownSection extends React.Component<MarkdownSectionProps, Markd
                         <div className="col lg-col-8 md-col-8 sm-col-12">
                             <span style={{textTransform: 'capitalize'}}>
                                 <AnchorTitle
-                                    headerType={this.props.headerType}
+                                    headerSize={this.props.headerSize}
                                     title={sectionName}
                                     id={id}
                                     shouldShowAnchor={this.state.shouldShowAnchor}

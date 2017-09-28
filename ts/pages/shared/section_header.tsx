@@ -2,9 +2,11 @@ import * as React from 'react';
 import {Element as ScrollElement} from 'react-scroll';
 import {AnchorTitle} from 'ts/pages/shared/anchor_title';
 import {utils} from 'ts/utils/utils';
+import {HeaderSizes} from 'ts/types';
 
 interface SectionHeaderProps {
     sectionName: string;
+    headerSize?: HeaderSizes;
 }
 
 interface SectionHeaderState {
@@ -12,6 +14,9 @@ interface SectionHeaderState {
 }
 
 export class SectionHeader extends React.Component<SectionHeaderProps, SectionHeaderState> {
+    public static defaultProps: Partial<SectionHeaderProps> = {
+        headerSize: HeaderSizes.H2,
+    };
     constructor(props: SectionHeaderProps) {
         super(props);
         this.state = {
@@ -28,7 +33,7 @@ export class SectionHeader extends React.Component<SectionHeaderProps, SectionHe
             >
                 <ScrollElement name={id}>
                     <AnchorTitle
-                        headerType="h2"
+                        headerSize={this.props.headerSize}
                         title={<span style={{textTransform: 'capitalize'}}>{sectionName}</span>}
                         id={id}
                         shouldShowAnchor={this.state.shouldShowAnchor}

@@ -8,6 +8,7 @@ import {
 } from 'react-scroll';
 import {Styles, Article, ArticlesBySection} from 'ts/types';
 import {TopBar} from 'ts/components/top_bar';
+import {HeaderSizes} from 'ts/types';
 import {utils} from 'ts/utils/utils';
 import {constants} from 'ts/utils/constants';
 import {configs} from 'ts/utils/configs';
@@ -99,6 +100,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
                                 <NestedSidebarMenu
                                     topLevelMenu={menuSubsectionsBySection}
                                     menuSubsectionsBySection={menuSubsectionsBySection}
+                                    isSectionHeaderClickable={true}
                                 />
                             </div>
                         </div>
@@ -136,7 +138,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
                     <MarkdownSection
                         sectionName={article.title}
                         markdownContent={article.content}
-                        headerType="h2"
+                        headerSize={HeaderSizes.H2}
                         githubLink={githubLink}
                     />
                     <div className="mb4 mt3 p3 center" style={{backgroundColor: '#f9f5ef'}}>
@@ -156,7 +158,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
                 key={`section-${sectionName}`}
                 className="py2 pr3 md-pl2 sm-pl3"
             >
-                <SectionHeader sectionName={sectionName} />
+                <SectionHeader sectionName={sectionName} headerSize={HeaderSizes.H1} />
                 {renderedArticles}
             </div>
         );

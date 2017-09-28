@@ -10,12 +10,13 @@ import {typeDocUtils} from 'ts/utils/typedoc_utils';
 import {Link as ScrollLink} from 'react-scroll';
 
 interface NestedSidebarMenuProps {
+    topLevelMenu: {[topLevel: string]: string[]};
+    menuSubsectionsBySection: MenuSubsectionsBySection;
     shouldDisplaySectionHeaders?: boolean;
     onMenuItemClick?: () => void;
     selectedVersion?: string;
     versions?: string[];
-    topLevelMenu: {[topLevel: string]: string[]};
-    menuSubsectionsBySection: MenuSubsectionsBySection;
+    isSectionHeaderClickable?: boolean;
 }
 
 interface NestedSidebarMenuState {}
@@ -41,17 +42,25 @@ export class NestedSidebarMenu extends React.Component<NestedSidebarMenuProps, N
         const navigation = _.map(this.props.topLevelMenu, (menuItems: string[], sectionName: string) => {
             const finalSectionName = sectionName.replace(/-/g, ' ');
             if (this.props.shouldDisplaySectionHeaders) {
+                const id = utils.getIdFromName(sectionName);
                 return (
                     <div
                         key={`section-${sectionName}`}
                         className="py1"
                     >
-                        <div
-                            style={{color: colors.grey500}}
-                            className="pb1"
+                        <ScrollLink
+                            to={id}
+                            offset={-20}
+                            duration={constants.DOCS_SCROLL_DURATION_MS}
+                            containerId={constants.DOCS_CONTAINER_ID}
                         >
-                            {finalSectionName.toUpperCase()}
-                        </div>
+                            <div
+                                style={{color: colors.grey500, cursor: 'pointer'}}
+                                className="pb1"
+                            >
+                                {finalSectionName.toUpperCase()}
+                            </div>
+                        </ScrollLink>
                         {this.renderMenuItems(menuItems)}
                     </div>
                 );

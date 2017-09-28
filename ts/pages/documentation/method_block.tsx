@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactMarkdown from 'react-markdown';
 import {Chip} from 'material-ui/Chip';
 import {colors} from 'material-ui/styles';
-import {TypeDocNode, Styles, TypeDefinitionByName, Method, Parameter} from 'ts/types';
+import {TypeDocNode, Styles, TypeDefinitionByName, Method, Parameter, HeaderSizes} from 'ts/types';
 import {utils} from 'ts/utils/utils';
 import {SourceLink} from 'ts/pages/documentation/source_link';
 import {MethodSignature} from 'ts/pages/documentation/method_signature';
@@ -65,7 +65,7 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                             </div>
                          }
                         <AnchorTitle
-                            headerType="h3"
+                            headerSize={HeaderSizes.H3}
                             title={method.name}
                             id={method.name}
                             shouldShowAnchor={this.state.shouldShowAnchor}

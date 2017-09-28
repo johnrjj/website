@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import {constants} from 'ts/utils/constants';
 import {utils} from 'ts/utils/utils';
-import {KindString, CustomType, TypeDocTypes, CustomTypeChild} from 'ts/types';
+import {KindString, CustomType, TypeDocTypes, CustomTypeChild, HeaderSizes} from 'ts/types';
 import {Type} from 'ts/pages/documentation/type';
 import {Interface} from 'ts/pages/documentation/interface';
 import {CustomEnum} from 'ts/pages/documentation/custom_enum';
@@ -106,7 +106,7 @@ export class TypeDefinition extends React.Component<TypeDefinitionProps, TypeDef
                 onMouseOut={this.setAnchorVisibility.bind(this, false)}
             >
                 <AnchorTitle
-                    headerType="h3"
+                    headerSize={HeaderSizes.H3}
                     title={`${typePrefix} ${customType.name}`}
                     id={this.props.shouldAddId ? typeDefinitionAnchorId : ''}
                     shouldShowAnchor={this.state.shouldShowAnchor}

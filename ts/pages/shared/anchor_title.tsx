@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {Styles} from 'ts/types';
+import {Styles, HeaderSizes} from 'ts/types';
 import {utils} from 'ts/utils/utils';
 import {constants} from 'ts/utils/constants';
 import {Link as ScrollLink} from 'react-scroll';
 
-const headerTypeToScrollOffset = {
+const headerSizeToScrollOffset: {[headerSize: string]: number} = {
     h2: -20,
     h3: 0,
 };
@@ -12,7 +12,7 @@ const headerTypeToScrollOffset = {
 interface AnchorTitleProps {
     title: string|React.ReactNode;
     id: string;
-    headerType: 'h2'|'h3';
+    headerSize: HeaderSizes;
     shouldShowAnchor: boolean;
 }
 
@@ -31,6 +31,11 @@ const styles: Styles = {
         WebkitMarginEnd: 0,
         fontWeight: 'bold',
         display: 'block',
+    },
+    h1: {
+        fontSize: '1.8em',
+        WebkitMarginBefore: '0.83em',
+        WebkitMarginAfter: '0.83em',
     },
     h2: {
         fontSize: '1.5em',
@@ -61,7 +66,7 @@ export class AnchorTitle extends React.Component<AnchorTitleProps, AnchorTitleSt
             }
         }
         return (
-            <div className="relative flex" style={{...styles[this.props.headerType], ...styles.headers}}>
+            <div className="relative flex" style={{...styles[this.props.headerSize], ...styles.headers}}>
                 <div
                     className="inline-block"
                     style={{paddingRight: 4}}
@@ -70,7 +75,7 @@ export class AnchorTitle extends React.Component<AnchorTitleProps, AnchorTitleSt
                 </div>
                 <ScrollLink
                     to={this.props.id}
-                    offset={headerTypeToScrollOffset[this.props.headerType]}
+                    offset={headerSizeToScrollOffset[this.props.headerSize]}
                     duration={constants.DOCS_SCROLL_DURATION_MS}
                     containerId={constants.DOCS_CONTAINER_ID}
                 >
