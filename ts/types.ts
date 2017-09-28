@@ -466,16 +466,6 @@ export const ZeroExJsDocSections = strEnum([
 ]);
 export type ZeroExJsDocSections = keyof typeof ZeroExJsDocSections;
 
-interface CivicSignupOpts {
-    style: string;
-    scopeRequest: string;
-}
-export interface CivicSip {
-    ScopeRequests: any;
-    signup: (opts: CivicSignupOpts) => void;
-    on: (eventName: string, callback: (event: any) => void) => void;
-}
-
 export interface FAQQuestion {
     prompt: string;
     answer: React.ReactNode;
