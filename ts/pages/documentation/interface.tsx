@@ -1,11 +1,11 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import {TypeDocNode, TypeDocTypes} from 'ts/types';
+import {CustomType, TypeDocTypes} from 'ts/types';
 import {Type} from 'ts/pages/documentation/type';
 import {MethodSignature} from 'ts/pages/documentation/method_signature';
 
 interface InterfaceProps {
-    type: TypeDocNode;
+    type: CustomType;
 }
 
 export function Interface(props: InterfaceProps) {
@@ -14,10 +14,10 @@ export function Interface(props: InterfaceProps) {
         return (
             <span key={`property-${property.name}-${property.type}-${type.name}`}>
                 {property.name}:{' '}
-                {property.type.type !== TypeDocTypes.reflection ?
+                {property.type.typeDocType !== TypeDocTypes.reflection ?
                     <Type type={property.type} /> :
                     <MethodSignature
-                        signature={property.type.declaration.signatures[0]}
+                        method={property.type.method}
                         shouldHideMethodName={true}
                         shouldUseArrowSyntax={true}
                     />
@@ -27,20 +27,17 @@ export function Interface(props: InterfaceProps) {
     });
     const hasIndexSignature = !_.isUndefined(type.indexSignature);
     if (hasIndexSignature) {
-        _.each(type.indexSignature, indexSignature => {
-            const params = _.map(indexSignature.parameters, p => {
-                return (
-                    <span key={`indexSigParams-${p.name}-${p.type}-${type.name}`}>
-                        {p.name}: <Type type={p.type} />
-                    </span>
-                );
-            });
-            properties.push((
-                <span key={`indexSignature-${type.name}-${indexSignature.type.name}`}>
-                    [{params}]: {indexSignature.type.name},
-                </span>
-            ));
-        });
+        const is = type.indexSignature;
+        const param = (
+            <span key={`indexSigParams-${is.keyName}-${is.keyType}-${type.name}`}>
+                {is.keyName}: <Type type={is.keyType} />
+            </span>
+        );
+        properties.push((
+            <span key={`indexSignature-${type.name}-${is.keyType.name}`}>
+                [{param}]: {is.valueName},
+            </span>
+        ));
     }
     const propertyList = _.reduce(properties, (prev: React.ReactNode, curr: React.ReactNode) => {
         return [prev, '\n\t', curr];

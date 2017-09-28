@@ -23,6 +23,10 @@ import {
     ScreenWidths,
     S3FileObject,
     TypeDefinitionByName,
+    DocAgnosticFormat,
+    Method,
+    Property,
+    CustomType,
 } from 'ts/types';
 import {TopBar} from 'ts/components/top_bar';
 import {utils} from 'ts/utils/utils';
@@ -70,7 +74,7 @@ export interface ZeroExJSDocumentationAllProps {
 }
 
 interface ZeroExJSDocumentationState {
-    versionDocObj?: TypeDocNode;
+    docAgnosticFormat?: DocAgnosticFormat;
 }
 
 const styles: Styles = {
@@ -96,7 +100,7 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
     constructor(props: ZeroExJSDocumentationAllProps) {
         super(props);
         this.state = {
-            versionDocObj: undefined,
+            docAgnosticFormat: undefined,
         };
     }
     public componentWillMount() {
@@ -107,9 +111,9 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
         this.fetchJSONDocsFireAndForgetAsync(preferredVersionIfExists);
     }
     public render() {
-        const menuSubsectionsBySection = _.isUndefined(this.state.versionDocObj)
+        const menuSubsectionsBySection = _.isUndefined(this.state.docAgnosticFormat)
                                          ? {}
-                                         : typeDocUtils.getMenuSubsectionsBySection(this.state.versionDocObj);
+                                         : typeDocUtils.getMenuSubsectionsBySection(this.state.docAgnosticFormat);
         return (
             <div>
                 <DocumentTitle title="0x.js Documentation"/>
@@ -121,7 +125,7 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
                     menuSubsectionsBySection={menuSubsectionsBySection}
                     shouldFullWidth={true}
                 />
-                {_.isUndefined(this.state.versionDocObj) ?
+                {_.isUndefined(this.state.docAgnosticFormat) ?
                     <div
                         className="col col-12"
                         style={styles.mainContainers}
@@ -174,16 +178,17 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
         );
     }
     private renderDocumentation(): React.ReactNode {
+        const typeDocSection = this.state.docAgnosticFormat[ZeroExJsDocSections.types];
+        const typeDefinitionByName = _.keyBy(typeDocSection.types, 'name');
+
         const subMenus = _.values(constants.menu0xjs);
         const orderedSectionNames = _.flatten(subMenus);
-        const sections = _.map(orderedSectionNames, this.renderSection.bind(this));
+        const sections = _.map(orderedSectionNames, this.renderSection.bind(this, typeDefinitionByName));
 
         return sections;
     }
-    private renderSection(sectionName: string): React.ReactNode {
-        const packageDefinitionIfExists = typeDocUtils.getModuleDefinitionBySectionNameIfExists(
-            this.state.versionDocObj, sectionName,
-        );
+    private renderSection(typeDefinitionByName: TypeDefinitionByName, sectionName: string): React.ReactNode {
+        const docSection = this.state.docAgnosticFormat[sectionName];
 
         const markdownFileIfExists = sectionNameToMarkdown[sectionName];
         if (!_.isUndefined(markdownFileIfExists)) {
@@ -196,48 +201,22 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
             );
         }
 
-        if (_.isUndefined(packageDefinitionIfExists)) {
+        if (_.isUndefined(docSection)) {
             return null;
         }
 
-        // Since the `types.ts` file is the only file that does not export a module/class but
-        // instead has each type export itself, we do not need to go down two levels of nesting
-        // for it.
-        let entities;
-        let packageComment = '';
-        if (sectionName === 'types') {
-            entities = packageDefinitionIfExists.children;
-        } else {
-            entities = packageDefinitionIfExists.children[0].children;
-            const commentObj = packageDefinitionIfExists.children[0].comment;
-            packageComment = !_.isUndefined(commentObj) ? commentObj.shortText : packageComment;
-        }
-
-        const constructors = _.filter(entities, typeDocUtils.isConstructor);
-
-        const publicProperties = _.filter(entities, entity => {
-            return typeDocUtils.isProperty(entity) && !typeDocUtils.isPrivateOrProtectedProperty(entity.name);
-        });
-        const publicPropertyDefs = _.map(publicProperties, property => this.renderProperty(property));
-
-        const methods = _.filter(entities, typeDocUtils.isMethod);
-        const typesPackageDefinitionIfExists = typeDocUtils.getModuleDefinitionBySectionNameIfExists(
-            this.state.versionDocObj, 'types',
-        );
-        const typeDefinitionByName = _.keyBy(typesPackageDefinitionIfExists.children, 'name');
-        const isConstructor = false;
-        const methodDefs = _.map(methods, method => {
-            return this.renderMethodBlocks(method, sectionName, isConstructor, typeDefinitionByName);
-        });
-
-        const types = _.filter(entities, typeDocUtils.isType);
-        const typeDefs = _.map(types, type => {
+        const typeDefs = _.map(docSection.types, customType => {
             return (
                 <TypeDefinition
-                    key={`type-${type.name}`}
-                    type={type}
+                    key={`type-${customType.name}`}
+                    customType={customType}
                 />
             );
+        });
+        const propertyDefs = _.map(docSection.properties, this.renderProperty.bind(this));
+        const methodDefs = _.map(docSection.methods, method => {
+            const isConstructor = false;
+            return this.renderMethodBlocks(method, sectionName, isConstructor, typeDefinitionByName);
         });
         return (
             <div
@@ -246,21 +225,21 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
             >
                 <SectionHeader sectionName={sectionName} />
                 <Comment
-                    comment={packageComment}
+                    comment={docSection.comment}
                 />
-                {sectionName === ZeroExJsDocSections.zeroEx && constructors.length > 0 &&
+                {sectionName === ZeroExJsDocSections.zeroEx && docSection.constructors.length > 0 &&
                     <div>
                         <h2 className="thin">Constructor</h2>
-                        {this.renderZeroExConstructors(constructors, typeDefinitionByName)}
+                        {this.renderZeroExConstructors(docSection.constructors, typeDefinitionByName)}
                     </div>
                 }
-                {publicPropertyDefs.length > 0 &&
+                {docSection.properties.length > 0 &&
                     <div>
                         <h2 className="thin">Properties</h2>
-                        <div>{publicPropertyDefs}</div>
+                        <div>{propertyDefs}</div>
                     </div>
                 }
-                {methodDefs.length > 0 &&
+                {docSection.methods.length > 0 &&
                     <div>
                         <h2 className="thin">Methods</h2>
                         <div>{methodDefs}</div>
@@ -274,12 +253,11 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
             </div>
         );
     }
-    private renderZeroExConstructors(constructors: TypeDocNode[],
+    private renderZeroExConstructors(constructors: Method[],
                                      typeDefinitionByName: TypeDefinitionByName): React.ReactNode {
-        const isConstructor = true;
         const constructorDefs = _.map(constructors, constructor => {
             return this.renderMethodBlocks(
-                constructor, ZeroExJsDocSections.zeroEx, isConstructor, typeDefinitionByName,
+                constructor, ZeroExJsDocSections.zeroEx, constructor.isConstructor, typeDefinitionByName,
             );
         });
         return (
@@ -288,8 +266,7 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
             </div>
         );
     }
-    private renderProperty(property: TypeDocNode): React.ReactNode {
-        const source = property.sources[0];
+    private renderProperty(property: Property): React.ReactNode {
         return (
             <div
                 key={`property-${property.name}-${property.type.name}`}
@@ -300,42 +277,27 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
                 </code>
                 <SourceLink
                     version={this.props.zeroExJSversion}
-                    source={source}
+                    source={property.source}
                 />
                 {property.comment &&
                     <Comment
-                        comment={property.comment.shortText}
+                        comment={property.comment}
                         className="py2"
                     />
                 }
             </div>
         );
     }
-    private renderMethodBlocks(method: TypeDocNode, sectionName: string, isConstructor: boolean,
+    private renderMethodBlocks(method: Method, sectionName: string, isConstructor: boolean,
                                typeDefinitionByName: TypeDefinitionByName): React.ReactNode {
-        const signatures = method.signatures;
-        const renderedSignatures = _.map(signatures, (signature: TypeDocNode, i: number) => {
-            const source = method.sources[i];
-            let entity = method.flags.isStatic ? 'ZeroEx.' : 'zeroEx.';
-            // Hack: currently the section names are identical as the property names on the ZeroEx class
-            // For now we reply on this mapping to construct the method entity. In the future, we should
-            // do this differently.
-            entity = (sectionName !== ZeroExJsDocSections.zeroEx) ? `${entity}${sectionName}.` : entity;
-            entity = isConstructor ? '' : entity;
-            return (
-                <MethodBlock
-                    key={`method-${source.name}-${source.line}`}
-                    isConstructor={isConstructor}
-                    isStatic={method.flags.isStatic}
-                    methodSignature={signature}
-                    source={source}
-                    entity={entity}
-                    typeDefinitionByName={typeDefinitionByName}
-                    libraryVersion={this.props.zeroExJSversion}
-                />
-            );
-        });
-        return renderedSignatures;
+        return (
+            <MethodBlock
+               key={`method-${method.name}-${method.source.line}`}
+               method={method}
+               typeDefinitionByName={typeDefinitionByName}
+               libraryVersion={this.props.zeroExJSversion}
+            />
+        );
     }
     private scrollToHash(): void {
         const hashWithPrefix = this.props.location.hash;
@@ -370,9 +332,10 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
 
         const versionFileNameToFetch = versionToFileName[versionToFetch];
         const versionDocObj = await this.getJSONDocFileAsync(versionFileNameToFetch);
+        const docAgnosticFormat = typeDocUtils.convertToDocAgnosticFormat(versionDocObj);
 
         this.setState({
-            versionDocObj,
+            docAgnosticFormat,
         }, () => {
             this.scrollToHash();
         });

@@ -1,7 +1,23 @@
 import * as _ from 'lodash';
 import compareVersions = require('compare-versions');
 import {constants} from 'ts/utils/constants';
-import {TypeDocNode, KindString, ZeroExJsDocSections, MenuSubsectionsBySection} from 'ts/types';
+import {utils} from 'ts/utils/utils';
+import {
+    TypeDocNode,
+    KindString,
+    ZeroExJsDocSections,
+    MenuSubsectionsBySection,
+    TypeDocType,
+    Type,
+    DocAgnosticFormat,
+    DocSection,
+    Method,
+    Parameter,
+    Property,
+    CustomType,
+    IndexSignature,
+    CustomTypeChild,
+} from 'ts/types';
 
 const TYPES_MODULE_PATH = '"src/types"';
 
@@ -41,7 +57,8 @@ export const typeDocUtils = {
     isPublicType(typeName: string): boolean {
         return _.includes(constants.public0xjsTypes, typeName);
     },
-    getModuleDefinitionBySectionNameIfExists(versionDocObj: TypeDocNode, sectionName: string): TypeDocNode|undefined {
+    getModuleDefinitionBySectionNameIfExists(versionDocObj: TypeDocNode, sectionName: string):
+        TypeDocNode|undefined {
         const possibleModulePathNames = sectionNameToPossibleModulePaths[sectionName];
         const modules = versionDocObj.children;
         for (const mod of modules) {
@@ -52,38 +69,25 @@ export const typeDocUtils = {
         }
         return undefined;
     },
-    getMenuSubsectionsBySection(versionDocObj: TypeDocNode): MenuSubsectionsBySection {
+    getMenuSubsectionsBySection(docAgnosticFormat?: DocAgnosticFormat): MenuSubsectionsBySection {
         const menuSubsectionsBySection = {} as MenuSubsectionsBySection;
-        if (_.isUndefined(versionDocObj)) {
+        if (_.isUndefined(docAgnosticFormat)) {
             return menuSubsectionsBySection;
         }
+
         const docSections = _.keys(ZeroExJsDocSections);
-        _.each(docSections, menuItemName => {
-            // Since the `types.ts` file is the only file that does not export a module/class but
-            // instead has each type export itself, we do not need to go down two levels of nesting
-            // for it.
-            if (menuItemName === ZeroExJsDocSections.types) {
-                const allModules = versionDocObj.children;
-                const typesModule = _.find(allModules, {name: TYPES_MODULE_PATH}) as TypeDocNode;
-                const allTypes = _.filter(typesModule.children, typeDocUtils.isType);
-                const publicTypes = _.filter(allTypes, type => {
-                    return typeDocUtils.isPublicType(type.name);
-                });
-                const typeNames = _.map(publicTypes, t => t.name);
-                menuSubsectionsBySection[menuItemName] = typeNames;
+        _.each(docSections, sectionName => {
+            const docSection = docAgnosticFormat[sectionName];
+            if (_.isUndefined(docSection)) {
+                return; // no-op
+            }
+
+            if (sectionName === ZeroExJsDocSections.types) {
+                const typeNames = _.map(docSection.types, t => t.name);
+                menuSubsectionsBySection[sectionName] = typeNames;
             } else {
-                const moduleDefinition = typeDocUtils.getModuleDefinitionBySectionNameIfExists(
-                    versionDocObj, menuItemName,
-                );
-                if (_.isUndefined(moduleDefinition)) {
-                    return;
-                }
-                const mainModuleExport = moduleDefinition.children[0];
-                const allMembers = mainModuleExport.children;
-                const allMethods = _.filter(allMembers, typeDocUtils.isMethod);
-                const publicMethods = _.filter(allMethods, method => method.flags.isPublic);
-                const methodNames = _.map(publicMethods, t => t.name);
-                menuSubsectionsBySection[menuItemName] = methodNames;
+                const methodNames = _.map(docSection.methods, m => m.name);
+                menuSubsectionsBySection[sectionName] = methodNames;
             }
         });
         return menuSubsectionsBySection;
@@ -101,5 +105,236 @@ export const typeDocUtils = {
             }
         });
         return finalMenu;
+    },
+    convertToDocAgnosticFormat(typeDocJson: TypeDocNode): DocAgnosticFormat {
+        const subMenus = _.values(constants.menu0xjs);
+        const orderedSectionNames = _.flatten(subMenus);
+        const docAgnosticFormat: DocAgnosticFormat = {};
+        _.each(orderedSectionNames, sectionName => {
+            const packageDefinitionIfExists = typeDocUtils.getModuleDefinitionBySectionNameIfExists(
+                typeDocJson, sectionName,
+            );
+            if (_.isUndefined(packageDefinitionIfExists)) {
+                return; // no-op
+            }
+
+            // Since the `types.ts` file is the only file that does not export a module/class but
+            // instead has each type export itself, we do not need to go down two levels of nesting
+            // for it.
+            let entities;
+            let packageComment = '';
+            if (sectionName === ZeroExJsDocSections.types) {
+                entities = packageDefinitionIfExists.children;
+            } else {
+                entities = packageDefinitionIfExists.children[0].children;
+                const commentObj = packageDefinitionIfExists.children[0].comment;
+                packageComment = !_.isUndefined(commentObj) ? commentObj.shortText : packageComment;
+            }
+
+            const docSection = this._convertEntitiesToDocSection(entities, sectionName);
+            docSection.comment = packageComment;
+            docAgnosticFormat[sectionName] = docSection;
+        });
+        return docAgnosticFormat;
+    },
+    _convertEntitiesToDocSection(entities: TypeDocNode[], sectionName: string) {
+        const docSection: DocSection = {
+            comment: '',
+            constructors: [],
+            methods: [],
+            properties: [],
+            types: [],
+        };
+
+        let isConstructor;
+        _.each(entities, entity => {
+            switch (entity.kindString) {
+                case KindString.Constructor:
+                    isConstructor = true;
+                    const constructor = this._convertMethod(entity, isConstructor, sectionName);
+                    docSection.constructors.push(constructor);
+                    break;
+
+                case KindString.Method:
+                    if (entity.flags.isPublic) {
+                        isConstructor = false;
+                        const method = this._convertMethod(entity, isConstructor, sectionName);
+                        docSection.methods.push(method);
+                    }
+                    break;
+
+                case KindString.Property:
+                    if (!this.isPrivateOrProtectedProperty(entity.name)) {
+                        const property = this._convertProperty(entity, sectionName);
+                        docSection.properties.push(property);
+                    }
+                    break;
+
+                case KindString.Interface:
+                case KindString.Function:
+                case KindString.Variable:
+                case KindString.Enumeration:
+                case KindString['Type alias']:
+                    if (typeDocUtils.isPublicType(entity.name)) {
+                        const customType = this._convertCustomType(entity, sectionName);
+                        docSection.types.push(customType);
+                    }
+                    break;
+
+                default:
+                    throw utils.spawnSwitchErr('kindString', entity.kindString);
+            }
+        });
+        return docSection;
+    },
+    _convertCustomType(entity: TypeDocNode, sectionName: string): CustomType {
+        const typeIfExists = !_.isUndefined(entity.type) ? this._convertType(entity.type, sectionName) : undefined;
+        const isConstructor = false;
+        const methodIfExists = !_.isUndefined(entity.declaration) ?
+            this._convertMethod(entity.declaration, isConstructor, sectionName) :
+            undefined;
+        const indexSignatureIfExists = !_.isUndefined(entity.indexSignature) ?
+            this._convertIndexSignature(entity.indexSignature[0], sectionName) :
+            undefined;
+        const commentIfExists = !_.isUndefined(entity.comment) && !_.isUndefined(entity.comment.shortText) ?
+            entity.comment.shortText :
+            undefined;
+
+        const childrenIfExist = !_.isUndefined(entity.children) ?
+            _.map(entity.children, (child: TypeDocNode) => {
+                const childTypeIfExists = !_.isUndefined(child.type) ?
+                    this._convertType(child.type, sectionName) :
+                    undefined;
+                const c: CustomTypeChild = {
+                    name: child.name,
+                    type: childTypeIfExists,
+                    defaultValue: child.defaultValue,
+                };
+                return c;
+            }) :
+            undefined;
+
+        const customType = {
+            name: entity.name,
+            kindString: entity.kindString,
+            type: typeIfExists,
+            method: methodIfExists,
+            indexSignature: indexSignatureIfExists,
+            defaultValue: entity.defaultValue,
+            comment: commentIfExists,
+            children: childrenIfExist,
+        };
+        return customType;
+    },
+    _convertIndexSignature(entity: TypeDocNode, sectionName: string): IndexSignature {
+        const key = entity.parameters[0];
+        const indexSignature = {
+            keyName: key.name,
+            keyType: this._convertType(key.type, sectionName),
+            valueName: entity.type.name,
+        };
+        return indexSignature;
+    },
+    _convertProperty(entity: TypeDocNode, sectionName: string): Property {
+        const source = entity.sources[0];
+        const commentIfExists = !_.isUndefined(entity.comment) ? entity.comment.shortText : undefined;
+        const property = {
+            name: entity.name,
+            type: this._convertType(entity.type, sectionName),
+            source: {
+                fileName: source.fileName,
+                line: source.line,
+            },
+            comment: commentIfExists,
+        };
+        return property;
+    },
+    _convertMethod(entity: TypeDocNode, isConstructor: boolean, sectionName: string): Method {
+        const signature = entity.signatures[0];
+        const source = entity.sources[0];
+        const hasComment = !_.isUndefined(signature.comment);
+        const isStatic = _.isUndefined(entity.flags.isStatic) ? false : entity.flags.isStatic;
+
+        const topLevelInterface = isStatic ? 'ZeroEx.' : 'zeroEx.';
+        // HACK: we use the fact that the sectionName is the same as the property name at the top-level
+        // of the public interface. In the future, we shouldn't use this hack but rather get it from the JSON.
+        let callPath = (sectionName !== ZeroExJsDocSections.zeroEx) ?
+            `${topLevelInterface}${sectionName}.` :
+            topLevelInterface;
+        callPath = isConstructor ? '' : callPath;
+
+        const parameters = _.map(signature.parameters, param => {
+            return this._convertParameter(param, sectionName);
+        });
+        const returnType = this._convertType(signature.type, sectionName);
+
+        const method = {
+            isConstructor,
+            isStatic,
+            name: signature.name,
+            comment: hasComment ? signature.comment.shortText : undefined,
+            returnComment: hasComment && signature.comment.returns ? signature.comment.returns : undefined,
+            source: {
+                fileName: source.fileName,
+                line: source.line,
+            },
+            callPath,
+            parameters,
+            returnType,
+        };
+        return method;
+    },
+    _convertParameter(entity: TypeDocNode, sectionName: string): Parameter {
+        let comment = '<No comment>';
+        if (entity.comment && entity.comment.shortText) {
+            comment = entity.comment.shortText;
+        } else if (entity.comment && entity.comment.text) {
+            comment = entity.comment.text;
+        }
+
+        const isOptional = !_.isUndefined(entity.flags.isOptional) ?
+            entity.flags.isOptional :
+            false;
+
+        const type = this._convertType(entity.type, sectionName);
+
+        const parameter = {
+            name: entity.name,
+            comment,
+            isOptional,
+            type,
+        };
+        return parameter;
+    },
+    _convertType(entity: TypeDocType, sectionName: string): Type {
+        const typeArguments = _.map(entity.typeArguments, typeArgument => {
+            return this._convertType(typeArgument, sectionName);
+        });
+        const types = _.map(entity.types, t => {
+            return this._convertType(t, sectionName);
+        });
+
+        const isConstructor = false;
+        const methodIfExists = !_.isUndefined(entity.declaration) ?
+            this._convertMethod(entity.declaration, isConstructor, sectionName) :
+            undefined;
+
+        const elementTypeIfExists = !_.isUndefined(entity.elementType) ?
+            {
+                name: entity.elementType.name,
+                typeDocType: entity.elementType.type,
+            } :
+            undefined;
+
+        const type = {
+            name: entity.name,
+            value: entity.value,
+            typeDocType: entity.type,
+            typeArguments,
+            elementType: elementTypeIfExists,
+            types,
+            method: methodIfExists,
+        };
+        return type;
     },
 };

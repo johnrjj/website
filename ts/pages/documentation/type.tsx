@@ -5,7 +5,7 @@ import * as ReactTooltip from 'react-tooltip';
 import {colors} from 'material-ui/styles';
 import {typeDocUtils} from 'ts/utils/typedoc_utils';
 import {constants} from 'ts/utils/constants';
-import {TypeDocType, TypeDocTypes, TypeDefinitionByName} from 'ts/types';
+import {Type as TypeDef, TypeDocTypes, TypeDefinitionByName} from 'ts/types';
 import {utils} from 'ts/utils/utils';
 import {TypeDefinition} from 'ts/pages/documentation/type_definition';
 
@@ -29,7 +29,7 @@ const typeToSection: {[typeName: string]: string} = {
 };
 
 interface TypeProps {
-    type: TypeDocType;
+    type: TypeDef;
     typeDefinitionByName?: TypeDefinitionByName;
 }
 
@@ -37,54 +37,72 @@ interface TypeProps {
 // <Type /> components (e.g when rendering the union type).
 export function Type(props: TypeProps): any {
     const type = props.type;
-    const isIntrinsic = type.type === TypeDocTypes.intrinsic;
-    const isReference = type.type === TypeDocTypes.reference;
-    const isArray = type.type === TypeDocTypes.array;
-    const isStringLiteral = type.type === TypeDocTypes.stringLiteral;
+    const isIntrinsic = type.typeDocType === TypeDocTypes.intrinsic;
+    const isReference = type.typeDocType === TypeDocTypes.reference;
+    const isArray = type.typeDocType === TypeDocTypes.array;
+    const isStringLiteral = type.typeDocType === TypeDocTypes.stringLiteral;
+    let typeNameColor = 'inherit';
     let typeName: string|React.ReactNode;
-    if (isIntrinsic || isReference) {
-        typeName = type.name;
-    } else if (isStringLiteral) {
-        typeName = `'${type.value}'`;
-    } else if (isArray) {
-        typeName = type.elementType.name;
-    }
     let typeArgs: React.ReactNode[] = [];
-    if (type.typeArguments) {
-        typeArgs = _.map(type.typeArguments, arg => {
-            if (arg.type === TypeDocTypes.array) {
-                return (
-                    <span>
+    switch (type.typeDocType) {
+        case TypeDocTypes.intrinsic:
+            typeName = type.name;
+            typeNameColor = BUILT_IN_TYPE_COLOR;
+            break;
+
+        case TypeDocTypes.reference:
+            typeName = type.name;
+            typeArgs = _.map(type.typeArguments, (arg: TypeDef) => {
+                if (arg.typeDocType === TypeDocTypes.array) {
+                    const key = `type-${arg.elementType.name}-${arg.elementType.typeDocType}`;
+                    return (
+                        <span>
+                            <Type
+                                key={key}
+                                type={arg.elementType}
+                                typeDefinitionByName={props.typeDefinitionByName}
+                            />[]
+                        </span>
+                    );
+                } else {
+                    const subType = (
                         <Type
-                            key={`type-${arg.elementType.name}-${arg.elementType.value}-${arg.elementType.type}`}
-                            type={arg.elementType}
+                            key={`type-${arg.name}-${arg.value}-${arg.typeDocType}`}
+                            type={arg}
                             typeDefinitionByName={props.typeDefinitionByName}
-                        />[]
-                    </span>
-                );
-            } else {
+                        />
+                    );
+                    return subType;
+                }
+            });
+            break;
+
+        case TypeDocTypes.stringLiteral:
+            typeName = `'${type.value}'`;
+            typeNameColor = STRING_LITERAL_COLOR;
+            break;
+
+        case TypeDocTypes.array:
+            typeName = type.elementType.name;
+            break;
+
+        case TypeDocTypes.union:
+            const unionTypes = _.map(type.types, t => {
                 return (
                     <Type
-                        key={`type-${arg.name}-${arg.value}-${arg.type}`}
-                        type={arg}
+                        key={`type-${t.name}-${t.value}-${t.typeDocType}`}
+                        type={t}
                         typeDefinitionByName={props.typeDefinitionByName}
                     />
                 );
-            }
-        });
-    } else if (type.type === TypeDocTypes.union) {
-        const unionTypes = _.map(type.types, t => {
-            return (
-                <Type
-                    key={`type-${t.name}-${t.value}-${t.type}`}
-                    type={t}
-                    typeDefinitionByName={props.typeDefinitionByName}
-                />
-            );
-        });
-        typeName = _.reduce(unionTypes, (prev: React.ReactNode, curr: React.ReactNode) => {
-            return [prev, '|', curr];
-        });
+            });
+            typeName = _.reduce(unionTypes, (prev: React.ReactNode, curr: React.ReactNode) => {
+                return [prev, '|', curr];
+            });
+            break;
+
+        default:
+            throw utils.spawnSwitchErr('type.typeDocType', type.typeDocType);
     }
     // HACK: Normalize BigNumber.BigNumber to simply BigNumber. For some reason the type
     // name is unpredictably one or the other.
@@ -144,18 +162,12 @@ export function Type(props: TypeProps): any {
                         id={id}
                         className="typeTooltip"
                     >
-                        <TypeDefinition type={typeDefinition} shouldAddId={false} />
+                        <TypeDefinition customType={typeDefinition} shouldAddId={false} />
                     </ReactTooltip>
                 </span>
             }
             </ScrollLink>
         );
-    }
-    let typeNameColor = 'inherit';
-    if (isIntrinsic) {
-        typeNameColor = BUILT_IN_TYPE_COLOR;
-    } else if (isStringLiteral) {
-        typeNameColor = STRING_LITERAL_COLOR;
     }
     return (
         <span>
