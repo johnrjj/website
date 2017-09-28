@@ -46,6 +46,7 @@ import {AllowanceToggle} from 'ts/components/inputs/allowance_toggle';
 import {EthWethConversionButton} from 'ts/components/eth_weth_conversion_button';
 import {SendButton} from 'ts/components/send_button';
 import {AssetPicker} from 'ts/components/generate_order/asset_picker';
+import {Identicon} from 'ts/components/ui/identicon';
 import {trackedTokenStorage} from 'ts/local_storage/tracked_token_storage';
 
 const ETHER_ICON_PATH = '/images/ether.png';
@@ -504,10 +505,13 @@ export class TokenBalances extends React.Component<TokenBalancesProps, TokenBala
         return (
             <div className="flex">
                 <div>
-                    <img
-                        style={{width: ICON_DIMENSION, height: ICON_DIMENSION}}
-                        src={token.iconUrl}
-                    />
+                    {(token.isRegistered) ?
+                        <img
+                            style={{width: ICON_DIMENSION, height: ICON_DIMENSION}}
+                            src={token.iconUrl}
+                        /> :
+                        <Identicon address={token.address} diameter={ICON_DIMENSION} />
+                    }
                 </div>
                 <div
                     data-tip={true}
