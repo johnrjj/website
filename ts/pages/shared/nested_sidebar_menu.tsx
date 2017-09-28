@@ -39,6 +39,7 @@ export class NestedSidebarMenu extends React.Component<NestedSidebarMenuProps, N
     };
     public render() {
         const navigation = _.map(this.props.topLevelMenu, (menuItems: string[], sectionName: string) => {
+            const finalSectionName = sectionName.replace(/-/g, ' ');
             if (this.props.shouldDisplaySectionHeaders) {
                 return (
                     <div
@@ -49,7 +50,7 @@ export class NestedSidebarMenu extends React.Component<NestedSidebarMenuProps, N
                             style={{color: colors.grey500}}
                             className="pb1"
                         >
-                            {sectionName.toUpperCase()}
+                            {finalSectionName.toUpperCase()}
                         </div>
                         {this.renderMenuItems(menuItems)}
                     </div>

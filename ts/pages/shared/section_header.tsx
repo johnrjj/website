@@ -19,7 +19,7 @@ export class SectionHeader extends React.Component<SectionHeaderProps, SectionHe
         };
     }
     public render() {
-        const sectionName = this.props.sectionName;
+        const sectionName = this.props.sectionName.replace(/-/g, ' ');
         const id = utils.getIdFromName(sectionName);
         return (
             <div
