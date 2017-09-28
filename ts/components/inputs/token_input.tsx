@@ -7,6 +7,7 @@ import {Dispatcher} from 'ts/redux/dispatcher';
 import {AssetToken, Side, TokenByAddress, BlockchainErrs, Token, TokenState} from 'ts/types';
 import {AssetPicker} from 'ts/components/generate_order/asset_picker';
 import {InputLabel} from 'ts/components/ui/input_label';
+import {TokenIcon} from 'ts/components/ui/token_icon';
 
 const TOKEN_ICON_DIMENSION = 80;
 
@@ -57,12 +58,9 @@ export class TokenInput extends React.Component<TokenInputProps, TokenInputState
                 >
                     <div
                         className="mx-auto pt2"
-                        style={{width: TOKEN_ICON_DIMENSION}}
+                        style={{width: TOKEN_ICON_DIMENSION, ...iconStyles}}
                     >
-                        <img
-                            style={{width: TOKEN_ICON_DIMENSION, height: TOKEN_ICON_DIMENSION, ...iconStyles}}
-                            src={token.iconUrl}
-                        />
+                        <TokenIcon token={token} diameter={TOKEN_ICON_DIMENSION} />
                     </div>
                     <div className="py1 center" style={{color: colors.grey500}}>
                         {token.name}

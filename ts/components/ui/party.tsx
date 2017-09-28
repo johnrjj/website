@@ -8,9 +8,8 @@ import {utils} from 'ts/utils/utils';
 import {EthereumAddress} from 'ts/components/ui/ethereum_address';
 
 const MIN_ADDRESS_WIDTH = 60;
-const ALTERNATIVE_IMAGE_DIMENSION = 80;
+const ALTERNATIVE_IMAGE_DIMENSION = 100;
 const IDENTICON_DIAMETER = 100;
-const TOKEN_CIRCLE_DIAMETER = 120;
 const CHECK_MARK_GREEN = 'rgb(0, 195, 62)';
 
 interface PartyProps {
@@ -45,12 +44,6 @@ export class Party extends React.Component<PartyProps, PartyState> {
             marginTop: 13,
             marginBottom: 10,
         };
-        const tokenCircleStyle = {
-            width: TOKEN_CIRCLE_DIAMETER,
-            height: TOKEN_CIRCLE_DIAMETER,
-            border: '1px solid #bdbdbd',
-            backgroundColor: 'white',
-        };
         const tokenImageStyle = {
             width: ALTERNATIVE_IMAGE_DIMENSION,
             height: ALTERNATIVE_IMAGE_DIMENSION,
@@ -74,17 +67,10 @@ export class Party extends React.Component<PartyProps, PartyState> {
                             target="_blank"
                         >
                             {!_.isUndefined(this.props.alternativeImage) ?
-                                <div
-                                    className="mx-auto circle relative"
-                                    style={tokenCircleStyle}
-                                >
-                                    <div className="absolute" style={{top: 20, left: 20}}>
-                                        <img
-                                            style={tokenImageStyle}
-                                            src={this.props.alternativeImage}
-                                        />
-                                    </div>
-                                </div> :
+                                <img
+                                    style={tokenImageStyle}
+                                    src={this.props.alternativeImage}
+                                /> :
                                 <Identicon
                                     address={this.props.address}
                                     diameter={identiconDiameter}
