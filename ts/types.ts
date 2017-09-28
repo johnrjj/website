@@ -368,6 +368,87 @@ export const TypeDocTypes = strEnum([
 ]);
 export type TypeDocTypes = keyof typeof TypeDocTypes;
 
+export interface DocAgnosticFormat {
+    [sectionName: string]: DocSection;
+}
+
+export interface DocSection {
+    comment: string;
+    constructors: Method[];
+    methods: Method[];
+    properties: Property[];
+    types: CustomType[];
+}
+
+export interface Property {
+    name: string;
+    type: Type;
+    source: Source;
+    comment?: string;
+}
+
+export interface Method {
+    isStatic: boolean;
+    isConstructor: boolean;
+    name: string;
+    comment?: string;
+    returnComment?: string|undefined;
+    source: Source;
+    callPath: string;
+    parameters: Parameter[];
+    returnType: Type;
+}
+
+export interface Source {
+    fileName: string;
+    line: number;
+}
+
+export interface Parameter {
+    name: string;
+    comment: string;
+    isOptional: boolean;
+    type: Type;
+}
+
+export interface Type {
+    name: string;
+    typeDocType: TypeDocTypes;
+    value?: string;
+    typeArguments?: Type[];
+    elementType?: ElementType;
+    types?: Type[];
+    method?: Method;
+}
+
+export interface ElementType {
+    name: string;
+    typeDocType: TypeDocTypes;
+}
+
+export interface IndexSignature {
+    keyName: string;
+    keyType: Type;
+    valueName: string;
+}
+
+export interface CustomType {
+    name: string;
+    kindString: string;
+    type?: Type;
+    method?: Method;
+    indexSignature?: IndexSignature;
+    defaultValue?: string;
+    comment?: string;
+    children?: CustomTypeChild[];
+}
+
+export interface CustomTypeChild {
+    name: string;
+    type?: Type;
+    defaultValue?: string;
+}
+
 export const ZeroExJsDocSections = strEnum([
   'introduction',
   'installation',
@@ -384,16 +465,6 @@ export const ZeroExJsDocSections = strEnum([
   'types',
 ]);
 export type ZeroExJsDocSections = keyof typeof ZeroExJsDocSections;
-
-interface CivicSignupOpts {
-    style: string;
-    scopeRequest: string;
-}
-export interface CivicSip {
-    ScopeRequests: any;
-    signup: (opts: CivicSignupOpts) => void;
-    on: (eventName: string, callback: (event: any) => void) => void;
-}
 
 export interface FAQQuestion {
     prompt: string;
@@ -487,7 +558,7 @@ export interface BlogPost {
 }
 
 export interface TypeDefinitionByName {
-    [typeName: string]: TypeDocNode;
+    [typeName: string]: CustomType;
 }
 
 export interface Article {
