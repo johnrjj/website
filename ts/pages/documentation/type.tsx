@@ -5,7 +5,7 @@ import * as ReactTooltip from 'react-tooltip';
 import {colors} from 'material-ui/styles';
 import {typeDocUtils} from 'ts/utils/typedoc_utils';
 import {constants} from 'ts/utils/constants';
-import {TypeDocType, TypeDocTypes, TypeDefinitionByName} from 'ts/types';
+import {Type as TypeDef, TypeDocTypes, TypeDefinitionByName} from 'ts/types';
 import {utils} from 'ts/utils/utils';
 import {TypeDefinition} from 'ts/pages/documentation/type_definition';
 
@@ -29,7 +29,7 @@ const typeToSection: {[typeName: string]: string} = {
 };
 
 interface TypeProps {
-    type: TypeDocType;
+    type: TypeDef;
     typeDefinitionByName?: TypeDefinitionByName;
 }
 
@@ -37,14 +37,14 @@ interface TypeProps {
 // <Type /> components (e.g when rendering the union type).
 export function Type(props: TypeProps): any {
     const type = props.type;
-    const isIntrinsic = type.type === TypeDocTypes.intrinsic;
-    const isReference = type.type === TypeDocTypes.reference;
-    const isArray = type.type === TypeDocTypes.array;
-    const isStringLiteral = type.type === TypeDocTypes.stringLiteral;
+    const isIntrinsic = type.typeDocType === TypeDocTypes.intrinsic;
+    const isReference = type.typeDocType === TypeDocTypes.reference;
+    const isArray = type.typeDocType === TypeDocTypes.array;
+    const isStringLiteral = type.typeDocType === TypeDocTypes.stringLiteral;
     let typeNameColor = 'inherit';
     let typeName: string|React.ReactNode;
     let typeArgs: React.ReactNode[] = [];
-    switch (type.type) {
+    switch (type.typeDocType) {
         case TypeDocTypes.intrinsic:
             typeName = type.name;
             typeNameColor = BUILT_IN_TYPE_COLOR;
@@ -52,25 +52,27 @@ export function Type(props: TypeProps): any {
 
         case TypeDocTypes.reference:
             typeName = type.name;
-            typeArgs = _.map(type.typeArguments, arg => {
-                if (arg.type === TypeDocTypes.array) {
+            typeArgs = _.map(type.typeArguments, (arg: TypeDef) => {
+                if (arg.typeDocType === TypeDocTypes.array) {
+                    const key = `type-${arg.elementType.name}-${arg.elementType.typeDocType}`;
                     return (
                         <span>
                             <Type
-                                key={`type-${arg.elementType.name}-${arg.elementType.value}-${arg.elementType.type}`}
+                                key={key}
                                 type={arg.elementType}
                                 typeDefinitionByName={props.typeDefinitionByName}
                             />[]
                         </span>
                     );
                 } else {
-                    return (
+                    const subType = (
                         <Type
-                            key={`type-${arg.name}-${arg.value}-${arg.type}`}
+                            key={`type-${arg.name}-${arg.value}-${arg.typeDocType}`}
                             type={arg}
                             typeDefinitionByName={props.typeDefinitionByName}
                         />
                     );
+                    return subType;
                 }
             });
             break;
@@ -88,7 +90,7 @@ export function Type(props: TypeProps): any {
             const unionTypes = _.map(type.types, t => {
                 return (
                     <Type
-                        key={`type-${t.name}-${t.value}-${t.type}`}
+                        key={`type-${t.name}-${t.value}-${t.typeDocType}`}
                         type={t}
                         typeDefinitionByName={props.typeDefinitionByName}
                     />
@@ -100,7 +102,7 @@ export function Type(props: TypeProps): any {
             break;
 
         default:
-            throw utils.spawnSwitchErr('type.type', type.type);
+            throw utils.spawnSwitchErr('type.typeDocType', type.typeDocType);
     }
     // HACK: Normalize BigNumber.BigNumber to simply BigNumber. For some reason the type
     // name is unpredictably one or the other.
@@ -160,7 +162,7 @@ export function Type(props: TypeProps): any {
                         id={id}
                         className="typeTooltip"
                     >
-                        <TypeDefinition type={typeDefinition} shouldAddId={false} />
+                        <TypeDefinition customType={typeDefinition} shouldAddId={false} />
                     </ReactTooltip>
                 </span>
             }

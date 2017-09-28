@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {colors} from 'material-ui/styles';
-import {TypeDocNode} from 'ts/types';
+import {Source} from 'ts/types';
 import {constants} from 'ts/utils/constants';
 
 interface SourceLinkProps {
-    source: TypeDocNode;
+    source: Source;
     version: string;
 }
 
