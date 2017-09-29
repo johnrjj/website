@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import * as accounting from 'accounting';
 import {Link} from 'react-router-dom';
 import {ZeroEx} from '0x.js';
 import * as moment from 'moment';
@@ -216,7 +215,7 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
         const parsedOrderExpiration = new BigNumber(this.state.parsedOrder.expiration);
         const exchangeRate = orderMakerAmount.div(orderTakerAmount);
 
-        let orderReceiveAmount = 0;
+        let orderReceiveAmount = new BigNumber(0);
         if (!_.isUndefined(this.props.orderFillAmount)) {
             const orderReceiveAmountBigNumber = exchangeRate.mul(this.props.orderFillAmount);
             orderReceiveAmount = this.formatCurrencyAmount(orderReceiveAmountBigNumber, makerToken.decimals);
@@ -283,7 +282,7 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
                            className="col col-5 pl1"
                            style={{color: CUSTOM_LIGHT_GRAY, paddingTop: 39}}
                        >
-                           = {accounting.formatNumber(orderReceiveAmount, 6)} {makerToken.symbol}
+                           = {orderReceiveAmount.toFormat(6)} {makerToken.symbol}
                        </div>
                     </div>
                 }
@@ -677,9 +676,9 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
             return;
         }
     }
-    private formatCurrencyAmount(amount: BigNumber.BigNumber, decimals: number): number {
+    private formatCurrencyAmount(amount: BigNumber.BigNumber, decimals: number): BigNumber.BigNumber {
         const unitAmount = ZeroEx.toUnitAmount(amount, decimals);
-        const roundedUnitAmount = Math.round(unitAmount.toNumber() * 100000) / 100000;
+        const roundedUnitAmount = unitAmount.mul(100000).round().div(100000);
         return roundedUnitAmount;
     }
     private onToggleTrackConfirmDialog(didConfirmTokenTracking: boolean) {
