@@ -8,7 +8,7 @@ import {
 } from 'react-scroll';
 import {Styles, Article, ArticlesBySection} from 'ts/types';
 import {TopBar} from 'ts/components/top_bar';
-import {HeaderSizes} from 'ts/types';
+import {HeaderSizes, WebsitePaths} from 'ts/types';
 import {utils} from 'ts/utils/utils';
 import {constants} from 'ts/utils/constants';
 import {configs} from 'ts/utils/configs';
@@ -175,7 +175,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
         scroller.scrollTo(hash, {duration: 0, offset: 0, containerId: 'documentation'});
     }
     private async fetchArticlesBySectionAsync(): Promise<void> {
-        const endpoint = `${configs.BACKEND_BASE_URL}/wiki`;
+        const endpoint = `${configs.BACKEND_BASE_URL}${WebsitePaths.Wiki}`;
         const response = await fetch(endpoint);
         if (response.status === constants.HTTP_NO_CONTENT_STATUS_CODE) {
             // We need to backoff and try fetching again later

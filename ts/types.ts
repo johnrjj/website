@@ -589,3 +589,13 @@ export enum HeaderSizes {
     H2 = 'h2',
     H3 = 'h3',
 }
+
+export enum WebsitePaths {
+    Portal = '/portal',
+    Wiki = '/wiki',
+    ZeroExJs = '/docs/0xjs',
+    Home = '/',
+    FAQ = '/faq',
+    TokenSale = '/token',
+    Whitepaper = '/pdfs/0x_white_paper.pdf',
+}

@@ -18,6 +18,7 @@ import {colors, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
 import {Switch, BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 import {tradeHistoryStorage} from 'ts/local_storage/trade_history_storage';
 import * as injectTapEventPlugin from 'react-tap-event-plugin';
+import {WebsitePaths} from 'ts/types';
 injectTapEventPlugin();
 
 // By default BigNumber's `toString` method converts to exponential notation if the value has
@@ -90,12 +91,12 @@ render(
                     <div>
                         <Switch>
                             <Route exact={true} path="/" component={Home as any} />
-                            <Redirect from="/otc" to="/portal"/>
-                            <Route path="/portal" component={LazyPortal} />
-                            <Route path="/token" component={TokenLaunch as any} />
-                            <Route path="/faq" component={FAQ as any} />
-                            <Route path="/wiki" component={Wiki as any} />
-                            <Route path="/docs/0xjs/:version?" component={LazyZeroExJSDocumentation} />
+                            <Redirect from="/otc" to={`${WebsitePaths.Portal}`}/>
+                            <Route path={`${WebsitePaths.Portal}`} component={LazyPortal} />
+                            <Route path={`${WebsitePaths.TokenSale}`} component={TokenLaunch as any} />
+                            <Route path={`${WebsitePaths.FAQ}`} component={FAQ as any} />
+                            <Route path={`${WebsitePaths.Wiki}`} component={Wiki as any} />
+                            <Route path={`${WebsitePaths.ZeroExJs}/:version?`} component={LazyZeroExJSDocumentation} />
                             <Route component={NotFound as any} />
                         </Switch>
                     </div>

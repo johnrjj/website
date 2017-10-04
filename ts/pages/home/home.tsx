@@ -6,7 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import {colors} from 'material-ui/styles';
 import {configs} from 'ts/utils/configs';
 import {constants} from 'ts/utils/constants';
-import {Styles, ProfileInfo, Partner} from 'ts/types';
+import {Styles, ProfileInfo, Partner, WebsitePaths} from 'ts/types';
 import {
     Link as ScrollLink,
     Element as ScrollElement,
@@ -110,7 +110,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
                                     {' '}The Protocol for Trading Tokens
                                 </div>
                                 <div className="flex sm-hide xs-hide">
-                                    <Link to="/docs/0xjs">
+                                    <Link to={`${WebsitePaths.ZeroExJs}`}>
                                         <RaisedButton
                                             label="Docs"
                                             primary={true}
@@ -120,18 +120,13 @@ export class Home extends React.Component<HomeProps, HomeState> {
                                     </Link>
                                     <a
                                         target="_blank"
-                                        href="/pdfs/0x_white_paper.pdf"
+                                        href={`${WebsitePaths.Whitepaper}`}
                                     >
                                         <FlatButton
                                             label="Whitepaper"
                                         />
                                     </a>
-                                    <Link to="/wiki">
-                                        <FlatButton
-                                            label="Wiki"
-                                        />
-                                    </Link>
-                                    <Link to="/faq">
+                                    <Link to={`${WebsitePaths.FAQ}`}>
                                         <FlatButton
                                             label="FAQ"
                                         />
@@ -144,11 +139,6 @@ export class Home extends React.Component<HomeProps, HomeState> {
                                             label="Blog"
                                         />
                                     </a>
-                                    <Link to="/portal">
-                                        <FlatButton
-                                            label="Portal"
-                                        />
-                                    </Link>
                                 </div>
                             </div>
                         </div>

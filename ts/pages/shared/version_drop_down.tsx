@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import MenuItem from 'material-ui/MenuItem';
 import DropDownMenu from 'material-ui/DropDownMenu';
+import {WebsitePaths} from 'ts/types';
 
 interface VersionDropDownProps {
     selectedVersion: string;
@@ -37,6 +38,6 @@ export class VersionDropDown extends React.Component<VersionDropDownProps, Versi
         return items;
     }
     private updateSelectedVersion(e: any, index: number, value: string) {
-        window.location.href = `/docs/0xjs/${value}${window.location.hash}`;
+        window.location.href = `${WebsitePaths.ZeroExJs}/${value}${window.location.hash}`;
     }
 }

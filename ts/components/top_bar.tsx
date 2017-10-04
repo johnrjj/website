@@ -11,13 +11,13 @@ import {Identicon} from 'ts/components/ui/identicon';
 import {NestedSidebarMenu} from 'ts/pages/shared/nested_sidebar_menu';
 import {typeDocUtils} from 'ts/utils/typedoc_utils';
 import {PortalMenu} from 'ts/components/portal_menu';
-import {Styles, TypeDocNode, MenuSubsectionsBySection} from 'ts/types';
 import {
     Link as ScrollLink,
     animateScroll,
 } from 'react-scroll';
 import {Link} from 'react-router-dom';
 import {HashLink} from 'react-router-hash-link';
+import {Styles, TypeDocNode, MenuSubsectionsBySection, WebsitePaths} from 'ts/types';
 
 const SECTION_HEADER_COLOR = 'rgb(234, 234, 234)';
 
@@ -111,16 +111,16 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 <a
                     className="text-decoration-none"
                     target="_blank"
-                    href="/pdfs/0x_white_paper.pdf"
+                    href={`${WebsitePaths.Whitepaper}`}
                 >
                     <MenuItem className="py2">Whitepaper</MenuItem>
                 </a>
                 {!this.isViewing0xjsDocs() &&
-                    <Link to="/docs/0xjs" className="text-decoration-none">
+                    <Link to={`${WebsitePaths.ZeroExJs}`} className="text-decoration-none">
                         <MenuItem className="py2">Documentation</MenuItem>
                     </Link>
                 }
-                <Link to="/wiki" className="text-decoration-none">
+                <Link to={`${WebsitePaths.Wiki}`} className="text-decoration-none">
                     <MenuItem className="py2">Wiki</MenuItem>
                 </Link>
                 <a
@@ -131,12 +131,12 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                     <MenuItem className="py2">Blog</MenuItem>
                 </a>
                 {this.renderHomepageMenuItem('team')}
-                <Link to="/token" className="text-decoration-none">
+                <Link to={`${WebsitePaths.TokenSale}`} className="text-decoration-none">
                     <MenuItem className="py2">Token sale</MenuItem>
                 </Link>
                 {this.renderHomepageMenuItem('advisors')}
                 {this.renderHomepageMenuItem('backers')}
-                <Link to="/faq" className="text-decoration-none">
+                <Link to={`${WebsitePaths.FAQ}`} className="text-decoration-none">
                     <MenuItem
                         className="py2"
                         onTouchTap={this.onMenuButtonClick.bind(this)}
@@ -145,7 +145,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                     </MenuItem>
                 </Link>
                 {!this.isViewingPortal() &&
-                    <Link to="/portal" className="text-decoration-none">
+                    <Link to={`${WebsitePaths.Portal}`} className="text-decoration-none">
                         <MenuItem className="py2">Portal DApp</MenuItem>
                     </Link>
                 }
@@ -204,7 +204,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
         );
     }
     private renderHomepageMenuItem(location: string) {
-        if (this.props.location.pathname === '/') {
+        if (this.props.location.pathname === WebsitePaths.Home) {
             return (
                 <ScrollLink
                     to={location}
@@ -262,12 +262,12 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
         });
     }
     private isViewingPortal() {
-        return _.includes(this.props.location.pathname, '/portal');
+        return _.includes(this.props.location.pathname, WebsitePaths.Portal);
     }
     private isViewing0xjsDocs() {
-        return _.includes(this.props.location.pathname, '/docs/0xjs');
+        return _.includes(this.props.location.pathname, WebsitePaths.ZeroExJs);
     }
     private isViewingWiki() {
-        return _.includes(this.props.location.pathname, '/wiki');
+        return _.includes(this.props.location.pathname, WebsitePaths.Wiki);
     }
 }
