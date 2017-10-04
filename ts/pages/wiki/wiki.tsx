@@ -116,7 +116,9 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
                                         0x Protocol Wiki
                                     </a>
                                 </h1>
-                                {this.renderWikiArticles()}
+                                <div id="wiki">
+                                    {this.renderWikiArticles()}
+                                </div>
                             </div>
                         </div>
                     </div>
