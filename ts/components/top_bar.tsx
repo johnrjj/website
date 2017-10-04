@@ -118,7 +118,12 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 </a>
                 {!this.isViewing0xjsDocs() &&
                     <Link to="/docs/0xjs" className="text-decoration-none">
-                        <MenuItem className="py2">Documentation</MenuItem>
+                        <MenuItem className="py2">0x.js Docs</MenuItem>
+                    </Link>
+                }
+                {!this.isViewingSmartContractsDocs() &&
+                    <Link to="/docs/contracts" className="text-decoration-none">
+                        <MenuItem className="py2">Smart Contract Docs</MenuItem>
                     </Link>
                 }
                 <Link to="/wiki" className="text-decoration-none">
@@ -162,9 +167,10 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
             typeDocUtils.getFinal0xjsMenu(this.props.docsVersion) :
             constants.menuSmartContracts;
 
+        const sectionTitle = this.isViewing0xjsDocs() ? '0x.js Docs' : 'Smart contract Docs';
         return (
             <div className="lg-hide md-hide">
-                <div className="pl1 py1" style={{backgroundColor: SECTION_HEADER_COLOR}}>0x.js Docs</div>
+                <div className="pl1 py1" style={{backgroundColor: SECTION_HEADER_COLOR}}>{sectionTitle}</div>
                 <NestedSidebarMenu
                     topLevelMenu={topLevelMenu}
                     menuSubsectionsBySection={this.props.menuSubsectionsBySection}
