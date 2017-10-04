@@ -24,7 +24,10 @@ export const MethodSignature: React.SFC<MethodSignatureProps> = (props: MethodSi
     return (
         <span>
             {props.method.callPath}{methodName}({paramString}){props.shouldUseArrowSyntax ? ' => ' : ': '}
-            {' '}<Type type={props.method.returnType} typeDefinitionByName={props.typeDefinitionByName}/>
+            {' '}
+            {props.method.returnType &&
+                <Type type={props.method.returnType} typeDefinitionByName={props.typeDefinitionByName}/>
+            }
         </span>
     );
 };

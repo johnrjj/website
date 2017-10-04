@@ -23,13 +23,13 @@ interface MethodBlockState {
 
 const styles: Styles = {
     chip: {
-        fontSize: 14,
+        fontSize: 13,
         backgroundColor: colors.lightBlueA700,
         color: 'white',
-        height: 16,
+        height: 11,
         borderRadius: 14,
-        marginTop: 13,
-        lineHeight: 1.2,
+        marginTop: 19,
+        lineHeight: 0.8,
     },
 };
 
@@ -57,13 +57,14 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                 {!method.isConstructor &&
                     <div className="flex">
                         {method.isStatic &&
-                            <div
-                                className="p1 mr1"
-                                style={styles.chip}
-                            >
-                                Static
-                            </div>
-                         }
+                            this.renderChip('Static')
+                        }
+                        {method.isConstant &&
+                            this.renderChip('Constant')
+                        }
+                        {method.isPayable &&
+                            this.renderChip('Payable')
+                        }
                         <AnchorTitle
                             headerSize={HeaderSizes.H3}
                             title={method.name}
@@ -78,17 +79,19 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                         typeDefinitionByName={this.props.typeDefinitionByName}
                     />
                 </code>
-                <SourceLink
-                    version={this.props.libraryVersion}
-                    source={method.source}
-                />
+                {method.source &&
+                    <SourceLink
+                        version={this.props.libraryVersion}
+                        source={method.source}
+                    />
+                }
                 {method.comment &&
                     <Comment
                         comment={method.comment}
                         className="py2"
                     />
                 }
-                {method.parameters &&
+                {method.parameters && !_.isEmpty(method.parameters) &&
                     <div>
                         <h4
                             className="pb1 thin"
@@ -115,6 +118,16 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
             </div>
         );
     }
+    private renderChip(text: string) {
+        return (
+            <div
+                className="p1 mr1"
+                style={styles.chip}
+            >
+                {text}
+            </div>
+        );
+    }
     private renderParameterDescriptions(parameters: Parameter[]) {
         const descriptions = _.map(parameters, parameter => {
             const isOptional = parameter.isOptional;
@@ -134,9 +147,11 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                         </div>
                     </div>
                     <div className="col lg-col-8 md-col-8 sm-col-12 col-12">
-                        <Comment
-                            comment={parameter.comment}
-                        />
+                        {parameter.comment &&
+                            <Comment
+                                comment={parameter.comment}
+                            />
+                        }
                     </div>
                 </div>
             );

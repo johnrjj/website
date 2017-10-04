@@ -378,25 +378,43 @@ export interface DocSection {
     methods: Method[];
     properties: Property[];
     types: CustomType[];
+    events?: Event[];
+}
+
+export interface Event {
+    name: string;
+    eventArgs: EventArg[];
+}
+
+export interface EventArg {
+    isIndexed: boolean;
+    name: string;
+    type: Type;
 }
 
 export interface Property {
     name: string;
     type: Type;
-    source: Source;
+    source?: Source;
     comment?: string;
 }
 
 export interface Method {
-    isStatic: boolean;
     isConstructor: boolean;
     name: string;
-    comment?: string;
     returnComment?: string|undefined;
-    source: Source;
     callPath: string;
     parameters: Parameter[];
     returnType: Type;
+    comment?: string;
+
+    // Only Typescript methods
+    source?: Source;
+    isStatic?: boolean;
+
+    // Only Solidity methods
+    isConstant?: boolean;
+    isPayable?: boolean;
 }
 
 export interface Source {
@@ -465,6 +483,16 @@ export const ZeroExJsDocSections = strEnum([
   'types',
 ]);
 export type ZeroExJsDocSections = keyof typeof ZeroExJsDocSections;
+
+export const SmartContractsDocSections = strEnum([
+  'Introduction',
+  'Exchange',
+  'TokenTransferProxy',
+  'TokenRegistry',
+  'ZRXToken',
+  'EtherToken',
+]);
+export type SmartContractsDocSections = keyof typeof SmartContractsDocSections;
 
 export interface FAQQuestion {
     prompt: string;
@@ -588,4 +616,64 @@ export enum HeaderSizes {
     H1 = 'h1',
     H2 = 'h2',
     H3 = 'h3',
+}
+
+export interface DoxityDocObj {
+    [contractName: string]: DoxityContractObj;
+}
+
+export interface DoxityContractObj {
+    title: string;
+    fileName: string;
+    name: string;
+    abiDocs: DoxityAbiDoc[];
+}
+
+export interface DoxityAbiDoc {
+    constant: boolean;
+    inputs: DoxityInput[];
+    name: string;
+    outputs: DoxityOutput[];
+    payable: boolean;
+    type: string;
+    details?: string;
+    return?: string;
+}
+
+export interface DoxityOutput {
+    name: string;
+    type: string;
+}
+
+export interface DoxityInput {
+    name: string;
+    type: string;
+    description: string;
+    indexed?: boolean;
+}
+
+export interface VersionToFileName {
+    [version: string]: string;
+}
+
+export enum Docs {
+    ZeroExJs,
+    SmartContracts,
+}
+
+export interface ContractAddresses {
+    [version: string]: {
+        [network: string]: AddressByContractName;
+    };
+}
+
+export interface AddressByContractName {
+    [contractName: string]: string;
+}
+
+export enum Networks {
+    mainnet = 'Mainnet',
+    kovan = 'Kovan',
+    ropsten = 'Ropsten',
+    rinkeby = 'Rinkeby',
 }

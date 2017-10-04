@@ -1,72 +1,63 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import * as ReactMarkdown from 'react-markdown';
 import DocumentTitle = require('react-document-title');
 import findVersions = require('find-versions');
 import semverSort = require('semver-sort');
 import {colors} from 'material-ui/styles';
-import MenuItem from 'material-ui/MenuItem';
 import CircularProgress from 'material-ui/CircularProgress';
-import Paper from 'material-ui/Paper';
 import {
-    Link as ScrollLink,
-    Element as ScrollElement,
     scroller,
 } from 'react-scroll';
 import {Dispatcher} from 'ts/redux/dispatcher';
 import {
-    KindString,
-    TypeDocNode,
-    ZeroExJsDocSections,
+    SmartContractsDocSections,
     Styles,
-    ScreenWidths,
+    DoxityDocObj,
     TypeDefinitionByName,
     DocAgnosticFormat,
     Method,
     Property,
     CustomType,
+    MenuSubsectionsBySection,
+    Event,
     Docs,
+    AddressByContractName,
+    Networks,
+    EtherscanLinkSuffixes,
 } from 'ts/types';
 import {TopBar} from 'ts/components/top_bar';
 import {utils} from 'ts/utils/utils';
 import {docUtils} from 'ts/utils/doc_utils';
 import {constants} from 'ts/utils/constants';
-import {Loading} from 'ts/components/ui/loading';
 import {MethodBlock} from 'ts/pages/documentation/method_block';
 import {SourceLink} from 'ts/pages/documentation/source_link';
 import {Type} from 'ts/pages/documentation/type';
 import {TypeDefinition} from 'ts/pages/documentation/type_definition';
 import {MarkdownSection} from 'ts/pages/shared/markdown_section';
 import {Comment} from 'ts/pages/documentation/comment';
+import {Badge} from 'ts/components/ui/badge';
+import {EventDefinition} from 'ts/pages/documentation/event_definition';
 import {AnchorTitle} from 'ts/pages/shared/anchor_title';
 import {SectionHeader} from 'ts/pages/shared/section_header';
 import {NestedSidebarMenu} from 'ts/pages/shared/nested_sidebar_menu';
-import {typeDocUtils} from 'ts/utils/typedoc_utils';
+import {doxityUtils} from 'ts/utils/doxity_utils';
 /* tslint:disable:no-var-requires */
-const IntroMarkdown = require('md/docs/0xjs/introduction');
-const InstallationMarkdown = require('md/docs/0xjs/installation');
-const AsyncMarkdown = require('md/docs/0xjs/async');
-const ErrorsMarkdown = require('md/docs/0xjs/errors');
-const versioningMarkdown = require('md/docs/0xjs/versioning');
+const IntroMarkdown = require('md/docs/smart_contracts/introduction');
 /* tslint:enable:no-var-requires */
 
 const SCROLL_TO_TIMEOUT = 500;
-const DOC_JSON_ROOT = constants.S3_0XJS_DOCUMENTATION_JSON_ROOT;
+const DOC_JSON_ROOT = constants.S3_SMART_CONTRACTS_DOCUMENTATION_JSON_ROOT;
 
 const sectionNameToMarkdown = {
-    [ZeroExJsDocSections.introduction]: IntroMarkdown,
-    [ZeroExJsDocSections.installation]: InstallationMarkdown,
-    [ZeroExJsDocSections.async]: AsyncMarkdown,
-    [ZeroExJsDocSections.errors]: ErrorsMarkdown,
-    [ZeroExJsDocSections.versioning]: versioningMarkdown,
+    [SmartContractsDocSections.Introduction]: IntroMarkdown,
+};
+const networkNameToColor = {
+    [Networks.kovan]: '#690596', // Purple
+    [Networks.ropsten]: '#e91751', // red
+    [Networks.mainnet]: '#058789', // Turquois
 };
 
-export interface ZeroExJSDocumentationPassedProps {
-    source: string;
-    location: Location;
-}
-
-export interface ZeroExJSDocumentationAllProps {
+export interface SmartContractsDocumentationAllProps {
     source: string;
     location: Location;
     dispatcher: Dispatcher;
@@ -74,7 +65,7 @@ export interface ZeroExJSDocumentationAllProps {
     availableDocVersions: string[];
 }
 
-interface ZeroExJSDocumentationState {
+interface SmartContractsDocumentationState {
     docAgnosticFormat?: DocAgnosticFormat;
 }
 
@@ -97,8 +88,9 @@ const styles: Styles = {
     },
 };
 
-export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentationAllProps, ZeroExJSDocumentationState> {
-    constructor(props: ZeroExJSDocumentationAllProps) {
+export class SmartContractsDocumentation extends
+    React.Component<SmartContractsDocumentationAllProps, SmartContractsDocumentationState> {
+    constructor(props: SmartContractsDocumentationAllProps) {
         super(props);
         this.state = {
             docAgnosticFormat: undefined,
@@ -114,7 +106,7 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
     public render() {
         const menuSubsectionsBySection = _.isUndefined(this.state.docAgnosticFormat)
                                          ? {}
-                                         : typeDocUtils.getMenuSubsectionsBySection(this.state.docAgnosticFormat);
+                                         : this.getMenuSubsectionsBySection(this.state.docAgnosticFormat);
         return (
             <div>
                 <DocumentTitle title="0x.js Documentation"/>
@@ -125,7 +117,7 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
                     availableDocVersions={this.props.availableDocVersions}
                     menuSubsectionsBySection={menuSubsectionsBySection}
                     shouldFullWidth={true}
-                    doc={Docs.ZeroExJs}
+                    doc={Docs.SmartContracts}
                 />
                 {_.isUndefined(this.state.docAgnosticFormat) ?
                     <div
@@ -154,9 +146,9 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
                                 <NestedSidebarMenu
                                     selectedVersion={this.props.docsVersion}
                                     versions={this.props.availableDocVersions}
-                                    topLevelMenu={typeDocUtils.getFinal0xjsMenu(this.props.docsVersion)}
+                                    topLevelMenu={constants.menuSmartContracts}
                                     menuSubsectionsBySection={menuSubsectionsBySection}
-                                    doc={Docs.ZeroExJs}
+                                    doc={Docs.SmartContracts}
                                 />
                             </div>
                         </div>
@@ -166,10 +158,10 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
                                 style={styles.mainContainers}
                                 className="absolute"
                             >
-                                <div id="zeroExJSDocs" />
+                                <div id="smartContractsDocs" />
                                 <h1 className="md-pl2 sm-pl3">
-                                    <a href={constants.GITHUB_0X_JS_URL} target="_blank">
-                                        0x.js
+                                    <a href={constants.GITHUB_CONTRACTS_URL} target="_blank">
+                                        0x Smart Contracts
                                     </a>
                                 </h1>
                                 {this.renderDocumentation()}
@@ -181,10 +173,10 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
         );
     }
     private renderDocumentation(): React.ReactNode {
-        const typeDocSection = this.state.docAgnosticFormat[ZeroExJsDocSections.types];
-        const typeDefinitionByName = _.keyBy(typeDocSection.types, 'name');
+        // const typeDocSection = this.state.docAgnosticFormat[SmartContractsDocSections.types];
+        const typeDefinitionByName = {}; // _.keyBy(typeDocSection.types, 'name');
 
-        const subMenus = _.values(constants.menu0xjs);
+        const subMenus = _.values(constants.menuSmartContracts);
         const orderedSectionNames = _.flatten(subMenus);
         const sections = _.map(orderedSectionNames, this.renderSection.bind(this, typeDefinitionByName));
 
@@ -208,7 +200,8 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
             return null;
         }
 
-        const typeDefs = _.map(docSection.types, customType => {
+        const sortedTypes = _.sortBy(docSection.types, 'name');
+        const typeDefs = _.map(sortedTypes, customType => {
             return (
                 <TypeDefinition
                     key={`type-${customType.name}`}
@@ -216,24 +209,44 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
                 />
             );
         });
-        const propertyDefs = _.map(docSection.properties, this.renderProperty.bind(this));
-        const methodDefs = _.map(docSection.methods, method => {
+        const sortedProperties = _.sortBy(docSection.properties, 'name');
+        const propertyDefs = _.map(sortedProperties, this.renderProperty.bind(this));
+
+        const sortedMethods = _.sortBy(docSection.methods, 'name');
+        const methodDefs = _.map(sortedMethods, method => {
             const isConstructor = false;
             return this.renderMethodBlocks(method, sectionName, isConstructor, typeDefinitionByName);
+        });
+
+        const sortedEvents = _.sortBy(docSection.events, 'name');
+        const eventDefs = _.map(sortedEvents, (event: Event, i: number) => {
+            return (
+                <EventDefinition
+                    key={`event-${event.name}-${i}`}
+                    event={event}
+                />
+            );
         });
         return (
             <div
                 key={`section-${sectionName}`}
                 className="py2 pr3 md-pl2 sm-pl3"
             >
-                <SectionHeader sectionName={sectionName} />
-                <Comment
-                    comment={docSection.comment}
-                />
-                {sectionName === ZeroExJsDocSections.zeroEx && docSection.constructors.length > 0 &&
+                <div className="flex">
+                        <div style={{marginRight: 7}}>
+                            <SectionHeader sectionName={sectionName} />
+                        </div>
+                        {this.renderNetworkBadges(sectionName)}
+                </div>
+                {docSection.comment &&
+                    <Comment
+                        comment={docSection.comment}
+                    />
+                }
+                {docSection.constructors.length > 0 &&
                     <div>
                         <h2 className="thin">Constructor</h2>
-                        {this.renderZeroExConstructors(docSection.constructors, typeDefinitionByName)}
+                        {this.renderConstructors(docSection.constructors, typeDefinitionByName)}
                     </div>
                 }
                 {docSection.properties.length > 0 &&
@@ -248,6 +261,12 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
                         <div>{methodDefs}</div>
                     </div>
                 }
+                {docSection.events.length > 0 &&
+                    <div>
+                        <h2 className="thin">Events</h2>
+                        <div>{eventDefs}</div>
+                    </div>
+                }
                 {typeDefs.length > 0 &&
                     <div>
                         <div>{typeDefs}</div>
@@ -256,11 +275,35 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
             </div>
         );
     }
-    private renderZeroExConstructors(constructors: Method[],
-                                     typeDefinitionByName: TypeDefinitionByName): React.ReactNode {
+    private renderNetworkBadges(sectionName: string) {
+        const networkToAddressByContractName = constants.contractAddresses[this.props.docsVersion];
+        const badges = _.map(networkToAddressByContractName,
+            (addressByContractName: AddressByContractName, networkName: string) => {
+                const contractAddress = addressByContractName[sectionName];
+                const linkIfExists = utils.getEtherScanLinkIfExists(
+                    contractAddress, constants.networkIdByName[networkName], EtherscanLinkSuffixes.address,
+                );
+                return (
+                    <a
+                        key={`badge-${networkName}-${sectionName}`}
+                        href={linkIfExists}
+                        target="_blank"
+                        style={{color: 'white', textDecoration: 'none'}}
+                    >
+                        <Badge
+                            title={networkName}
+                            backgroundColor={networkNameToColor[networkName]}
+                        />
+                    </a>
+                );
+        });
+        return badges;
+    }
+    private renderConstructors(constructors: Method[],
+                               typeDefinitionByName: TypeDefinitionByName): React.ReactNode {
         const constructorDefs = _.map(constructors, constructor => {
             return this.renderMethodBlocks(
-                constructor, ZeroExJsDocSections.zeroEx, constructor.isConstructor, typeDefinitionByName,
+                constructor, SmartContractsDocSections.zeroEx, constructor.isConstructor, typeDefinitionByName,
             );
         });
         return (
@@ -278,10 +321,12 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
                 <code className="hljs">
                     {property.name}: <Type type={property.type} />
                 </code>
-                <SourceLink
-                    version={this.props.docsVersion}
-                    source={property.source}
-                />
+                {property.source &&
+                    <SourceLink
+                        version={this.props.docsVersion}
+                        source={property.source}
+                    />
+                }
                 {property.comment &&
                     <Comment
                         comment={property.comment}
@@ -306,10 +351,37 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
         const hashWithPrefix = this.props.location.hash;
         let hash = hashWithPrefix.slice(1);
         if (_.isEmpty(hash)) {
-            hash = 'zeroExJSDocs'; // scroll to the top
+            hash = 'smartContractsDocs'; // scroll to the top
         }
 
         scroller.scrollTo(hash, {duration: 0, offset: 0, containerId: 'documentation'});
+    }
+    private getMenuSubsectionsBySection(docAgnosticFormat?: DocAgnosticFormat): MenuSubsectionsBySection {
+        const menuSubsectionsBySection = {} as MenuSubsectionsBySection;
+        if (_.isUndefined(docAgnosticFormat)) {
+            return menuSubsectionsBySection;
+        }
+
+        const docSections = _.keys(SmartContractsDocSections);
+        _.each(docSections, sectionName => {
+            const docSection = docAgnosticFormat[sectionName];
+            if (_.isUndefined(docSection)) {
+                return; // no-op
+            }
+
+            if (sectionName === SmartContractsDocSections.types) {
+                const sortedTypesNames = _.sortBy(docSection.types, 'name');
+                const typeNames = _.map(sortedTypesNames, t => t.name);
+                menuSubsectionsBySection[sectionName] = typeNames;
+            } else {
+                const sortedEventNames = _.sortBy(docSection.events, 'name');
+                const eventNames = _.map(sortedEventNames, m => m.name);
+                const sortedMethodNames = _.sortBy(docSection.methods, 'name');
+                const methodNames = _.map(sortedMethodNames, m => m.name);
+                menuSubsectionsBySection[sectionName] = [...methodNames, ...eventNames];
+            }
+        });
+        return menuSubsectionsBySection;
     }
     private async fetchJSONDocsFireAndForgetAsync(preferredVersionIfExists?: string): Promise<void> {
         const versionToFileName = await docUtils.getVersionToFileNameAsync(DOC_JSON_ROOT);
@@ -329,7 +401,7 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
 
         const versionFileNameToFetch = versionToFileName[versionToFetch];
         const versionDocObj = await docUtils.getJSONDocFileAsync(versionFileNameToFetch, DOC_JSON_ROOT);
-        const docAgnosticFormat = typeDocUtils.convertToDocAgnosticFormat((versionDocObj as TypeDocNode));
+        const docAgnosticFormat = doxityUtils.convertToDocAgnosticFormat(versionDocObj as DoxityDocObj);
 
         this.setState({
             docAgnosticFormat,
