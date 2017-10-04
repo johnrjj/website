@@ -78,11 +78,11 @@ const LazyPortal = createLazyComponent(
 );
 const LazyZeroExJSDocumentation = createLazyComponent(
     'ZeroExJSDocumentation',
-    () => System.import<any>(/* webpackChunkName: "docs" */'ts/containers/zero_ex_js_documentation'),
+    () => System.import<any>(/* webpackChunkName: "zeroExDocs" */'ts/containers/zero_ex_js_documentation'),
 );
 const LazySmartContractsDocumentation = createLazyComponent(
     'SmartContractsDocumentation',
-    () => System.import<any>(/* webpackChunkName: "smartContracts" */'ts/containers/smart_contracts_documentation'),
+    () => System.import<any>(/* webpackChunkName: "smartContractDocs" */'ts/containers/smart_contracts_documentation'),
 );
 
 const store: ReduxStore<State> = createStore(reducer);
