@@ -203,15 +203,6 @@ export class SmartContractsDocumentation extends
             return null;
         }
 
-        const sortedTypes = _.sortBy(docSection.types, 'name');
-        const typeDefs = _.map(sortedTypes, customType => {
-            return (
-                <TypeDefinition
-                    key={`type-${customType.name}`}
-                    customType={customType}
-                />
-            );
-        });
         const sortedProperties = _.sortBy(docSection.properties, 'name');
         const propertyDefs = _.map(sortedProperties, this.renderProperty.bind(this));
 
@@ -268,11 +259,6 @@ export class SmartContractsDocumentation extends
                     <div>
                         <h2 className="thin">Events</h2>
                         <div>{eventDefs}</div>
-                    </div>
-                }
-                {typeDefs.length > 0 &&
-                    <div>
-                        <div>{typeDefs}</div>
                     </div>
                 }
             </div>
