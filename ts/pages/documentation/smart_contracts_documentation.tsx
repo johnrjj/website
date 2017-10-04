@@ -112,7 +112,7 @@ export class SmartContractsDocumentation extends
                                          : this.getMenuSubsectionsBySection(this.state.docAgnosticFormat);
         return (
             <div>
-                <DocumentTitle title="0x.js Documentation"/>
+                <DocumentTitle title="0x Smart Contract Documentation"/>
                 <TopBar
                     blockchainIsLoaded={false}
                     location={this.props.location}
