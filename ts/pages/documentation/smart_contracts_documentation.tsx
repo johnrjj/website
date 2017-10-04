@@ -176,11 +176,11 @@ export class SmartContractsDocumentation extends
         );
     }
     private renderDocumentation(): React.ReactNode {
-        // const typeDocSection = this.state.docAgnosticFormat[SmartContractsDocSections.types];
-        const typeDefinitionByName = {}; // _.keyBy(typeDocSection.types, 'name');
-
         const subMenus = _.values(constants.menuSmartContracts);
         const orderedSectionNames = _.flatten(subMenus);
+        // Since smart contract method params are all base types, no need to pass
+        // down the typeDefinitionByName
+        const typeDefinitionByName = {};
         const sections = _.map(orderedSectionNames, this.renderSection.bind(this, typeDefinitionByName));
 
         return sections;
