@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import DocumentTitle = require('react-document-title');
 import {Link} from 'react-router-dom';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -77,6 +78,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
     public render() {
         return (
             <div id="home" style={{color: colors.grey800}}>
+                <DocumentTitle title="0x Protocol"/>
                 <TopBar
                     blockchainIsLoaded={false}
                     location={this.props.location}
