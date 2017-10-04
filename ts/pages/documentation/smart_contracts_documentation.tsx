@@ -46,15 +46,18 @@ const IntroMarkdown = require('md/docs/smart_contracts/introduction');
 /* tslint:enable:no-var-requires */
 
 const SCROLL_TO_TIMEOUT = 500;
+const CUSTOM_PURPLE = '#690596';
+const CUSTOM_RED = '#e91751';
+const CUSTOM_TURQUOIS = '#058789';
 const DOC_JSON_ROOT = constants.S3_SMART_CONTRACTS_DOCUMENTATION_JSON_ROOT;
 
 const sectionNameToMarkdown = {
     [SmartContractsDocSections.Introduction]: IntroMarkdown,
 };
 const networkNameToColor = {
-    [Networks.kovan]: '#690596', // Purple
-    [Networks.ropsten]: '#e91751', // red
-    [Networks.mainnet]: '#058789', // Turquois
+    [Networks.kovan]: CUSTOM_PURPLE,
+    [Networks.ropsten]: CUSTOM_RED,
+    [Networks.mainnet]: CUSTOM_TURQUOIS,
 };
 
 export interface SmartContractsDocumentationAllProps {
