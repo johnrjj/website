@@ -677,3 +677,9 @@ export enum Networks {
     ropsten = 'Ropsten',
     rinkeby = 'Rinkeby',
 }
+
+export enum DoxityAbiDocType {
+    Constructor = 'constructor',
+    Event = 'event',
+    Function = 'function',
+}

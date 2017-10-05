@@ -10,6 +10,7 @@ import {
     Type,
     TypeDocTypes,
     EventArg,
+    DoxityAbiDocType,
 } from 'ts/types';
 
 export const doxityUtils = {
@@ -17,7 +18,7 @@ export const doxityUtils = {
         const docAgnosticFormat: DocAgnosticFormat = {};
         _.each(doxityDocObj, (doxityContractObj: DoxityContractObj, contractName: string) => {
             const doxityConstructor = _.find(doxityContractObj.abiDocs, (abiDoc: DoxityAbiDoc) => {
-                return abiDoc.type === 'constructor';
+                return abiDoc.type === DoxityAbiDocType.Constructor;
             });
             const constructors = [];
             if (!_.isUndefined(doxityConstructor)) {
@@ -77,7 +78,7 @@ export const doxityUtils = {
             });
 
             const doxityEvents = _.filter(
-                doxityContractObj.abiDocs, (abiDoc: DoxityAbiDoc) => abiDoc.type === 'event',
+                doxityContractObj.abiDocs, (abiDoc: DoxityAbiDoc) => abiDoc.type === DoxityAbiDocType.Event,
             );
             const events = _.map(doxityEvents, doxityEvent => {
                 const event = {
@@ -119,7 +120,7 @@ export const doxityUtils = {
         return type;
     },
     _isMethod(abiDoc: DoxityAbiDoc) {
-        if (abiDoc.type !== 'function') {
+        if (abiDoc.type !== DoxityAbiDocType.Function) {
             return false;
         }
         const hasInputs = !_.isEmpty(abiDoc.inputs);
@@ -129,7 +130,7 @@ export const doxityUtils = {
         return isMethod;
     },
     _isProperty(abiDoc: DoxityAbiDoc) {
-        if (abiDoc.type !== 'function') {
+        if (abiDoc.type !== DoxityAbiDocType.Function) {
             return false;
         }
         const hasInputs = !_.isEmpty(abiDoc.inputs);
