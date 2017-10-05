@@ -38,12 +38,14 @@ export const doxityUtils = {
                 return this._isMethod(abiDoc);
             });
             const methods = _.map(doxityMethods, (doxityMethod: DoxityAbiDoc) => {
+                // We assume that none of our functions returns more then a single value
                 const outputIfExists = !_.isUndefined(doxityMethod.outputs) ?
                     doxityMethod.outputs[0] :
                     undefined;
                 const returnTypeIfExists = !_.isUndefined(outputIfExists) ?
                     this._convertType(outputIfExists.type) :
                     undefined;
+                // For ZRXToken, we want to convert it to zrxToken, rather then simply zRXToken
                 const callPath = contractName !== 'ZRXToken' ?
                     `${contractName[0].toLowerCase()}${contractName.slice(1)}.` :
                     `${contractName.slice(0, 3).toLowerCase()}${contractName.slice(3)}.`;
@@ -65,8 +67,10 @@ export const doxityUtils = {
                 return this._isProperty(abiDoc);
             });
             const properties = _.map(doxityProperties, (doxityProperty: DoxityAbiDoc) => {
+                // We assume that none of our functions return more then a single return value
                 let typeName = doxityProperty.outputs[0].type;
                 if (!_.isEmpty(doxityProperty.inputs)) {
+                    // Properties never have more then a single input
                     typeName = `(${doxityProperty.inputs[0].type} => ${typeName})`;
                 }
                 const property = {
