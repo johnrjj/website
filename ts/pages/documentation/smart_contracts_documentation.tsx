@@ -15,7 +15,7 @@ import {
     DoxityDocObj,
     TypeDefinitionByName,
     DocAgnosticFormat,
-    Method,
+    SolidityMethod,
     Property,
     CustomType,
     MenuSubsectionsBySection,
@@ -288,7 +288,7 @@ export class SmartContractsDocumentation extends
         });
         return badges;
     }
-    private renderConstructors(constructors: Method[],
+    private renderConstructors(constructors: SolidityMethod[],
                                typeDefinitionByName: TypeDefinitionByName): React.ReactNode {
         const constructorDefs = _.map(constructors, constructor => {
             return this.renderMethodBlocks(
@@ -325,11 +325,11 @@ export class SmartContractsDocumentation extends
             </div>
         );
     }
-    private renderMethodBlocks(method: Method, sectionName: string, isConstructor: boolean,
+    private renderMethodBlocks(method: SolidityMethod, sectionName: string, isConstructor: boolean,
                                typeDefinitionByName: TypeDefinitionByName): React.ReactNode {
         return (
             <MethodBlock
-               key={`method-${method.name}-${!_.isUndefined(method.source) ? method.source.line : ''}`}
+               key={`method-${method.name}`}
                method={method}
                typeDefinitionByName={typeDefinitionByName}
                libraryVersion={this.props.docsVersion}

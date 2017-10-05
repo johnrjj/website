@@ -3,7 +3,15 @@ import * as React from 'react';
 import * as ReactMarkdown from 'react-markdown';
 import {Chip} from 'material-ui/Chip';
 import {colors} from 'material-ui/styles';
-import {TypeDocNode, Styles, TypeDefinitionByName, Method, Parameter, HeaderSizes} from 'ts/types';
+import {
+    TypeDocNode,
+    Styles,
+    TypeDefinitionByName,
+    TypescriptMethod,
+    SolidityMethod,
+    Parameter,
+    HeaderSizes,
+} from 'ts/types';
 import {utils} from 'ts/utils/utils';
 import {SourceLink} from 'ts/pages/documentation/source_link';
 import {MethodSignature} from 'ts/pages/documentation/method_signature';
@@ -12,7 +20,7 @@ import {Comment} from 'ts/pages/documentation/comment';
 import {typeDocUtils} from 'ts/utils/typedoc_utils';
 
 interface MethodBlockProps {
-    method: Method;
+    method: SolidityMethod|TypescriptMethod;
     libraryVersion: string;
     typeDefinitionByName: TypeDefinitionByName;
 }
@@ -56,7 +64,7 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
             >
                 {!method.isConstructor &&
                     <div className="flex">
-                        {method.isStatic &&
+                        {(method as TypescriptMethod).isStatic &&
                             this.renderChip('Static')
                         }
                         {method.isConstant &&
@@ -79,10 +87,10 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                         typeDefinitionByName={this.props.typeDefinitionByName}
                     />
                 </code>
-                {method.source &&
+                {(method as TypescriptMethod).source &&
                     <SourceLink
                         version={this.props.libraryVersion}
-                        source={method.source}
+                        source={(method as TypescriptMethod).source}
                     />
                 }
                 {method.comment &&

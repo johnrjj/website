@@ -22,7 +22,7 @@ import {
     ScreenWidths,
     TypeDefinitionByName,
     DocAgnosticFormat,
-    Method,
+    TypescriptMethod,
     Property,
     CustomType,
     Docs,
@@ -256,7 +256,7 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
             </div>
         );
     }
-    private renderZeroExConstructors(constructors: Method[],
+    private renderZeroExConstructors(constructors: TypescriptMethod[],
                                      typeDefinitionByName: TypeDefinitionByName): React.ReactNode {
         const constructorDefs = _.map(constructors, constructor => {
             return this.renderMethodBlocks(
@@ -291,7 +291,7 @@ export class ZeroExJSDocumentation extends React.Component<ZeroExJSDocumentation
             </div>
         );
     }
-    private renderMethodBlocks(method: Method, sectionName: string, isConstructor: boolean,
+    private renderMethodBlocks(method: TypescriptMethod, sectionName: string, isConstructor: boolean,
                                typeDefinitionByName: TypeDefinitionByName): React.ReactNode {
         return (
             <MethodBlock

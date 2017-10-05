@@ -374,8 +374,8 @@ export interface DocAgnosticFormat {
 
 export interface DocSection {
     comment: string;
-    constructors: Method[];
-    methods: Method[];
+    constructors: Array<TypescriptMethod|SolidityMethod>;
+    methods: Array<TypescriptMethod|SolidityMethod>;
     properties: Property[];
     types: CustomType[];
     events?: Event[];
@@ -399,7 +399,7 @@ export interface Property {
     comment?: string;
 }
 
-export interface Method {
+export interface BaseMethod {
     isConstructor: boolean;
     name: string;
     returnComment?: string|undefined;
@@ -408,11 +408,17 @@ export interface Method {
     returnType: Type;
     comment?: string;
 
-    // Only Typescript methods
+    // Only Solidity methods
+    isConstant?: boolean;
+    isPayable?: boolean;
+}
+
+export interface TypescriptMethod extends BaseMethod {
     source?: Source;
     isStatic?: boolean;
+}
 
-    // Only Solidity methods
+export interface SolidityMethod extends BaseMethod {
     isConstant?: boolean;
     isPayable?: boolean;
 }
@@ -436,7 +442,7 @@ export interface Type {
     typeArguments?: Type[];
     elementType?: ElementType;
     types?: Type[];
-    method?: Method;
+    method?: TypescriptMethod;
 }
 
 export interface ElementType {
@@ -454,7 +460,7 @@ export interface CustomType {
     name: string;
     kindString: string;
     type?: Type;
-    method?: Method;
+    method?: TypescriptMethod;
     indexSignature?: IndexSignature;
     defaultValue?: string;
     comment?: string;

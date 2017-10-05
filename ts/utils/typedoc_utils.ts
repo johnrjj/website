@@ -11,7 +11,7 @@ import {
     Type,
     DocAgnosticFormat,
     DocSection,
-    Method,
+    TypescriptMethod,
     Parameter,
     Property,
     CustomType,
@@ -249,7 +249,7 @@ export const typeDocUtils = {
         };
         return property;
     },
-    _convertMethod(entity: TypeDocNode, isConstructor: boolean, sectionName: string): Method {
+    _convertMethod(entity: TypeDocNode, isConstructor: boolean, sectionName: string): TypescriptMethod {
         const signature = entity.signatures[0];
         const source = entity.sources[0];
         const hasComment = !_.isUndefined(signature.comment);
