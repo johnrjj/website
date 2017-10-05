@@ -598,4 +598,5 @@ export enum WebsitePaths {
     FAQ = '/faq',
     TokenSale = '/token',
     Whitepaper = '/pdfs/0x_white_paper.pdf',
+    SmartContracts = '/docs/contracts',
 }

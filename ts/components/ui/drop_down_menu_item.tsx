@@ -1,0 +1,114 @@
+import * as _ from 'lodash';
+import * as React from 'react';
+import {
+    Link as ScrollLink,
+} from 'react-scroll';
+import {Link} from 'react-router-dom';
+import Popover from 'material-ui/Popover';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+import {Styles, WebsitePaths} from 'ts/types';
+
+const CHECK_CLOSE_POPOVER_INTERVAL_MS = 300;
+const CUSTOM_LIGHT_GRAY = '#848484';
+const DEFAULT_STYLE = {
+    fontSize: 14,
+};
+
+interface DropDownMenuItemProps {
+    title: string;
+    subMenuItems: React.ReactNode[];
+    style?: React.CSSProperties;
+    menuItemStyle?: React.CSSProperties;
+}
+
+interface DropDownMenuItemState {
+    isDropDownOpen: boolean;
+    anchorEl?: any;
+}
+
+export class DropDownMenuItem extends React.Component<DropDownMenuItemProps, DropDownMenuItemState> {
+    public static defaultProps: Partial<DropDownMenuItemProps> = {
+        style: DEFAULT_STYLE,
+        menuItemStyle: DEFAULT_STYLE,
+    };
+    private isHovering: boolean;
+    private popoverCloseCheckIntervalId: number;
+    constructor(props: DropDownMenuItemProps) {
+        super(props);
+        this.state = {
+            isDropDownOpen: false,
+        };
+    }
+    public componentDidMount() {
+        this.popoverCloseCheckIntervalId = window.setInterval(() => {
+            this.checkIfShouldClosePopover();
+        }, CHECK_CLOSE_POPOVER_INTERVAL_MS);
+    }
+    public componentWillUnmount() {
+        window.clearInterval(this.popoverCloseCheckIntervalId);
+    }
+    public render() {
+        return (
+            <div
+                style={this.props.style}
+                onMouseEnter={this.onHover.bind(this)}
+                onMouseLeave={this.onHoverOff.bind(this)}
+            >
+                <div className="flex">
+                    <div>
+                        {this.props.title}
+                    </div>
+                    <div style={{paddingLeft: 3}}>
+                        <i className="zmdi zmdi-caret-right" style={{fontSize: 22}} />
+                    </div>
+                </div>
+                <Popover
+                    open={this.state.isDropDownOpen}
+                    anchorEl={this.state.anchorEl}
+                    anchorOrigin={{horizontal: 'middle', vertical: 'bottom'}}
+                    targetOrigin={{horizontal: 'middle', vertical: 'top'}}
+                    onRequestClose={this.closePopover.bind(this)}
+                    useLayerForClickAway={false}
+                >
+                    <div
+                        onMouseEnter={this.onHover.bind(this)}
+                        onMouseLeave={this.onHoverOff.bind(this)}
+                    >
+                        <Menu style={{color: CUSTOM_LIGHT_GRAY}}>
+                            {this.props.subMenuItems}
+                        </Menu>
+                    </div>
+                </Popover>
+            </div>
+        );
+    }
+    private onHover(event: any) {
+        this.isHovering = true;
+        this.checkIfShouldOpenPopover(event);
+    }
+    private checkIfShouldOpenPopover(event: any) {
+        if (this.state.isDropDownOpen) {
+            return; // noop
+        }
+
+        this.setState({
+          isDropDownOpen: true,
+          anchorEl: event.currentTarget,
+        });
+    }
+    private onHoverOff(event: any) {
+        this.isHovering = false;
+    }
+    private checkIfShouldClosePopover() {
+        if (!this.state.isDropDownOpen || this.isHovering) {
+            return; // noop
+        }
+        this.closePopover();
+    }
+    private closePopover() {
+        this.setState({
+            isDropDownOpen: false,
+        });
+    }
+}
