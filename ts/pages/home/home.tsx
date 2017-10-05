@@ -128,7 +128,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
                                     </a>
                                     <Link to="/docs/contracts">
                                         <FlatButton
-                                            label="Contracts"
+                                            label="Smart Contracts"
                                         />
                                     </Link>
                                     <Link to="/wiki">
