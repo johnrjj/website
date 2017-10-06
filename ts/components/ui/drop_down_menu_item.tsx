@@ -24,7 +24,7 @@ interface DropDownMenuItemProps {
 
 interface DropDownMenuItemState {
     isDropDownOpen: boolean;
-    anchorEl?: any;
+    anchorEl?: HTMLInputElement;
 }
 
 export class DropDownMenuItem extends React.Component<DropDownMenuItemProps, DropDownMenuItemState> {
@@ -83,11 +83,11 @@ export class DropDownMenuItem extends React.Component<DropDownMenuItemProps, Dro
             </div>
         );
     }
-    private onHover(event: any) {
+    private onHover(event: React.FormEvent<HTMLInputElement>) {
         this.isHovering = true;
         this.checkIfShouldOpenPopover(event);
     }
-    private checkIfShouldOpenPopover(event: any) {
+    private checkIfShouldOpenPopover(event: React.FormEvent<HTMLInputElement>) {
         if (this.state.isDropDownOpen) {
             return; // noop
         }
@@ -97,7 +97,7 @@ export class DropDownMenuItem extends React.Component<DropDownMenuItemProps, Dro
           anchorEl: event.currentTarget,
         });
     }
-    private onHoverOff(event: any) {
+    private onHoverOff(event: React.FormEvent<HTMLInputElement>) {
         this.isHovering = false;
     }
     private checkIfShouldClosePopover() {
