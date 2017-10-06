@@ -197,7 +197,7 @@ export class TokenLaunch extends React.Component<TokenLaunchProps, TokenLaunchSt
                     <Distribution />
                     <Partnerships shouldCenterAlignTitle={true} />
                 </div>
-                <Footer />
+                <Footer location={this.props.location} />
             </div>
         );
     }
