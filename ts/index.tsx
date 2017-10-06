@@ -78,7 +78,11 @@ const LazyPortal = createLazyComponent(
 );
 const LazyZeroExJSDocumentation = createLazyComponent(
     'ZeroExJSDocumentation',
-    () => System.import<any>(/* webpackChunkName: "docs" */'ts/containers/zero_ex_js_documentation'),
+    () => System.import<any>(/* webpackChunkName: "zeroExDocs" */'ts/containers/zero_ex_js_documentation'),
+);
+const LazySmartContractsDocumentation = createLazyComponent(
+    'SmartContractsDocumentation',
+    () => System.import<any>(/* webpackChunkName: "smartContractDocs" */'ts/containers/smart_contracts_documentation'),
 );
 
 const store: ReduxStore<State> = createStore(reducer);
@@ -96,6 +100,7 @@ render(
                             <Route path="/faq" component={FAQ as any} />
                             <Route path="/wiki" component={Wiki as any} />
                             <Route path="/docs/0xjs/:version?" component={LazyZeroExJSDocumentation} />
+                            <Route path="/docs/contracts" component={LazySmartContractsDocumentation} />
                             <Route component={NotFound as any} />
                         </Switch>
                     </div>

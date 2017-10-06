@@ -11,7 +11,7 @@ import {Identicon} from 'ts/components/ui/identicon';
 import {NestedSidebarMenu} from 'ts/pages/shared/nested_sidebar_menu';
 import {typeDocUtils} from 'ts/utils/typedoc_utils';
 import {PortalMenu} from 'ts/components/portal_menu';
-import {Styles, TypeDocNode, MenuSubsectionsBySection} from 'ts/types';
+import {Styles, TypeDocNode, MenuSubsectionsBySection, Docs} from 'ts/types';
 import {
     Link as ScrollLink,
     animateScroll,
@@ -25,10 +25,11 @@ interface TopBarProps {
     userAddress?: string;
     blockchainIsLoaded: boolean;
     location: Location;
-    zeroExJSversion?: string;
-    availableZeroExJSVersions?: string[];
+    docsVersion?: string;
+    availableDocVersions?: string[];
     menuSubsectionsBySection?: MenuSubsectionsBySection;
     shouldFullWidth?: boolean;
+    doc?: Docs;
 }
 
 interface TopBarState {
@@ -104,7 +105,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 onRequestChange={this.onMenuButtonClick.bind(this)}
             >
                 {this.renderPortalMenu()}
-                {this.render0xjsDocMenu()}
+                {this.renderDocsMenu()}
                 {this.renderWiki()}
                 <div className="pl1 py1 mt3" style={{backgroundColor: SECTION_HEADER_COLOR}}>Website</div>
                 {this.renderHomepageMenuItem('home')}
@@ -117,7 +118,12 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 </a>
                 {!this.isViewing0xjsDocs() &&
                     <Link to="/docs/0xjs" className="text-decoration-none">
-                        <MenuItem className="py2">Documentation</MenuItem>
+                        <MenuItem className="py2">0x.js Docs</MenuItem>
+                    </Link>
+                }
+                {!this.isViewingSmartContractsDocs() &&
+                    <Link to="/docs/contracts" className="text-decoration-none">
+                        <MenuItem className="py2">Smart Contract Docs</MenuItem>
                     </Link>
                 }
                 <Link to="/wiki" className="text-decoration-none">
@@ -152,21 +158,27 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
             </Drawer>
         );
     }
-    private render0xjsDocMenu() {
-        if (!this.isViewing0xjsDocs()) {
+    private renderDocsMenu() {
+        if (!this.isViewing0xjsDocs() && !this.isViewingSmartContractsDocs()) {
             return;
         }
 
+        const topLevelMenu = this.isViewing0xjsDocs() ?
+            typeDocUtils.getFinal0xjsMenu(this.props.docsVersion) :
+            constants.menuSmartContracts;
+
+        const sectionTitle = this.isViewing0xjsDocs() ? '0x.js Docs' : 'Smart contract Docs';
         return (
             <div className="lg-hide md-hide">
-                <div className="pl1 py1" style={{backgroundColor: SECTION_HEADER_COLOR}}>0x.js Docs</div>
+                <div className="pl1 py1" style={{backgroundColor: SECTION_HEADER_COLOR}}>{sectionTitle}</div>
                 <NestedSidebarMenu
-                    topLevelMenu={typeDocUtils.getFinal0xjsMenu(this.props.zeroExJSversion)}
+                    topLevelMenu={topLevelMenu}
                     menuSubsectionsBySection={this.props.menuSubsectionsBySection}
                     shouldDisplaySectionHeaders={false}
                     onMenuItemClick={this.onMenuButtonClick.bind(this)}
-                    selectedVersion={this.props.zeroExJSversion}
-                    versions={this.props.availableZeroExJSVersions}
+                    selectedVersion={this.props.docsVersion}
+                    doc={this.props.doc}
+                    versions={this.props.availableDocVersions}
                 />
             </div>
         );
@@ -265,7 +277,10 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
         return _.includes(this.props.location.pathname, '/portal');
     }
     private isViewing0xjsDocs() {
-        return _.includes(this.props.location.pathname, '/docs/0xjs');
+        return _.includes(this.props.location.pathname, constants.docToPath[Docs.ZeroExJs]);
+    }
+    private isViewingSmartContractsDocs() {
+        return _.includes(this.props.location.pathname, constants.docToPath[Docs.SmartContracts]);
     }
     private isViewingWiki() {
         return _.includes(this.props.location.pathname, '/wiki');

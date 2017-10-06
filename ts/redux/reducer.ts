@@ -19,10 +19,10 @@ import {
     TokenState,
 } from 'ts/types';
 
-// Instead of defaulting the 0x.js version to an empty string, we pre-populate it with
+// Instead of defaulting the docs version to an empty string, we pre-populate it with
 // a valid version value. This does not need to be updated however, since onLoad, it
 // is always replaced with a value retrieved from our S3 bucket.
-const DEFAULT_0X_JS_VERSION = '0.7.1';
+const DEFAULT_DOCS_VERSION = '0.0.0';
 
 export interface State {
     // Portal
@@ -47,8 +47,8 @@ export interface State {
     userSuppliedOrderCache: Order;
 
     // Docs
-    zeroExJSversion: string;
-    availableZeroExJSVersions: string[];
+    docsVersion: string;
+    availableDocVersions: string[];
 
     // Shared
     flashMessage: string|React.ReactNode;
@@ -86,8 +86,8 @@ const INITIAL_STATE: State = {
     userSuppliedOrderCache: undefined,
 
     // Docs
-    zeroExJSversion: DEFAULT_0X_JS_VERSION,
-    availableZeroExJSVersions: [DEFAULT_0X_JS_VERSION],
+    docsVersion: DEFAULT_DOCS_VERSION,
+    availableDocVersions: [DEFAULT_DOCS_VERSION],
 
     // Shared
     flashMessage: undefined,
@@ -323,12 +323,12 @@ export function reducer(state: State = INITIAL_STATE, action: Action) {
         // Docs
         case ActionTypes.UPDATE_LIBRARY_VERSION: {
             return _.assign({}, state, {
-                zeroExJSversion: action.data,
+                docsVersion: action.data,
             });
         }
         case ActionTypes.UPDATE_AVAILABLE_LIBRARY_VERSIONS: {
             return _.assign({}, state, {
-                availableZeroExJSVersions: action.data,
+                availableDocVersions: action.data,
             });
         }
 
