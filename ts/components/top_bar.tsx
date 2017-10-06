@@ -1,5 +1,11 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import {
+    Link as ScrollLink,
+    animateScroll,
+} from 'react-scroll';
+import {Link} from 'react-router-dom';
+import {HashLink} from 'react-router-hash-link';
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -11,14 +17,11 @@ import {Identicon} from 'ts/components/ui/identicon';
 import {NestedSidebarMenu} from 'ts/pages/shared/nested_sidebar_menu';
 import {typeDocUtils} from 'ts/utils/typedoc_utils';
 import {PortalMenu} from 'ts/components/portal_menu';
-import {
-    Link as ScrollLink,
-    animateScroll,
-} from 'react-scroll';
-import {Link} from 'react-router-dom';
-import {HashLink} from 'react-router-hash-link';
 import {Styles, TypeDocNode, MenuSubsectionsBySection, WebsitePaths, Docs} from 'ts/types';
+import {TopBarMenuItem} from 'ts/components/top_bar_menu_item';
+import {DropDownMenuItem} from 'ts/components/ui/drop_down_menu_item';
 
+const CUSTOM_DARK_GRAY = '#231F20';
 const SECTION_HEADER_COLOR = 'rgb(234, 234, 234)';
 
 interface TopBarProps {
@@ -52,13 +55,24 @@ const styles: Styles = {
     },
     topBar: {
         backgroundColor: 'white',
-        height: 42,
+        height: 58,
         width: '100%',
         position: 'fixed',
         top: 0,
         zIndex: 1100,
         paddingBottom: 1,
+    },
+    bottomBar: {
         boxShadow: 'rgba(0, 0, 0, 0.187647) 0px 1px 3px',
+    },
+    menuItem: {
+        fontSize: 14,
+        color: CUSTOM_DARK_GRAY,
+        paddingTop: 6,
+        paddingBottom: 6,
+        marginTop: 13,
+        cursor: 'pointer',
+        fontWeight: 600,
     },
 };
 
@@ -73,24 +87,88 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
         };
     }
     public render() {
-        const parentClassNames = `flex mx-auto ${this.props.shouldFullWidth ? 'pl2' : 'max-width-4'}`;
+        const isFullWidthPage = this.props.shouldFullWidth;
+        const parentClassNames = `flex mx-auto ${isFullWidthPage ? 'pl2' : 'max-width-4'}`;
+        const developerSectionMenuItems = [
+            <Link
+                key="subMenuItem-zeroEx"
+                to={WebsitePaths.ZeroExJs}
+                className="text-decoration-none"
+            >
+                <MenuItem style={{fontSize: styles.menuItem.fontSize}} primaryText="0x.js" />
+            </Link>,
+            <Link
+                key="subMenuItem-smartContracts"
+                to={WebsitePaths.SmartContracts}
+                className="text-decoration-none"
+            >
+                <MenuItem style={{fontSize: styles.menuItem.fontSize}} primaryText="Smart Contracts" />
+            </Link>,
+            <a
+                key="subMenuItem-whitePaper"
+                target="_blank"
+                className="text-decoration-none"
+                href={`${WebsitePaths.Whitepaper}`}
+            >
+                <MenuItem style={{fontSize: styles.menuItem.fontSize}} primaryText="Whitepaper" />
+            </a>,
+        ];
+        const bottomBorderStyle = this.shouldDisplayBottomBar() ? styles.bottomBar : {};
+        const fullWithClassNames = isFullWidthPage ? 'pr4' : '';
         return (
-            <div style={styles.topBar} className="pb1">
+            <div style={{...styles.topBar, ...bottomBorderStyle}} className="pb1">
                 <div className={parentClassNames}>
-                    <div className="col col-1">
+                    <div className="col col-2 sm-pl2" style={{paddingTop: 15}}>
+                        <Link to={`${WebsitePaths.Home}`} className="text-decoration-none">
+                            <img src="/images/top_bar_logo.png" height="28" />
+                        </Link>
+                    </div>
+                    <div className={`col col-${isFullWidthPage ? '8' : '9'} lg-hide md-hide`} />
+                    <div className={`col col-${isFullWidthPage ? '6' : '5'} sm-hide xs-hide`} />
+                    {!this.isViewingPortal() &&
+                        <div className={`col col-${isFullWidthPage ? '4' : '5'} ${fullWithClassNames} sm-hide xs-hide`}>
+                            <div className="flex justify-between">
+                                <DropDownMenuItem
+                                    title="Developers"
+                                    subMenuItems={developerSectionMenuItems}
+                                    style={styles.menuItem}
+                                />
+                                <TopBarMenuItem
+                                    title="Wiki"
+                                    path={`${WebsitePaths.Wiki}`}
+                                    style={styles.menuItem}
+                                />
+                                <TopBarMenuItem
+                                    title="FAQ"
+                                    path={`${WebsitePaths.FAQ}`}
+                                    style={styles.menuItem}
+                                />
+                                <TopBarMenuItem
+                                    title="Portal DApp"
+                                    path={`${WebsitePaths.Portal}`}
+                                    isPrimary={true}
+                                    style={styles.menuItem}
+                                    className={`${isFullWidthPage && 'md-hide'}`}
+                                />
+                            </div>
+                        </div>
+                    }
+                    {this.props.blockchainIsLoaded && !_.isEmpty(this.props.userAddress) &&
+                        <div className="col col-5">
+                            {this.renderUser()}
+                        </div>
+                    }
+                    <div
+                        className={`col col-${isFullWidthPage ? '2' : '1'} md-hide lg-hide ${isFullWidthPage && 'pl2'}`}
+                    >
                         <div
-                            className="sm-pl2 md-pl2 lg-pl0"
-                            style={{fontSize: 25, color: 'black', cursor: 'pointer', paddingTop: 8}}
+                            style={{fontSize: 25, color: 'black', cursor: 'pointer', paddingTop: 10}}
                         >
                             <i
                                 className="zmdi zmdi-menu"
                                 onClick={this.onMenuButtonClick.bind(this)}
                             />
                         </div>
-                    </div>
-                    <div className="col col-8" />
-                    <div className="col col-3">
-                        {this.renderUser()}
                     </div>
                 </div>
                 {this.renderDrawer()}
@@ -102,6 +180,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
             <Drawer
                 open={this.state.isDrawerOpen}
                 docked={false}
+                openSecondary={true}
                 onRequestChange={this.onMenuButtonClick.bind(this)}
             >
                 {this.renderPortalMenu()}
@@ -246,14 +325,13 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
         }
     }
     private renderUser() {
-        if (!this.props.blockchainIsLoaded || this.props.userAddress === '') {
-            return <span />;
-        }
-
         const userAddress = this.props.userAddress;
         const identiconDiameter = 26;
         return (
-            <div className="flex right pt1 lg-pr0 md-pr2 sm-pr2">
+            <div
+                className="flex right lg-pr0 md-pr2 sm-pr2"
+                style={{paddingTop: 16}}
+            >
                 <div
                     style={styles.address}
                     data-tip={true}
@@ -276,6 +354,9 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
     private isViewingPortal() {
         return _.includes(this.props.location.pathname, WebsitePaths.Portal);
     }
+    private isViewingFAQ() {
+        return _.includes(this.props.location.pathname, WebsitePaths.FAQ);
+    }
     private isViewing0xjsDocs() {
         return _.includes(this.props.location.pathname, WebsitePaths.ZeroExJs);
     }
@@ -284,5 +365,9 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
     }
     private isViewingWiki() {
         return _.includes(this.props.location.pathname, WebsitePaths.Wiki);
+    }
+    private shouldDisplayBottomBar() {
+        return this.isViewingWiki() || this.isViewing0xjsDocs() || this.isViewingFAQ() ||
+               this.isViewingSmartContractsDocs();
     }
 }

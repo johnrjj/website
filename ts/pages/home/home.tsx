@@ -120,6 +120,11 @@ export class Home extends React.Component<HomeProps, HomeState> {
                                             buttonStyle={{width: 106}}
                                         />
                                     </Link>
+                                    <Link to="/docs/contracts">
+                                        <FlatButton
+                                            label="Smart Contracts"
+                                        />
+                                    </Link>
                                     <a
                                         target="_blank"
                                         href={`${WebsitePaths.Whitepaper}`}
@@ -128,21 +133,6 @@ export class Home extends React.Component<HomeProps, HomeState> {
                                             label="Whitepaper"
                                         />
                                     </a>
-                                    <Link to="/docs/contracts">
-                                        <FlatButton
-                                            label="Smart Contracts"
-                                        />
-                                    </Link>
-                                    <Link to="/wiki">
-                                        <FlatButton
-                                            label="Wiki"
-                                        />
-                                    </Link>
-                                    <Link to={WebsitePaths.FAQ}>
-                                        <FlatButton
-                                            label="FAQ"
-                                        />
-                                    </Link>
                                     <a
                                         target="_blank"
                                         href="https://blog.0xproject.com/latest"
