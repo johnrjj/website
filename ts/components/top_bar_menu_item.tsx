@@ -12,6 +12,7 @@ const styles: Styles = {
     primary: {
         borderRadius: 4,
         border: '2px solid rgb(230, 229, 229)',
+        marginTop: 11,
     },
 };
 
