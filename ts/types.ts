@@ -680,8 +680,8 @@ export enum Networks {
     rinkeby = 'Rinkeby',
 }
 
-export enum DoxityAbiDocType {
+export enum AbiTypes {
     Constructor = 'constructor',
-    Event = 'event',
     Function = 'function',
+    Event = 'event',
 }
