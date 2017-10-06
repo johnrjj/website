@@ -8,8 +8,8 @@ import {utils} from 'ts/utils/utils';
 import {EthereumAddress} from 'ts/components/ui/ethereum_address';
 
 const MIN_ADDRESS_WIDTH = 60;
-const ALTERNATIVE_IMAGE_DIMENSION = 100;
-const IDENTICON_DIAMETER = 100;
+const IMAGE_DIMENSION = 100;
+const IDENTICON_DIAMETER = 95;
 const CHECK_MARK_GREEN = 'rgb(0, 195, 62)';
 
 interface PartyProps {
@@ -45,8 +45,8 @@ export class Party extends React.Component<PartyProps, PartyState> {
             marginBottom: 10,
         };
         const tokenImageStyle = {
-            width: ALTERNATIVE_IMAGE_DIMENSION,
-            height: ALTERNATIVE_IMAGE_DIMENSION,
+            width: IMAGE_DIMENSION,
+            height: IMAGE_DIMENSION,
         };
         const etherscanLinkIfExists = utils.getEtherScanLinkIfExists(
             this.props.address, this.props.networkId, EtherscanLinkSuffixes.address,
@@ -71,11 +71,16 @@ export class Party extends React.Component<PartyProps, PartyState> {
                                     style={tokenImageStyle}
                                     src={this.props.alternativeImage}
                                 /> :
-                                <Identicon
-                                    address={this.props.address}
-                                    diameter={identiconDiameter}
-                                    style={this.props.identiconStyle}
-                                />
+                                <div
+                                    className="mx-auto"
+                                    style={{height: IMAGE_DIMENSION, width: IMAGE_DIMENSION}}
+                                >
+                                    <Identicon
+                                        address={this.props.address}
+                                        diameter={identiconDiameter}
+                                        style={this.props.identiconStyle}
+                                    />
+                                </div>
                             }
                         </a>
                     }
