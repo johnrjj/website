@@ -46,6 +46,7 @@ import {AllowanceToggle} from 'ts/components/inputs/allowance_toggle';
 import {EthWethConversionButton} from 'ts/components/eth_weth_conversion_button';
 import {SendButton} from 'ts/components/send_button';
 import {AssetPicker} from 'ts/components/generate_order/asset_picker';
+import {TokenIcon} from 'ts/components/ui/token_icon';
 import {trackedTokenStorage} from 'ts/local_storage/tracked_token_storage';
 
 const ETHER_ICON_PATH = '/images/ether.png';
@@ -503,12 +504,7 @@ export class TokenBalances extends React.Component<TokenBalancesProps, TokenBala
         const tooltipId = `tooltip-${token.address}`;
         return (
             <div className="flex">
-                <div>
-                    <img
-                        style={{width: ICON_DIMENSION, height: ICON_DIMENSION}}
-                        src={token.iconUrl}
-                    />
-                </div>
+                <TokenIcon token={token} diameter={ICON_DIMENSION} />
                 <div
                     data-tip={true}
                     data-for={tooltipId}
