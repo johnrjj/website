@@ -8,9 +8,8 @@ import {utils} from 'ts/utils/utils';
 import {EthereumAddress} from 'ts/components/ui/ethereum_address';
 
 const MIN_ADDRESS_WIDTH = 60;
-const ALTERNATIVE_IMAGE_DIMENSION = 80;
-const IDENTICON_DIAMETER = 100;
-const TOKEN_CIRCLE_DIAMETER = 120;
+const IMAGE_DIMENSION = 100;
+const IDENTICON_DIAMETER = 95;
 const CHECK_MARK_GREEN = 'rgb(0, 195, 62)';
 
 interface PartyProps {
@@ -45,15 +44,9 @@ export class Party extends React.Component<PartyProps, PartyState> {
             marginTop: 13,
             marginBottom: 10,
         };
-        const tokenCircleStyle = {
-            width: TOKEN_CIRCLE_DIAMETER,
-            height: TOKEN_CIRCLE_DIAMETER,
-            border: '1px solid #bdbdbd',
-            backgroundColor: 'white',
-        };
         const tokenImageStyle = {
-            width: ALTERNATIVE_IMAGE_DIMENSION,
-            height: ALTERNATIVE_IMAGE_DIMENSION,
+            width: IMAGE_DIMENSION,
+            height: IMAGE_DIMENSION,
         };
         const etherscanLinkIfExists = utils.getEtherScanLinkIfExists(
             this.props.address, this.props.networkId, EtherscanLinkSuffixes.address,
@@ -73,23 +66,21 @@ export class Party extends React.Component<PartyProps, PartyState> {
                             href={etherscanLinkIfExists}
                             target="_blank"
                         >
-                            {!_.isUndefined(this.props.alternativeImage) ?
+                            {isRegistered && !_.isUndefined(this.props.alternativeImage) ?
+                                <img
+                                    style={tokenImageStyle}
+                                    src={this.props.alternativeImage}
+                                /> :
                                 <div
-                                    className="mx-auto circle relative"
-                                    style={tokenCircleStyle}
+                                    className="mx-auto"
+                                    style={{height: IMAGE_DIMENSION, width: IMAGE_DIMENSION}}
                                 >
-                                    <div className="absolute" style={{top: 20, left: 20}}>
-                                        <img
-                                            style={tokenImageStyle}
-                                            src={this.props.alternativeImage}
-                                        />
-                                    </div>
-                                </div> :
-                                <Identicon
-                                    address={this.props.address}
-                                    diameter={identiconDiameter}
-                                    style={this.props.identiconStyle}
-                                />
+                                    <Identicon
+                                        address={this.props.address}
+                                        diameter={identiconDiameter}
+                                        style={this.props.identiconStyle}
+                                    />
+                                </div>
                             }
                         </a>
                     }

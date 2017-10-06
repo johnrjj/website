@@ -26,12 +26,8 @@ interface VisualOrderState {}
 export class VisualOrder extends React.Component<VisualOrderProps, VisualOrderState> {
     public render() {
         const allTokens = _.values(this.props.tokenByAddress);
-        const makerImage = this.props.isMakerTokenAddressInRegistry ?
-                           this.props.makerToken.iconUrl :
-                           constants.DEFAULT_TOKEN_ICON_URL;
-        const takerImage = this.props.isTakerTokenAddressInRegistry ?
-                           this.props.takerToken.iconUrl :
-                           constants.DEFAULT_TOKEN_ICON_URL;
+        const makerImage = this.props.makerToken.iconUrl;
+        const takerImage = this.props.takerToken.iconUrl;
         return (
             <div>
                 <div className="clearfix">

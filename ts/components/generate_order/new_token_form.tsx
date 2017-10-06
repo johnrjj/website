@@ -149,7 +149,7 @@ export class NewTokenForm extends React.Component<NewTokenFormProps, NewTokenFor
         const newToken: Token = {
             address: this.state.address,
             decimals: _.parseInt(this.state.decimals),
-            iconUrl: constants.DEFAULT_TOKEN_ICON_URL,
+            iconUrl: undefined,
             name: this.state.name,
             symbol: this.state.symbol.toUpperCase(),
             isTracked: true,

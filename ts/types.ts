@@ -38,7 +38,7 @@ export const Direction = strEnum([
 export type Direction = keyof typeof Direction;
 
 export interface Token {
-    iconUrl: string;
+    iconUrl?: string;
     name: string;
     address: string;
     symbol: string;

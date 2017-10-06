@@ -20,7 +20,9 @@ import {
 import {NewTokenForm} from 'ts/components/generate_order/new_token_form';
 import {trackedTokenStorage} from 'ts/local_storage/tracked_token_storage';
 import {TrackTokenConfirmation} from 'ts/components/track_token_confirmation';
+import {TokenIcon} from 'ts/components/ui/token_icon';
 
+const TOKEN_ICON_DIMENSION = 100;
 const TILE_DIMENSION = 146;
 enum AssetViews {
     ASSET_PICKER = 'ASSET_PICKER',
@@ -156,10 +158,7 @@ export class AssetPicker extends React.Component<AssetPickerProps, AssetPickerSt
                     onMouseLeave={this.onToggleHover.bind(this, address, false)}
                 >
                     <div className="p1 center">
-                        <img
-                            style={{width: 100, height: 100}}
-                            src={token.iconUrl}
-                        />
+                        <TokenIcon token={token} diameter={TOKEN_ICON_DIMENSION} />
                     </div>
                     <div className="center">{token.name}</div>
                 </div>
