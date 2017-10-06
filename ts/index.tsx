@@ -10,7 +10,6 @@ import {constants} from 'ts/utils/constants';
 import {Home} from 'ts/pages/home/home';
 import {FAQ} from 'ts/pages/faq/faq';
 import {Wiki} from 'ts/pages/wiki/wiki';
-import {TokenLaunch} from 'ts/pages/token_launch/token_launch';
 import {NotFound} from 'ts/pages/not_found';
 import {createLazyComponent} from 'ts/lazy_component';
 import {State, reducer} from 'ts/redux/reducer';
@@ -97,7 +96,6 @@ render(
                             <Route exact={true} path="/" component={Home as any} />
                             <Redirect from="/otc" to={`${WebsitePaths.Portal}`}/>
                             <Route path={`${WebsitePaths.Portal}`} component={LazyPortal} />
-                            <Route path={`${WebsitePaths.TokenSale}`} component={TokenLaunch as any} />
                             <Route path={`${WebsitePaths.FAQ}`} component={FAQ as any} />
                             <Route path={`${WebsitePaths.Wiki}`} component={Wiki as any} />
                             <Route path={`${WebsitePaths.ZeroExJs}/:version?`} component={LazyZeroExJSDocumentation} />
