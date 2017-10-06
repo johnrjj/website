@@ -565,11 +565,6 @@ export interface TxParams {
     chainId: number; // EIP 155 chainId - mainnet: 1, ropsten: 3
 }
 
-export const TokenSaleErrs = strEnum([
-  'ADDRESS_NOT_REGISTERED',
-]);
-export type TokenSaleErrs = keyof typeof TokenSaleErrs;
-
 export interface PublicNodeUrlsByNetworkId {
     [networkId: number]: string[];
 };
@@ -692,7 +687,6 @@ export enum WebsitePaths {
     ZeroExJs = '/docs/0xjs',
     Home = '/',
     FAQ = '/faq',
-    TokenSale = '/token',
     Whitepaper = '/pdfs/0x_white_paper.pdf',
     SmartContracts = '/docs/contracts',
 }
