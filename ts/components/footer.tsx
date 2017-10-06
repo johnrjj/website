@@ -29,6 +29,9 @@ enum Sections {
 }
 
 const ICON_DIMENSION = 16;
+const CUSTOM_DARK_GRAY = '#393939';
+const CUSTOM_LIGHT_GRAY = '#CACACA';
+const CUSTOM_LIGHTEST_GRAY = '#9E9E9E';
 const menuItemsBySection: MenuItemsBySection = {
     Documentation: [
         {
@@ -118,14 +121,14 @@ interface FooterState {}
 export class Footer extends React.Component<FooterProps, FooterState> {
     public render() {
         return (
-            <div className="relative pb4 pt2" style={{backgroundColor: '#393939'}}>
+            <div className="relative pb4 pt2" style={{backgroundColor: CUSTOM_DARK_GRAY}}>
                 <div className="mx-auto max-width-4 py4 clearfix" style={{color: 'white'}}>
                     <div className="col col-4 left">
                         <div className="center" style={{width: 148}}>
                             <div>
                                 <img src="/images/protocol_logo_white.png" height="30" />
                             </div>
-                            <div className="pt2" style={{fontSize: 11, color: '#CACACA'}}>
+                            <div className="pt2" style={{fontSize: 11, color: CUSTOM_LIGHTEST_GRAY}}>
                                 Copyright © ZeroEx, Intl.
                             </div>
                         </div>
@@ -207,7 +210,7 @@ export class Footer extends React.Component<FooterProps, FooterState> {
     private renderHeader(title: string) {
         const headerStyle = {
             textTransform: 'uppercase',
-            color: '#9E9E9E',
+            color: CUSTOM_LIGHT_GRAY,
             letterSpacing: 2,
             fontFamily: 'Roboto Mono',
             fontSize: 13,
