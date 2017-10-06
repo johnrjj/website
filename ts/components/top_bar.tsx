@@ -158,18 +158,20 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                             {this.renderUser()}
                         </div>
                     }
-                    <div
-                        className={`col col-${isFullWidthPage ? '2' : '1'} md-hide lg-hide ${isFullWidthPage && 'pl2'}`}
-                    >
+                    {!this.isViewingPortal() &&
                         <div
-                            style={{fontSize: 25, color: 'black', cursor: 'pointer', paddingTop: 10}}
+                            className={`col ${isFullWidthPage ? 'col-2 pl2' : 'col-1'} md-hide lg-hide`}
                         >
-                            <i
-                                className="zmdi zmdi-menu"
-                                onClick={this.onMenuButtonClick.bind(this)}
-                            />
+                            <div
+                                style={{fontSize: 25, color: 'black', cursor: 'pointer', paddingTop: 10}}
+                            >
+                                <i
+                                    className="zmdi zmdi-menu"
+                                    onClick={this.onMenuButtonClick.bind(this)}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
                 {this.renderDrawer()}
             </div>
