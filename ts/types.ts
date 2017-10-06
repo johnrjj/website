@@ -407,10 +407,6 @@ export interface BaseMethod {
     parameters: Parameter[];
     returnType: Type;
     comment?: string;
-
-    // Only Solidity methods
-    isConstant?: boolean;
-    isPayable?: boolean;
 }
 
 export interface TypescriptMethod extends BaseMethod {
