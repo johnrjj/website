@@ -1,12 +1,13 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import DocumentTitle = require('react-document-title');
 import {Link} from 'react-router-dom';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import {colors} from 'material-ui/styles';
 import {configs} from 'ts/utils/configs';
 import {constants} from 'ts/utils/constants';
-import {Styles, ProfileInfo, Partner} from 'ts/types';
+import {Styles, ProfileInfo, Partner, WebsitePaths} from 'ts/types';
 import {
     Link as ScrollLink,
     Element as ScrollElement,
@@ -77,6 +78,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
     public render() {
         return (
             <div id="home" style={{color: colors.grey800}}>
+                <DocumentTitle title="0x Protocol"/>
                 <TopBar
                     blockchainIsLoaded={false}
                     location={this.props.location}
@@ -110,32 +112,27 @@ export class Home extends React.Component<HomeProps, HomeState> {
                                     {' '}The Protocol for Trading Tokens
                                 </div>
                                 <div className="flex sm-hide xs-hide">
-                                    <Link to="/docs/0xjs">
+                                    <Link to={`${WebsitePaths.ZeroExJs}`}>
                                         <RaisedButton
-                                            label="Docs"
+                                            label="0x.js"
                                             primary={true}
                                             style={{marginRight: 12}}
                                             buttonStyle={{width: 106}}
                                         />
                                     </Link>
+                                    <Link to="/docs/contracts">
+                                        <FlatButton
+                                            label="Smart Contracts"
+                                        />
+                                    </Link>
                                     <a
                                         target="_blank"
-                                        href="/pdfs/0x_white_paper.pdf"
+                                        href={`${WebsitePaths.Whitepaper}`}
                                     >
                                         <FlatButton
                                             label="Whitepaper"
                                         />
                                     </a>
-                                    <Link to="/wiki">
-                                        <FlatButton
-                                            label="Wiki"
-                                        />
-                                    </Link>
-                                    <Link to="/faq">
-                                        <FlatButton
-                                            label="FAQ"
-                                        />
-                                    </Link>
                                     <a
                                         target="_blank"
                                         href="https://blog.0xproject.com/latest"
@@ -144,11 +141,6 @@ export class Home extends React.Component<HomeProps, HomeState> {
                                             label="Blog"
                                         />
                                     </a>
-                                    <Link to="/portal">
-                                        <FlatButton
-                                            label="Portal"
-                                        />
-                                    </Link>
                                 </div>
                             </div>
                         </div>

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as BigNumber from 'bignumber.js';
-import {ValidatedBigNumberCallback, InputErrMsg} from 'ts/types';
+import {ValidatedBigNumberCallback, InputErrMsg, WebsitePaths} from 'ts/types';
 import TextField from 'material-ui/TextField';
 import {RequiredLabel} from 'ts/components/ui/required_label';
 import {colors} from 'material-ui/styles';
@@ -140,7 +140,7 @@ export class BalanceBoundedInput extends
         if (_.isUndefined(this.props.onVisitBalancesPageClick)) {
             return (
                 <Link
-                    to="/portal/balances"
+                    to={`${WebsitePaths.Portal}/balances`}
                     style={linkStyle}
                 >
                     {increaseBalanceText}

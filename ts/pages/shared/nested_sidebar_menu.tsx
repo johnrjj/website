@@ -5,7 +5,7 @@ import {colors} from 'material-ui/styles';
 import {utils} from 'ts/utils/utils';
 import {constants} from 'ts/utils/constants';
 import {VersionDropDown} from 'ts/pages/shared/version_drop_down';
-import {ZeroExJsDocSections, Styles, MenuSubsectionsBySection} from 'ts/types';
+import {ZeroExJsDocSections, Styles, MenuSubsectionsBySection, Docs} from 'ts/types';
 import {typeDocUtils} from 'ts/utils/typedoc_utils';
 import {Link as ScrollLink} from 'react-scroll';
 
@@ -16,6 +16,7 @@ interface NestedSidebarMenuProps {
     onMenuItemClick?: () => void;
     selectedVersion?: string;
     versions?: string[];
+    doc?: Docs;
     isSectionHeaderClickable?: boolean;
 }
 
@@ -76,9 +77,11 @@ export class NestedSidebarMenu extends React.Component<NestedSidebarMenuProps, N
             <div>
                 {!_.isUndefined(this.props.versions) &&
                  !_.isUndefined(this.props.selectedVersion) &&
+                 !_.isUndefined(this.props.doc) &&
                     <VersionDropDown
                         selectedVersion={this.props.selectedVersion}
                         versions={this.props.versions}
+                        doc={this.props.doc}
                     />
                 }
                 {navigation}

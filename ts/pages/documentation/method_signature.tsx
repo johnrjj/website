@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import {Method, TypeDefinitionByName, Parameter} from 'ts/types';
+import {TypescriptMethod, SolidityMethod, TypeDefinitionByName, Parameter} from 'ts/types';
 import {Type} from 'ts/pages/documentation/type';
 
 interface MethodSignatureProps {
-    method: Method;
+    method: TypescriptMethod|SolidityMethod;
     shouldHideMethodName?: boolean;
     shouldUseArrowSyntax?: boolean;
     typeDefinitionByName?: TypeDefinitionByName;
@@ -24,12 +24,15 @@ export const MethodSignature: React.SFC<MethodSignatureProps> = (props: MethodSi
     return (
         <span>
             {props.method.callPath}{methodName}({paramString}){props.shouldUseArrowSyntax ? ' => ' : ': '}
-            {' '}<Type type={props.method.returnType} typeDefinitionByName={props.typeDefinitionByName}/>
+            {' '}
+            {props.method.returnType &&
+                <Type type={props.method.returnType} typeDefinitionByName={props.typeDefinitionByName}/>
+            }
         </span>
     );
 };
 
-function renderParameters(method: Method, typeDefinitionByName?: TypeDefinitionByName) {
+function renderParameters(method: TypescriptMethod|SolidityMethod, typeDefinitionByName?: TypeDefinitionByName) {
     const parameters = method.parameters;
     const params = _.map(parameters, (p: Parameter) => {
         const isOptional = p.isOptional;

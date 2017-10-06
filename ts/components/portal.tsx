@@ -30,6 +30,7 @@ import {
     ScreenWidths,
     Token,
     TokenStateByAddress,
+    WebsitePaths,
 } from 'ts/types';
 import {TopBar} from 'ts/components/top_bar';
 import {Footer} from 'ts/components/footer';
@@ -200,17 +201,20 @@ export class Portal extends React.Component<PortalAllProps, PortalAllState> {
                                     <div className="py2" style={{backgroundColor: colors.grey50}}>
                                         {this.props.blockchainIsLoaded ?
                                             <Switch>
-                                                <Route path="/portal/fill" render={this.renderFillOrder.bind(this)} />
                                                 <Route
-                                                    path="/portal/balances"
+                                                    path={`${WebsitePaths.Portal}/fill`}
+                                                    render={this.renderFillOrder.bind(this)}
+                                                />
+                                                <Route
+                                                    path={`${WebsitePaths.Portal}/balances`}
                                                     render={this.renderTokenBalances.bind(this)}
                                                 />
                                                 <Route
-                                                    path="/portal/trades"
+                                                    path={`${WebsitePaths.Portal}/trades`}
                                                     component={this.renderTradeHistory.bind(this)}
                                                 />
                                                 <Route
-                                                    path="/"
+                                                    path={`${WebsitePaths.Home}`}
                                                     render={this.renderGenerateOrderForm.bind(this)}
                                                 />
                                             </Switch> :

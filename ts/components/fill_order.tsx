@@ -24,6 +24,7 @@ import {
     ExchangeContractErrs,
     AlertTypes,
     ContractResponse,
+    WebsitePaths,
 } from 'ts/types';
 import {Alert} from 'ts/components/ui/alert';
 import {Identicon} from 'ts/components/ui/identicon';
@@ -330,7 +331,7 @@ export class FillOrder extends React.Component<FillOrderProps, FillOrderState> {
             <div>
                 Order successfully filled. See the trade details in your{' '}
                 <Link
-                    to="/portal/trades"
+                    to={`${WebsitePaths.Portal}/trades`}
                     style={{color: 'white'}}
                 >
                     trade history

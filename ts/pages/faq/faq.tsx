@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as DocumentTitle from 'react-document-title';
 import RaisedButton from 'material-ui/RaisedButton';
 import {colors} from 'material-ui/styles';
-import {Styles, FAQSection, FAQQuestion} from 'ts/types';
+import {Styles, FAQSection, FAQQuestion, WebsitePaths} from 'ts/types';
 import {Link} from 'react-router-dom';
 import {Footer} from 'ts/components/footer';
 import {TopBar} from 'ts/components/top_bar';
@@ -34,10 +34,10 @@ const sections: FAQSection[] = [
                         At its core, 0x is an open and non-rent seeking protocol that facilitates trustless,
                         low friction exchange of Ethereum-based assets. Developers can use 0x as a platform
                         to build exchange applications on top of{' '}
-                        (<a href={`${configs.BASE_URL}/docs/0xjs#introduction`} target="blank">0x.js</a> is a
-                        Javascript library for interacting with the 0x protocol). For end users, 0x will be
+                        (<a href={`${configs.BASE_URL}${WebsitePaths.ZeroExJs}#introduction`} target="blank">0x.js</a>
+                        {' '}is a Javascript library for interacting with the 0x protocol). For end users, 0x will be
                         the infrastructure of a wide variety of user-facing applications i.e.{' '}
-                        <a href={`${configs.BASE_URL}/portal`} target="blank">0x Portal</a>,
+                        <a href={`${configs.BASE_URL}${WebsitePaths.Portal}`} target="blank">0x Portal</a>,
                         a decentralized application that facilitates trustless trading of Ethereum-based tokens
                         between known counterparties.
                     </div>

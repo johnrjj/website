@@ -204,13 +204,13 @@ export class Dispatcher {
     }
 
     // Docs
-    public updateCurrent0xjsVersion(version: string) {
+    public updateCurrentDocsVersion(version: string) {
         this.dispatch({
             data: version,
             type: ActionTypes.UPDATE_LIBRARY_VERSION,
         });
     }
-    public updateAvailable0xjsVersions(versions: string[]) {
+    public updateAvailableDocVersions(versions: string[]) {
         this.dispatch({
             data: versions,
             type: ActionTypes.UPDATE_AVAILABLE_LIBRARY_VERSIONS,

@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import {MenuItem} from 'ts/components/ui/menu_item';
 import {Link} from 'react-router-dom';
+import {WebsitePaths} from 'ts/types';
 
 export interface PortalMenuProps {
     menuItemStyle: React.CSSProperties;
@@ -20,7 +21,7 @@ export class PortalMenu extends React.Component<PortalMenuProps, PortalMenuState
                 <MenuItem
                     style={this.props.menuItemStyle}
                     className="py2"
-                    to="/portal"
+                    to={`${WebsitePaths.Portal}`}
                     onClick={this.props.onClick.bind(this)}
                 >
                     {this.renderMenuItemWithIcon('Generate order', 'zmdi-arrow-right-top')}
@@ -28,7 +29,7 @@ export class PortalMenu extends React.Component<PortalMenuProps, PortalMenuState
                 <MenuItem
                     style={this.props.menuItemStyle}
                     className="py2"
-                    to="/portal/fill"
+                    to={`${WebsitePaths.Portal}/fill`}
                     onClick={this.props.onClick.bind(this)}
                 >
                     {this.renderMenuItemWithIcon('Fill order', 'zmdi-arrow-left-bottom')}
@@ -36,7 +37,7 @@ export class PortalMenu extends React.Component<PortalMenuProps, PortalMenuState
                 <MenuItem
                     style={this.props.menuItemStyle}
                     className="py2"
-                    to="/portal/balances"
+                    to={`${WebsitePaths.Portal}/balances`}
                     onClick={this.props.onClick.bind(this)}
                 >
                     {this.renderMenuItemWithIcon('Balances', 'zmdi-balance-wallet')}
@@ -44,7 +45,7 @@ export class PortalMenu extends React.Component<PortalMenuProps, PortalMenuState
                 <MenuItem
                     style={this.props.menuItemStyle}
                     className="py2"
-                    to="/portal/trades"
+                    to={`${WebsitePaths.Portal}/trades`}
                     onClick={this.props.onClick.bind(this)}
                 >
                     {this.renderMenuItemWithIcon('Trade history', 'zmdi-format-list-bulleted')}
