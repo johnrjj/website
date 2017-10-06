@@ -690,9 +690,9 @@ export enum WebsitePaths {
     Portal = '/portal',
     Wiki = '/wiki',
     ZeroExJs = '/docs/0xjs',
-    SmartContracts = '/docs/contracts',
     Home = '/',
     FAQ = '/faq',
     TokenSale = '/token',
     Whitepaper = '/pdfs/0x_white_paper.pdf',
+    SmartContracts = '/docs/contracts',
 }

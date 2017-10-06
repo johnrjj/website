@@ -81,13 +81,13 @@ interface ZeroExJSDocumentationState {
 const styles: Styles = {
     mainContainers: {
         position: 'absolute',
-        top: 43,
+        top: 59,
         left: 0,
         bottom: 0,
         right: 0,
         overflowZ: 'hidden',
         overflowY: 'scroll',
-        minHeight: 'calc(100vh - 43px)',
+        minHeight: 'calc(100vh - 59px)',
         WebkitOverflowScrolling: 'touch',
     },
     menuContainer: {
