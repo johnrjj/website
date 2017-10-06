@@ -117,7 +117,6 @@ interface FooterState {}
 
 export class Footer extends React.Component<FooterProps, FooterState> {
     public render() {
-        const isExternal = true;
         return (
             <div className="relative pb4 pt2" style={{backgroundColor: '#393939'}}>
                 <div className="mx-auto max-width-4 py4 clearfix" style={{color: 'white'}}>
