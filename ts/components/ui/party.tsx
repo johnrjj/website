@@ -66,7 +66,7 @@ export class Party extends React.Component<PartyProps, PartyState> {
                             href={etherscanLinkIfExists}
                             target="_blank"
                         >
-                            {!_.isUndefined(this.props.alternativeImage) ?
+                            {isRegistered && !_.isUndefined(this.props.alternativeImage) ?
                                 <img
                                     style={tokenImageStyle}
                                     src={this.props.alternativeImage}
