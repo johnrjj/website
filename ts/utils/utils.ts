@@ -9,6 +9,7 @@ import {
     ScreenWidths,
     EtherscanLinkSuffixes,
     Token,
+    Networks,
 } from 'ts/types';
 import * as moment from 'moment';
 import isMobile = require('is-mobile');
@@ -140,7 +141,7 @@ export const utils = {
         if (_.isUndefined(networkName)) {
             return undefined;
         }
-        const etherScanPrefix = networkName === 'Frontier' ? '' : `${networkName.toLowerCase()}.`;
+        const etherScanPrefix = networkName === Networks.mainnet ? '' : `${networkName.toLowerCase()}.`;
         return `https://${etherScanPrefix}etherscan.io/${suffix}/${addressOrTxHash}`;
     },
     setUrlHash(anchorId: string) {

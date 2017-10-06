@@ -374,29 +374,49 @@ export interface DocAgnosticFormat {
 
 export interface DocSection {
     comment: string;
-    constructors: Method[];
-    methods: Method[];
+    constructors: Array<TypescriptMethod|SolidityMethod>;
+    methods: Array<TypescriptMethod|SolidityMethod>;
     properties: Property[];
     types: CustomType[];
+    events?: Event[];
+}
+
+export interface Event {
+    name: string;
+    eventArgs: EventArg[];
+}
+
+export interface EventArg {
+    isIndexed: boolean;
+    name: string;
+    type: Type;
 }
 
 export interface Property {
     name: string;
     type: Type;
-    source: Source;
+    source?: Source;
     comment?: string;
 }
 
-export interface Method {
-    isStatic: boolean;
+export interface BaseMethod {
     isConstructor: boolean;
     name: string;
-    comment?: string;
     returnComment?: string|undefined;
-    source: Source;
     callPath: string;
     parameters: Parameter[];
     returnType: Type;
+    comment?: string;
+}
+
+export interface TypescriptMethod extends BaseMethod {
+    source?: Source;
+    isStatic?: boolean;
+}
+
+export interface SolidityMethod extends BaseMethod {
+    isConstant?: boolean;
+    isPayable?: boolean;
 }
 
 export interface Source {
@@ -418,7 +438,7 @@ export interface Type {
     typeArguments?: Type[];
     elementType?: ElementType;
     types?: Type[];
-    method?: Method;
+    method?: TypescriptMethod;
 }
 
 export interface ElementType {
@@ -436,7 +456,7 @@ export interface CustomType {
     name: string;
     kindString: string;
     type?: Type;
-    method?: Method;
+    method?: TypescriptMethod;
     indexSignature?: IndexSignature;
     defaultValue?: string;
     comment?: string;
@@ -465,6 +485,16 @@ export const ZeroExJsDocSections = strEnum([
   'types',
 ]);
 export type ZeroExJsDocSections = keyof typeof ZeroExJsDocSections;
+
+export const SmartContractsDocSections = strEnum([
+  'Introduction',
+  'Exchange',
+  'TokenTransferProxy',
+  'TokenRegistry',
+  'ZRXToken',
+  'EtherToken',
+]);
+export type SmartContractsDocSections = keyof typeof SmartContractsDocSections;
 
 export interface FAQQuestion {
     prompt: string;
@@ -590,10 +620,77 @@ export enum HeaderSizes {
     H3 = 'h3',
 }
 
+export interface DoxityDocObj {
+    [contractName: string]: DoxityContractObj;
+}
+
+export interface DoxityContractObj {
+    title: string;
+    fileName: string;
+    name: string;
+    abiDocs: DoxityAbiDoc[];
+}
+
+export interface DoxityAbiDoc {
+    constant: boolean;
+    inputs: DoxityInput[];
+    name: string;
+    outputs: DoxityOutput[];
+    payable: boolean;
+    type: string;
+    details?: string;
+    return?: string;
+}
+
+export interface DoxityOutput {
+    name: string;
+    type: string;
+}
+
+export interface DoxityInput {
+    name: string;
+    type: string;
+    description: string;
+    indexed?: boolean;
+}
+
+export interface VersionToFileName {
+    [version: string]: string;
+}
+
+export enum Docs {
+    ZeroExJs,
+    SmartContracts,
+}
+
+export interface ContractAddresses {
+    [version: string]: {
+        [network: string]: AddressByContractName;
+    };
+}
+
+export interface AddressByContractName {
+    [contractName: string]: string;
+}
+
+export enum Networks {
+    mainnet = 'Mainnet',
+    kovan = 'Kovan',
+    ropsten = 'Ropsten',
+    rinkeby = 'Rinkeby',
+}
+
+export enum AbiTypes {
+    Constructor = 'constructor',
+    Function = 'function',
+    Event = 'event',
+}
+
 export enum WebsitePaths {
     Portal = '/portal',
     Wiki = '/wiki',
     ZeroExJs = '/docs/0xjs',
+    SmartContracts = '/docs/contracts',
     Home = '/',
     FAQ = '/faq',
     TokenSale = '/token',

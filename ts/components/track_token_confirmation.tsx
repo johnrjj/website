@@ -54,7 +54,8 @@ export class TrackTokenConfirmation extends
                         <div>
                             Tracking a token adds it to the balances section of 0x Portal and
                             allows you to generate/fill orders involving the token
-                            {isMultipleTokens && 's'}. Would you like to start tracking this token?
+                            {isMultipleTokens && 's'}. Would you like to start tracking{' '}
+                            {isMultipleTokens ? 'these' : 'this'}{' '}token?
                         </div>
                     </div>
                 }

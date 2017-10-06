@@ -114,7 +114,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
                                 <div className="flex sm-hide xs-hide">
                                     <Link to={`${WebsitePaths.ZeroExJs}`}>
                                         <RaisedButton
-                                            label="Docs"
+                                            label="0x.js"
                                             primary={true}
                                             style={{marginRight: 12}}
                                             buttonStyle={{width: 106}}
@@ -128,7 +128,17 @@ export class Home extends React.Component<HomeProps, HomeState> {
                                             label="Whitepaper"
                                         />
                                     </a>
-                                    <Link to={`${WebsitePaths.FAQ}`}>
+                                    <Link to="/docs/contracts">
+                                        <FlatButton
+                                            label="Smart Contracts"
+                                        />
+                                    </Link>
+                                    <Link to="/wiki">
+                                        <FlatButton
+                                            label="Wiki"
+                                        />
+                                    </Link>
+                                    <Link to={WebsitePaths.FAQ}>
                                         <FlatButton
                                             label="FAQ"
                                         />

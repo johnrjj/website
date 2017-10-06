@@ -17,7 +17,7 @@ import {
 } from 'react-scroll';
 import {Link} from 'react-router-dom';
 import {HashLink} from 'react-router-hash-link';
-import {Styles, TypeDocNode, MenuSubsectionsBySection, WebsitePaths} from 'ts/types';
+import {Styles, TypeDocNode, MenuSubsectionsBySection, WebsitePaths, Docs} from 'ts/types';
 
 const SECTION_HEADER_COLOR = 'rgb(234, 234, 234)';
 
@@ -25,10 +25,11 @@ interface TopBarProps {
     userAddress?: string;
     blockchainIsLoaded: boolean;
     location: Location;
-    zeroExJSversion?: string;
-    availableZeroExJSVersions?: string[];
+    docsVersion?: string;
+    availableDocVersions?: string[];
     menuSubsectionsBySection?: MenuSubsectionsBySection;
     shouldFullWidth?: boolean;
+    doc?: Docs;
 }
 
 interface TopBarState {
@@ -104,7 +105,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 onRequestChange={this.onMenuButtonClick.bind(this)}
             >
                 {this.renderPortalMenu()}
-                {this.render0xjsDocMenu()}
+                {this.renderDocsMenu()}
                 {this.renderWiki()}
                 <div className="pl1 py1 mt3" style={{backgroundColor: SECTION_HEADER_COLOR}}>Website</div>
                 {this.renderHomepageMenuItem('home')}
@@ -116,8 +117,13 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                     <MenuItem className="py2">Whitepaper</MenuItem>
                 </a>
                 {!this.isViewing0xjsDocs() &&
-                    <Link to={`${WebsitePaths.ZeroExJs}`} className="text-decoration-none">
-                        <MenuItem className="py2">Documentation</MenuItem>
+                    <Link to={WebsitePaths.ZeroExJs} className="text-decoration-none">
+                        <MenuItem className="py2">0x.js Docs</MenuItem>
+                    </Link>
+                }
+                {!this.isViewingSmartContractsDocs() &&
+                    <Link to={WebsitePaths.SmartContracts} className="text-decoration-none">
+                        <MenuItem className="py2">Smart Contract Docs</MenuItem>
                     </Link>
                 }
                 <Link to={`${WebsitePaths.Wiki}`} className="text-decoration-none">
@@ -152,21 +158,27 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
             </Drawer>
         );
     }
-    private render0xjsDocMenu() {
-        if (!this.isViewing0xjsDocs()) {
+    private renderDocsMenu() {
+        if (!this.isViewing0xjsDocs() && !this.isViewingSmartContractsDocs()) {
             return;
         }
 
+        const topLevelMenu = this.isViewing0xjsDocs() ?
+            typeDocUtils.getFinal0xjsMenu(this.props.docsVersion) :
+            constants.menuSmartContracts;
+
+        const sectionTitle = this.isViewing0xjsDocs() ? '0x.js Docs' : 'Smart contract Docs';
         return (
             <div className="lg-hide md-hide">
-                <div className="pl1 py1" style={{backgroundColor: SECTION_HEADER_COLOR}}>0x.js Docs</div>
+                <div className="pl1 py1" style={{backgroundColor: SECTION_HEADER_COLOR}}>{sectionTitle}</div>
                 <NestedSidebarMenu
-                    topLevelMenu={typeDocUtils.getFinal0xjsMenu(this.props.zeroExJSversion)}
+                    topLevelMenu={topLevelMenu}
                     menuSubsectionsBySection={this.props.menuSubsectionsBySection}
                     shouldDisplaySectionHeaders={false}
                     onMenuItemClick={this.onMenuButtonClick.bind(this)}
-                    selectedVersion={this.props.zeroExJSversion}
-                    versions={this.props.availableZeroExJSVersions}
+                    selectedVersion={this.props.docsVersion}
+                    doc={this.props.doc}
+                    versions={this.props.availableDocVersions}
                 />
             </div>
         );
@@ -266,6 +278,9 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
     }
     private isViewing0xjsDocs() {
         return _.includes(this.props.location.pathname, WebsitePaths.ZeroExJs);
+    }
+    private isViewingSmartContractsDocs() {
+        return _.includes(this.props.location.pathname, WebsitePaths.SmartContracts);
     }
     private isViewingWiki() {
         return _.includes(this.props.location.pathname, WebsitePaths.Wiki);

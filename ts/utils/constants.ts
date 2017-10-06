@@ -1,4 +1,13 @@
-import {ExchangeContractErrs, PublicNodeUrlsByNetworkId, ZeroExJsDocSections} from 'ts/types';
+import {
+    ExchangeContractErrs,
+    PublicNodeUrlsByNetworkId,
+    ZeroExJsDocSections,
+    SmartContractsDocSections,
+    Docs,
+    ContractAddresses,
+    Networks,
+    WebsitePaths,
+} from 'ts/types';
 import * as BigNumber from 'bignumber.js';
 
 const INFURA_API_KEY = 'T5WSC8cautR4KXyYgsRs';
@@ -17,6 +26,7 @@ export const constants = {
     FEE_RECIPIENT_ADDRESS: '0x0000000000000000000000000000000000000000',
     FIREFOX_U2F_ADDON: 'https://addons.mozilla.org/en-US/firefox/addon/u2f-support-add-on/',
     GITHUB_0X_JS_URL: 'https://github.com/0xProject/0x.js',
+    GITHUB_CONTRACTS_URL: 'https://github.com/0xProject/contracts',
     GITHUB_WIKI_URL: 'https://github.com/0xProject/wiki',
     HTTP_NO_CONTENT_STATUS_CODE: 204,
     ACCEPT_DISCLAIMER_LOCAL_STORAGE_KEY: 'didAcceptPortalDisclaimer',
@@ -56,7 +66,8 @@ export const constants = {
     DOCS_CONTAINER_ID: 'documentation',
     HOME_SCROLL_DURATION_MS: 500,
     SUCCESS_STATUS: 200,
-    S3_DOCUMENTATION_JSON_ROOT: 'https://s3.amazonaws.com/0xjs-docs-jsons',
+    S3_0XJS_DOCUMENTATION_JSON_ROOT: 'https://s3.amazonaws.com/0xjs-docs-jsons',
+    S3_SMART_CONTRACTS_DOCUMENTATION_JSON_ROOT: 'https://s3.amazonaws.com/smart-contracts-docs-json',
     UNAVAILABLE_STATUS: 503,
     TAKER_FEE: new BigNumber(0),
     TESTNET_NAME: 'Kovan',
@@ -108,11 +119,17 @@ export const constants = {
         'TRST': '/images/token_icons/trust.png',
     } as {[symbol: string]: string},
     networkNameById: {
-        1: 'Frontier',
-        3: 'Ropsten',
-        4: 'Rinkeby',
-        42: 'Kovan',
+        1: Networks.mainnet,
+        3: Networks.ropsten,
+        4: Networks.rinkeby,
+        42: Networks.kovan,
     } as {[symbol: number]: string},
+    networkIdByName: {
+        [Networks.mainnet]: 1,
+        [Networks.ropsten]: 3,
+        [Networks.rinkeby]: 4,
+        [Networks.kovan]: 42,
+    },
     // Note: This needs to be kept in sync with the types exported in index.ts. Unfortunately there is
     // currently no way to extract the re-exported types from index.ts via TypeDoc :(
     public0xjsTypes: [
@@ -154,6 +171,18 @@ export const constants = {
         'ValidateOrderFillableOpts',
         'OrderTransactionOpts',
     ],
+    menuSmartContracts: {
+        introduction: [
+            SmartContractsDocSections.Introduction,
+        ],
+        contracts: [
+            SmartContractsDocSections.Exchange,
+            SmartContractsDocSections.TokenRegistry,
+            SmartContractsDocSections.ZRXToken,
+            SmartContractsDocSections.EtherToken,
+            SmartContractsDocSections.TokenTransferProxy,
+        ],
+    },
     menu0xjs: {
         introduction: [
             ZeroExJsDocSections.introduction,
@@ -184,4 +213,33 @@ export const constants = {
         [ZeroExJsDocSections.etherToken]: '0.7.1',
         [ZeroExJsDocSections.proxy]: '0.8.0',
     },
+    docToPath: {
+        [Docs.ZeroExJs]: WebsitePaths.ZeroExJs,
+        [Docs.SmartContracts]: WebsitePaths.SmartContracts,
+    },
+    contractAddresses: {
+        '1.0.0': {
+            [Networks.mainnet]: {
+                [SmartContractsDocSections.Exchange]: '0x12459c951127e0c374ff9105dda097662a027093',
+                [SmartContractsDocSections.TokenTransferProxy]: '0x8da0d80f5007ef1e431dd2127178d224e32c2ef4',
+                [SmartContractsDocSections.ZRXToken]: '0xe41d2489571d322189246dafa5ebde1f4699f498',
+                [SmartContractsDocSections.EtherToken]: '0x2956356cd2a2bf3202f771f50d3d14a367b48070',
+                [SmartContractsDocSections.TokenRegistry]: '0x926a74c5c36adf004c87399e65f75628b0f98d2c',
+            },
+            [Networks.ropsten]: {
+                [SmartContractsDocSections.Exchange]: '0x479cc461fecd078f766ecc58533d6f69580cf3ac',
+                [SmartContractsDocSections.TokenTransferProxy]: '0x4e9aad8184de8833365fea970cd9149372fdf1e6',
+                [SmartContractsDocSections.ZRXToken]: '0xa8e9fa8f91e5ae138c74648c9c304f1c75003a8d',
+                [SmartContractsDocSections.EtherToken]: '0xc00fd9820cd2898cc4c054b7bf142de637ad129a',
+                [SmartContractsDocSections.TokenRegistry]: '0x6b1a50f0bb5a7995444bd3877b22dc89c62843ed',
+            },
+            [Networks.kovan]: {
+                [SmartContractsDocSections.Exchange]: '0x90fe2af704b34e0224bf2299c838e04d4dcf1364',
+                [SmartContractsDocSections.TokenTransferProxy]: '0x087Eed4Bc1ee3DE49BeFbd66C662B434B15d49d4',
+                [SmartContractsDocSections.ZRXToken]: '0x6ff6c0ff1d68b964901f986d4c9fa3ac68346570',
+                [SmartContractsDocSections.EtherToken]: '0x05d090b51c40b020eab3bfcb6a2dff130df22e9c',
+                [SmartContractsDocSections.TokenRegistry]: '0xf18e504561f4347bea557f3d4558f559dddbae7f',
+            },
+        },
+    } as ContractAddresses,
 };

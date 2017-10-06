@@ -3,7 +3,15 @@ import * as React from 'react';
 import * as ReactMarkdown from 'react-markdown';
 import {Chip} from 'material-ui/Chip';
 import {colors} from 'material-ui/styles';
-import {TypeDocNode, Styles, TypeDefinitionByName, Method, Parameter, HeaderSizes} from 'ts/types';
+import {
+    TypeDocNode,
+    Styles,
+    TypeDefinitionByName,
+    TypescriptMethod,
+    SolidityMethod,
+    Parameter,
+    HeaderSizes,
+} from 'ts/types';
 import {utils} from 'ts/utils/utils';
 import {SourceLink} from 'ts/pages/documentation/source_link';
 import {MethodSignature} from 'ts/pages/documentation/method_signature';
@@ -12,7 +20,7 @@ import {Comment} from 'ts/pages/documentation/comment';
 import {typeDocUtils} from 'ts/utils/typedoc_utils';
 
 interface MethodBlockProps {
-    method: Method;
+    method: SolidityMethod|TypescriptMethod;
     libraryVersion: string;
     typeDefinitionByName: TypeDefinitionByName;
 }
@@ -23,13 +31,13 @@ interface MethodBlockState {
 
 const styles: Styles = {
     chip: {
-        fontSize: 14,
+        fontSize: 13,
         backgroundColor: colors.lightBlueA700,
         color: 'white',
-        height: 16,
+        height: 11,
         borderRadius: 14,
-        marginTop: 13,
-        lineHeight: 1.2,
+        marginTop: 19,
+        lineHeight: 0.8,
     },
 };
 
@@ -56,14 +64,15 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
             >
                 {!method.isConstructor &&
                     <div className="flex">
-                        {method.isStatic &&
-                            <div
-                                className="p1 mr1"
-                                style={styles.chip}
-                            >
-                                Static
-                            </div>
-                         }
+                        {(method as TypescriptMethod).isStatic &&
+                            this.renderChip('Static')
+                        }
+                        {(method as SolidityMethod).isConstant &&
+                            this.renderChip('Constant')
+                        }
+                        {(method as SolidityMethod).isPayable &&
+                            this.renderChip('Payable')
+                        }
                         <AnchorTitle
                             headerSize={HeaderSizes.H3}
                             title={method.name}
@@ -78,17 +87,19 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                         typeDefinitionByName={this.props.typeDefinitionByName}
                     />
                 </code>
-                <SourceLink
-                    version={this.props.libraryVersion}
-                    source={method.source}
-                />
+                {(method as TypescriptMethod).source &&
+                    <SourceLink
+                        version={this.props.libraryVersion}
+                        source={(method as TypescriptMethod).source}
+                    />
+                }
                 {method.comment &&
                     <Comment
                         comment={method.comment}
                         className="py2"
                     />
                 }
-                {method.parameters &&
+                {method.parameters && !_.isEmpty(method.parameters) &&
                     <div>
                         <h4
                             className="pb1 thin"
@@ -115,6 +126,16 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
             </div>
         );
     }
+    private renderChip(text: string) {
+        return (
+            <div
+                className="p1 mr1"
+                style={styles.chip}
+            >
+                {text}
+            </div>
+        );
+    }
     private renderParameterDescriptions(parameters: Parameter[]) {
         const descriptions = _.map(parameters, parameter => {
             const isOptional = parameter.isOptional;
@@ -134,9 +155,11 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                         </div>
                     </div>
                     <div className="col lg-col-8 md-col-8 sm-col-12 col-12">
-                        <Comment
-                            comment={parameter.comment}
-                        />
+                        {parameter.comment &&
+                            <Comment
+                                comment={parameter.comment}
+                            />
+                        }
                     </div>
                 </div>
             );
