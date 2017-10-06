@@ -67,10 +67,10 @@ export class MethodBlock extends React.Component<MethodBlockProps, MethodBlockSt
                         {(method as TypescriptMethod).isStatic &&
                             this.renderChip('Static')
                         }
-                        {method.isConstant &&
+                        {(method as SolidityMethod).isConstant &&
                             this.renderChip('Constant')
                         }
-                        {method.isPayable &&
+                        {(method as SolidityMethod).isPayable &&
                             this.renderChip('Payable')
                         }
                         <AnchorTitle
