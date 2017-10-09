@@ -123,8 +123,8 @@ export class Footer extends React.Component<FooterProps, FooterState> {
         return (
             <div className="relative pb4 pt2" style={{backgroundColor: CUSTOM_DARK_GRAY}}>
                 <div className="mx-auto max-width-4 py4 clearfix" style={{color: 'white'}}>
-                    <div className="col col-4 left">
-                        <div className="center" style={{width: 148}}>
+                    <div className="col lg-col-4 md-col-4 col-12 left">
+                        <div className="center sm-mx-auto" style={{width: 148}}>
                             <div>
                                 <img src="/images/protocol_logo_white.png" height="30" />
                             </div>
@@ -133,21 +133,21 @@ export class Footer extends React.Component<FooterProps, FooterState> {
                             </div>
                         </div>
                     </div>
-                    <div className="col col-8 pl4">
-                        <div className="col col-4">
-                            <div className="right">
+                    <div className="col lg-col-8 md-col-8 col-12 lg-pl4 md-pl4">
+                        <div className="col lg-col-4 md-col-4 col-12">
+                            <div className="lg-right md-right sm-center">
                                 {this.renderHeader(Sections.Documentation)}
                                 {_.map(menuItemsBySection[Sections.Documentation], this.renderMenuItem.bind(this))}
                             </div>
                         </div>
-                        <div className="col col-4">
-                            <div className="right">
+                        <div className="col lg-col-4 md-col-4 col-12 lg-pr2 md-pr2">
+                            <div className="lg-right md-right sm-center">
                                 {this.renderHeader(Sections.Community)}
                                 {_.map(menuItemsBySection[Sections.Community], this.renderMenuItem.bind(this))}
                             </div>
                         </div>
-                        <div className="col col-4">
-                            <div className="right">
+                        <div className="col lg-col-4 md-col-4 col-12">
+                            <div className="lg-right md-right sm-center">
                                 {this.renderHeader(Sections.Organization)}
                                 {_.map(menuItemsBySection[Sections.Organization], this.renderMenuItem.bind(this))}
                             </div>
@@ -169,6 +169,7 @@ export class Footer extends React.Component<FooterProps, FooterState> {
         return (
             <div
                 key={item.title}
+                className="sm-center"
                 style={{fontSize: 13, paddingTop: 25}}
             >
                 {item.isExternal ?
@@ -178,14 +179,17 @@ export class Footer extends React.Component<FooterProps, FooterState> {
                         target="_blank"
                         href={item.path}
                     >
-                        <div className="flex">
-                            {!_.isUndefined(iconIfExists) &&
-                                <div className="pr1">
-                                    {this.renderIcon(iconIfExists)}
+                        {!_.isUndefined(iconIfExists) ?
+                            <div className="mx-auto" style={{width: 65}}>
+                                <div className="flex">
+                                    <div className="pr1">
+                                        {this.renderIcon(iconIfExists)}
+                                    </div>
+                                    <div>{item.title}</div>
                                 </div>
-                            }
-                            {item.title}
-                        </div>
+                            </div> :
+                            item.title
+                        }
                     </a> :
                     item.isHomepage ?
                         this.renderHomepageLink(item.title) :
@@ -194,7 +198,7 @@ export class Footer extends React.Component<FooterProps, FooterState> {
                             style={linkStyle}
                             className="text-decoration-none"
                         >
-                            <div className="flex">
+                            <div>
                                 {!_.isUndefined(iconIfExists) &&
                                     <div className="pr1">
                                         {this.renderIcon(iconIfExists)}
@@ -217,7 +221,7 @@ export class Footer extends React.Component<FooterProps, FooterState> {
         };
         return (
             <div
-                className="pb2"
+                className="lg-pb2 md-pb2 sm-pt4"
                 style={headerStyle}
             >
                 {title}
