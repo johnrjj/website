@@ -56,10 +56,10 @@ export class DropDownMenuItem extends React.Component<DropDownMenuItemProps, Dro
                 onMouseLeave={this.onHoverOff.bind(this)}
             >
                 <div className="flex relative">
-                    <div>
+                    <div style={{paddingRight: 10}}>
                         {this.props.title}
                     </div>
-                    <div className="absolute" style={{paddingLeft: 3, right: -7, top: -2}}>
+                    <div className="absolute" style={{paddingLeft: 3, right: 3, top: -2}}>
                         <i className="zmdi zmdi-caret-right" style={{fontSize: 22}} />
                     </div>
                 </div>
