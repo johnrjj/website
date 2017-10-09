@@ -30,13 +30,13 @@ interface WikiState {
 const styles: Styles = {
     mainContainers: {
         position: 'absolute',
-        top: 59,
+        top: 60,
         left: 0,
         bottom: 0,
         right: 0,
         overflowZ: 'hidden',
         overflowY: 'scroll',
-        minHeight: 'calc(100vh - 59px)',
+        minHeight: 'calc(100vh - 60px)',
         WebkitOverflowScrolling: 'touch',
     },
     menuContainer: {
