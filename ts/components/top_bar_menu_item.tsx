@@ -12,7 +12,9 @@ const styles: Styles = {
     primary: {
         borderRadius: 4,
         border: '2px solid rgb(230, 229, 229)',
-        marginTop: 11,
+        marginTop: 15,
+        paddingLeft: 9,
+        paddingRight: 9,
     },
 };
 
@@ -39,7 +41,7 @@ export class TopBarMenuItem extends React.Component<TopBarMenuItemProps, TopBarM
             this.props.style.color;
         return (
             <div
-                className={`ml1 px2 ${this.props.className}`}
+                className={`center ${this.props.className}`}
                 style={{...this.props.style, ...primaryStyles}}
             >
                 <Link to={this.props.path} className="text-decoration-none" style={{color: linkColor}}>

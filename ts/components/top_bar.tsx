@@ -55,7 +55,7 @@ const styles: Styles = {
     },
     topBar: {
         backgroundColor: 'white',
-        height: 58,
+        height: 59,
         width: '100%',
         position: 'fixed',
         top: 0,
@@ -70,7 +70,7 @@ const styles: Styles = {
         color: CUSTOM_DARK_GRAY,
         paddingTop: 6,
         paddingBottom: 6,
-        marginTop: 13,
+        marginTop: 17,
         cursor: 'pointer',
         fontWeight: 600,
     },
@@ -120,7 +120,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 <div className={parentClassNames}>
                     <div className="col col-2 sm-pl2" style={{paddingTop: 15}}>
                         <Link to={`${WebsitePaths.Home}`} className="text-decoration-none">
-                            <img src="/images/top_bar_logo.png" height="28" />
+                            <img src="/images/top_bar_logo.png" height="30" />
                         </Link>
                     </div>
                     <div className={`col col-${isFullWidthPage ? '8' : '9'} lg-hide md-hide`} />
@@ -163,7 +163,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                             className={`col ${isFullWidthPage ? 'col-2 pl2' : 'col-1'} md-hide lg-hide`}
                         >
                             <div
-                                style={{fontSize: 25, color: 'black', cursor: 'pointer', paddingTop: 10}}
+                                style={{fontSize: 25, color: 'black', cursor: 'pointer', paddingTop: 16}}
                             >
                                 <i
                                     className="zmdi zmdi-menu"
@@ -190,13 +190,9 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 {this.renderWiki()}
                 <div className="pl1 py1 mt3" style={{backgroundColor: SECTION_HEADER_COLOR}}>Website</div>
                 {this.renderHomepageMenuItem('home')}
-                <a
-                    className="text-decoration-none"
-                    target="_blank"
-                    href={`${WebsitePaths.Whitepaper}`}
-                >
-                    <MenuItem className="py2">Whitepaper</MenuItem>
-                </a>
+                <Link to={`${WebsitePaths.Wiki}`} className="text-decoration-none">
+                    <MenuItem className="py2">Wiki</MenuItem>
+                </Link>
                 {!this.isViewing0xjsDocs() &&
                     <Link to={WebsitePaths.ZeroExJs} className="text-decoration-none">
                         <MenuItem className="py2">0x.js Docs</MenuItem>
@@ -207,9 +203,19 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                         <MenuItem className="py2">Smart Contract Docs</MenuItem>
                     </Link>
                 }
-                <Link to={`${WebsitePaths.Wiki}`} className="text-decoration-none">
-                    <MenuItem className="py2">Wiki</MenuItem>
-                </Link>
+                {!this.isViewingPortal() &&
+                    <Link to={`${WebsitePaths.Portal}`} className="text-decoration-none">
+                        <MenuItem className="py2">Portal DApp</MenuItem>
+                    </Link>
+                }
+                <a
+                    className="text-decoration-none"
+                    target="_blank"
+                    href={`${WebsitePaths.Whitepaper}`}
+                >
+                    <MenuItem className="py2">Whitepaper</MenuItem>
+                </a>
+                {this.renderHomepageMenuItem('team')}
                 <a
                     className="text-decoration-none"
                     target="_blank"
@@ -217,12 +223,6 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 >
                     <MenuItem className="py2">Blog</MenuItem>
                 </a>
-                {this.renderHomepageMenuItem('team')}
-                <Link to={`${WebsitePaths.TokenSale}`} className="text-decoration-none">
-                    <MenuItem className="py2">Token sale</MenuItem>
-                </Link>
-                {this.renderHomepageMenuItem('advisors')}
-                {this.renderHomepageMenuItem('backers')}
                 <Link to={`${WebsitePaths.FAQ}`} className="text-decoration-none">
                     <MenuItem
                         className="py2"
@@ -231,11 +231,6 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                         FAQ
                     </MenuItem>
                 </Link>
-                {!this.isViewingPortal() &&
-                    <Link to={`${WebsitePaths.Portal}`} className="text-decoration-none">
-                        <MenuItem className="py2">Portal DApp</MenuItem>
-                    </Link>
-                }
             </Drawer>
         );
     }
