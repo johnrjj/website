@@ -13,6 +13,7 @@ import * as BigNumber from 'bignumber.js';
 const INFURA_API_KEY = 'T5WSC8cautR4KXyYgsRs';
 
 export const constants = {
+    ANGELLIST_URL: 'https://angel.co/0xproject/jobs',
     STAGING_DOMAIN: 'staging-0xproject.s3-website-us-east-1.amazonaws.com',
     PRODUCTION_DOMAIN: '0xproject.com',
     DEVELOPMENT_DOMAIN: '0xproject.dev:3572',

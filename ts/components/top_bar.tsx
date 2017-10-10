@@ -33,6 +33,7 @@ interface TopBarProps {
     menuSubsectionsBySection?: MenuSubsectionsBySection;
     shouldFullWidth?: boolean;
     doc?: Docs;
+    style?: React.CSSProperties;
 }
 
 interface TopBarState {
@@ -79,6 +80,7 @@ const styles: Styles = {
 export class TopBar extends React.Component<TopBarProps, TopBarState> {
     public static defaultProps: Partial<TopBarProps> = {
         shouldFullWidth: false,
+        style: {},
     };
     constructor(props: TopBarProps) {
         super(props);
@@ -116,7 +118,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
         const bottomBorderStyle = this.shouldDisplayBottomBar() ? styles.bottomBar : {};
         const fullWithClassNames = isFullWidthPage ? 'pr4' : '';
         return (
-            <div style={{...styles.topBar, ...bottomBorderStyle}} className="pb1">
+            <div style={{...styles.topBar, ...bottomBorderStyle, ...this.props.style}} className="pb1">
                 <div className={parentClassNames}>
                     <div className="col col-2 sm-pl2" style={{paddingTop: 15}}>
                         <Link to={`${WebsitePaths.Home}`} className="text-decoration-none">
