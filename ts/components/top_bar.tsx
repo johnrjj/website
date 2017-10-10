@@ -34,6 +34,7 @@ interface TopBarProps {
     shouldFullWidth?: boolean;
     doc?: Docs;
     style?: React.CSSProperties;
+    isNightVersion?: boolean;
 }
 
 interface TopBarState {
@@ -73,7 +74,7 @@ const styles: Styles = {
         paddingBottom: 6,
         marginTop: 17,
         cursor: 'pointer',
-        fontWeight: 600,
+        fontWeight: 400,
     },
 };
 
@@ -81,6 +82,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
     public static defaultProps: Partial<TopBarProps> = {
         shouldFullWidth: false,
         style: {},
+        isNightVersion: false,
     };
     constructor(props: TopBarProps) {
         super(props);
@@ -117,12 +119,13 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
         ];
         const bottomBorderStyle = this.shouldDisplayBottomBar() ? styles.bottomBar : {};
         const fullWithClassNames = isFullWidthPage ? 'pr4' : '';
+        const logoUrl = this.props.isNightVersion ? '/images/protocol_logo_white.png' : '/images/top_bar_logo.png';
         return (
             <div style={{...styles.topBar, ...bottomBorderStyle, ...this.props.style}} className="pb1">
                 <div className={parentClassNames}>
                     <div className="col col-2 sm-pl2" style={{paddingTop: 15}}>
                         <Link to={`${WebsitePaths.Home}`} className="text-decoration-none">
-                            <img src="/images/top_bar_logo.png" height="30" />
+                            <img src={logoUrl} height="30" />
                         </Link>
                     </div>
                     <div className={`col col-${isFullWidthPage ? '8' : '9'} lg-hide md-hide`} />
@@ -134,16 +137,19 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                                     title="Developers"
                                     subMenuItems={developerSectionMenuItems}
                                     style={styles.menuItem}
+                                    isNightVersion={this.props.isNightVersion}
                                 />
                                 <TopBarMenuItem
                                     title="Wiki"
                                     path={`${WebsitePaths.Wiki}`}
                                     style={styles.menuItem}
+                                    isNightVersion={this.props.isNightVersion}
                                 />
                                 <TopBarMenuItem
                                     title="FAQ"
                                     path={`${WebsitePaths.FAQ}`}
                                     style={styles.menuItem}
+                                    isNightVersion={this.props.isNightVersion}
                                 />
                                 <TopBarMenuItem
                                     title="Portal DApp"
@@ -151,6 +157,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                                     isPrimary={true}
                                     style={styles.menuItem}
                                     className={`${isFullWidthPage && 'md-hide'}`}
+                                    isNightVersion={this.props.isNightVersion}
                                 />
                             </div>
                         </div>
