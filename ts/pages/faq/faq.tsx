@@ -9,6 +9,7 @@ import {Footer} from 'ts/components/footer';
 import {TopBar} from 'ts/components/top_bar';
 import {Question} from 'ts/pages/faq/question';
 import {configs} from 'ts/utils/configs';
+import {constants} from 'ts/utils/constants';
 
 export interface FAQProps {
     source: string;
@@ -412,7 +413,7 @@ const sections: FAQSection[] = [
                 prompt: 'How can I get involved?',
                 answer: (
                     <div>
-                        Join our <a href="https://slack.0xproject.com/" target="_blank">Slack</a>!
+                        Join our <a href={constants.SLACK_URL} target="_blank">Slack</a>!
                         As an open source project, 0x will rely on a worldwide community of passionate
                         developers to contribute proposals, ideas and code.
                     </div>
@@ -463,7 +464,7 @@ export class FAQ extends React.Component<FAQProps, FAQState> {
                         {this.renderSections()}
                     </div>
                 </div>
-                <Footer />
+                <Footer location={this.props.location} />
             </div>
         );
     }

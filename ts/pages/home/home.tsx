@@ -77,7 +77,7 @@ const styles: Styles = {
 export class Home extends React.Component<HomeProps, HomeState> {
     public render() {
         return (
-            <div id="home" style={{color: colors.grey800}}>
+            <div id="home relative" style={{color: colors.grey800}}>
                 <DocumentTitle title="0x Protocol"/>
                 <TopBar
                     blockchainIsLoaded={false}
@@ -135,7 +135,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
                                     </a>
                                     <a
                                         target="_blank"
-                                        href="https://blog.0xproject.com/latest"
+                                        href={constants.BLOG_URL}
                                     >
                                         <FlatButton
                                             label="Blog"
@@ -237,7 +237,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
                         </div>
                     </div>
                 </div>
-                <Footer />
+                <Footer location={this.props.location} />
             </div>
         );
     }

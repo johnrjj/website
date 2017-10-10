@@ -19,6 +19,7 @@ export const constants = {
     BIGNUMBERJS_GITHUB_URL: 'http://mikemcl.github.io/bignumber.js',
     BITLY_ACCESS_TOKEN: 'ffc4c1a31e5143848fb7c523b39f91b9b213d208',
     BITLY_ENDPOINT: 'https://api-ssl.bitly.com',
+    BLOG_URL: 'https://blog.0xproject.com/latest',
     CUSTOM_BLUE: '#60a4f4',
     DEFAULT_DERIVATION_PATH: `44'/60'/0'`,
     ETHER_FAUCET_ENDPOINT: 'https://faucet.0xproject.com',
@@ -42,11 +43,8 @@ export const constants = {
     PUBLIC_NODE_URLS_BY_NETWORK_ID: {
         [1]: [
             `https://mainnet.infura.io/${INFURA_API_KEY}`,
-            'https://mainnet.0xproject.com',
-            'https://api.myetherapi.com/eth',
         ],
         [42]: [
-            'https://kovan.0xproject.com',
             `https://kovan.infura.io/${INFURA_API_KEY}`,
         ],
     } as PublicNodeUrlsByNetworkId,
@@ -64,6 +62,8 @@ export const constants = {
     DOCS_SCROLL_DURATION_MS: 0,
     DOCS_CONTAINER_ID: 'documentation',
     HOME_SCROLL_DURATION_MS: 500,
+    REDDIT_URL: 'https://reddit.com/r/0xproject',
+    SLACK_URL: 'https://slack.0xproject.com/',
     SUCCESS_STATUS: 200,
     S3_0XJS_DOCUMENTATION_JSON_ROOT: 'https://s3.amazonaws.com/0xjs-docs-jsons',
     S3_SMART_CONTRACTS_DOCUMENTATION_JSON_ROOT: 'https://s3.amazonaws.com/smart-contracts-docs-json',
@@ -72,6 +72,7 @@ export const constants = {
     TESTNET_NAME: 'Kovan',
     TESTNET_NETWORK_ID: 42,
     TESTRPC_NETWORK_ID: 50,
+    TWITTER_URL: 'https://twitter.com/0xproject',
     ETH_DECIMAL_PLACES: 18,
     MINT_AMOUNT: new BigNumber('100000000000000000000'),
     WEB3_DOCS_URL: 'https://github.com/ethereum/wiki/wiki/JavaScript-API',

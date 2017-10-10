@@ -219,7 +219,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 <a
                     className="text-decoration-none"
                     target="_blank"
-                    href="https://blog.0xproject.com/latest"
+                    href={constants.BLOG_URL}
                 >
                     <MenuItem className="py2">Blog</MenuItem>
                 </a>
