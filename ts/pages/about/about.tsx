@@ -62,16 +62,6 @@ const teamRow1: ProfileInfo[] = [
 
 const teamRow2: ProfileInfo[] = [
     {
-        name: 'Ben Burns',
-        title: 'Designer',
-        description: `Product, motion, and graphic designer. Previously designer \
-                      at Airtable and Apple. Digital Design at University of Cincinnati.`,
-        image: '/images/team/ben.jpg',
-        linkedIn: 'https://www.linkedin.com/in/ben-burns-30170478/',
-        github: '',
-        medium: '',
-    },
-    {
         name: 'Leonid Logvinov',
         title: 'Engineer',
         description: `Full-stack blockchain engineer. Previously blockchain engineer \
@@ -79,6 +69,16 @@ const teamRow2: ProfileInfo[] = [
         image: '/images/team/leonid.png',
         linkedIn: 'https://www.linkedin.com/in/leonidlogvinov/',
         github: 'https://github.com/LogvinovLeon',
+        medium: '',
+    },
+    {
+        name: 'Ben Burns',
+        title: 'Designer',
+        description: `Product, motion, and graphic designer. Previously designer \
+                      at Airtable and Apple. Digital Design at University of Cincinnati.`,
+        image: '/images/team/ben.jpg',
+        linkedIn: 'https://www.linkedin.com/in/ben-burns-30170478/',
+        github: '',
         medium: '',
     },
     {
@@ -96,7 +96,7 @@ const teamRow2: ProfileInfo[] = [
         title: 'Senior Engineer',
         description: `Full-stack engineer. Previously senior software engineer at \
                       Twitter. Electrical and Computer Engineering at Duke.`,
-        image: '/images/team/brandon.jpg',
+        image: '/images/team/brandon.png',
         linkedIn: 'https://www.linkedin.com/company-beta/17942619/',
     },
 ];
