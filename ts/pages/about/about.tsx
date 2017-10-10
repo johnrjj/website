@@ -21,8 +21,8 @@ const teamRow1: ProfileInfo[] = [
     {
         name: 'Will Warren',
         title: 'Co-founder & CEO',
-        description: `Smart contract R&D. Previously applied physics research at Los Alamos National
-                      Laboratory. Mechanical engineering at UC San Diego. PhD dropout.`,
+        description: `Smart contract R&D. Previously applied physics at Los Alamos \
+                      Nat Lab. Mechanical engineering at UC San Diego. PhD dropout.`,
         image: '/images/team/will.jpg',
         linkedIn: 'https://www.linkedin.com/in/will-warren-92aab62b/',
         github: 'https://github.com/willwarren89',
@@ -31,7 +31,7 @@ const teamRow1: ProfileInfo[] = [
     {
         name: 'Amir Bandeali',
         title: 'Co-founder & CTO',
-        description: `Smart contract R&D. Former fixed income trader at DRW.
+        description: `Smart contract R&D. Previously fixed income trader at DRW. \
                       Finance at University of Illinois, Urbana-Champaign.`,
         image: '/images/team/amir.jpeg',
         linkedIn: 'https://www.linkedin.com/in/abandeali1/',
@@ -41,8 +41,8 @@ const teamRow1: ProfileInfo[] = [
     {
         name: 'Fabio Berger',
         title: 'Senior Engineer',
-        description: `Blockchain engineer with extensive full-stack and DevOps experience. Previously
-                      software engineer at Airtable and founder of WealthLift. Computer science at Duke.`,
+        description: `Full-stack blockchain engineer. Previously software engineer \
+                      at Airtable and founder of WealthLift. Computer science at Duke.`,
         image: '/images/team/fabio.jpg',
         linkedIn: 'https://www.linkedin.com/in/fabio-berger-03ab261a/',
         github: 'https://github.com/fabioberger',
@@ -51,8 +51,8 @@ const teamRow1: ProfileInfo[] = [
     {
         name: 'Alex Xu',
         title: 'Director of Operations',
-        description: `End-to-end business operations & strategy. Previously digital marketing consultant at
-                      Google and vendor management at Amazon. Economics at UC San Diego.`,
+        description: `Strategy and operations. Previously digital marketing at Google \
+                      and vendor management at Amazon. Economics at UC San Diego.`,
         image: '/images/team/alex.jpg',
         linkedIn: 'https://www.linkedin.com/in/alex-xu/',
         github: '',
@@ -62,31 +62,30 @@ const teamRow1: ProfileInfo[] = [
 
 const teamRow2: ProfileInfo[] = [
     {
-        name: 'Ben Burns',
-        title: 'Designer',
-        description: `Product, motion, and graphic designer. Previously designer at Airtable and Apple.
-                      Digital Design at University of Cincinnati.`,
-        image: '/images/team/ben.jpg',
-        linkedIn: 'https://www.linkedin.com/in/ben-burns-30170478/',
-        github: '',
-        medium: '',
-    },
-    {
         name: 'Leonid Logvinov',
         title: 'Engineer',
-        description: `Full-stack & blockchain engineer. Previously blockchain engineer at Neufund,
-                      software engineer intern at Quora and competitive programmer. Computer science
-                      at University of Warsaw.`,
+        description: `Full-stack blockchain engineer. Previously blockchain engineer \
+                      at Neufund. Computer science at University of Warsaw.`,
         image: '/images/team/leonid.png',
         linkedIn: 'https://www.linkedin.com/in/leonidlogvinov/',
         github: 'https://github.com/LogvinovLeon',
         medium: '',
     },
     {
+        name: 'Ben Burns',
+        title: 'Designer',
+        description: `Product, motion, and graphic designer. Previously designer \
+                      at Airtable and Apple. Digital Design at University of Cincinnati.`,
+        image: '/images/team/ben.jpg',
+        linkedIn: 'https://www.linkedin.com/in/ben-burns-30170478/',
+        github: '',
+        medium: '',
+    },
+    {
         name: 'Philippe Castonguay',
         title: 'Dev Relations Manager',
-        description: `Previously Computational neuroscience research at Janelia and Master
-                      degree in Statistics at Western University [Dropout].`,
+        description: `Developer relations. Previously computational neuroscience \
+                      research at Janelia. Statistics at Western University. MA Dropout.`,
         image: '/images/team/philippe.png',
         linkedIn: '',
         github: 'https://github.com/PhABC',
@@ -95,10 +94,9 @@ const teamRow2: ProfileInfo[] = [
     {
         name: 'Brandon Millman',
         title: 'Senior Engineer',
-        description: `Senior full-stack engineer focused on backend services.
-                      Previously senior software engineer at Twitter. Electrical
-                      and Computer Engineering at Duke.`,
-        image: '/images/team/brandon.jpg',
+        description: `Full-stack engineer. Previously senior software engineer at \
+                      Twitter. Electrical and Computer Engineering at Duke.`,
+        image: '/images/team/brandon.png',
         linkedIn: 'https://www.linkedin.com/company-beta/17942619/',
     },
 ];
@@ -106,7 +104,7 @@ const teamRow2: ProfileInfo[] = [
 const advisors: ProfileInfo[] = [
     {
         name: 'Fred Ehrsam',
-        description: 'Co-founder of Coinbase. Previously FX trader at Goldman Sachs. Computer Science at Duke.',
+        description: 'Co-founder of Coinbase. Previously FX trader at Goldman Sachs.',
         image: '/images/advisors/fred.jpg',
         linkedIn: 'https://www.linkedin.com/in/fredehrsam/',
         medium: 'https://medium.com/@FEhrsam',
@@ -115,14 +113,13 @@ const advisors: ProfileInfo[] = [
     {
         name: 'Olaf Carlson-Wee',
         image: '/images/advisors/olaf.png',
-        description: 'Founder of Polychain Capital. First employee at Coinbase. Angel investor.',
+        description: 'Founder of Polychain Capital. First hire at Coinbase. Angel investor.',
         linkedIn: 'https://www.linkedin.com/in/olafcw/',
         angellist: 'https://angel.co/olafcw',
     },
     {
         name: 'Joey Krug',
-        description: `Co-CIO at Pantera Capital. Founder of Augur.
-                      Thiel Fellowship 20 Under 20 Fellow.`,
+        description: `Co-CIO at Pantera Capital. Founder of Augur. Thiel 20 Under 20 Fellow.`,
         image: '/images/advisors/joey.jpg',
         linkedIn: 'https://www.linkedin.com/in/joeykrug/',
         github: 'https://github.com/joeykrug',
@@ -130,7 +127,7 @@ const advisors: ProfileInfo[] = [
     },
     {
         name: 'Linda Xie',
-        description: 'Product Manager at Coinbase. Previously Portfolio Risk at AIG.',
+        description: 'Co-founder of Scalar Capital. Previously PM at Coinbase.',
         image: '/images/advisors/linda.jpg',
         linkedIn: 'https://www.linkedin.com/in/lindaxie/',
         medium: 'https://medium.com/@linda.xie',
