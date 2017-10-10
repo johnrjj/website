@@ -43,11 +43,8 @@ export const constants = {
     PUBLIC_NODE_URLS_BY_NETWORK_ID: {
         [1]: [
             `https://mainnet.infura.io/${INFURA_API_KEY}`,
-            'https://mainnet.0xproject.com',
-            'https://api.myetherapi.com/eth',
         ],
         [42]: [
-            'https://kovan.0xproject.com',
             `https://kovan.infura.io/${INFURA_API_KEY}`,
         ],
     } as PublicNodeUrlsByNetworkId,
