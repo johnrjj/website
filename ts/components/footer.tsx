@@ -1,83 +1,258 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import {Styles} from 'ts/types';
+import {HashLink} from 'react-router-hash-link';
+import {Styles, WebsitePaths} from 'ts/types';
 import {
   Link,
 } from 'react-router-dom';
+import {
+    Link as ScrollLink,
+} from 'react-scroll';
 import {constants} from 'ts/utils/constants';
 
-export interface FooterProps {}
+interface MenuItemsBySection {
+    [sectionName: string]: FooterMenuItem[];
+}
+
+interface FooterMenuItem {
+    title: string;
+    path?: string;
+    isExternal?: boolean;
+    fileName?: string;
+    isHomepage?: boolean;
+}
+
+enum Sections {
+    Documentation = 'Documentation',
+    Community = 'Community',
+    Organization = 'Organization',
+}
+
+const ICON_DIMENSION = 16;
+const CUSTOM_DARK_GRAY = '#393939';
+const CUSTOM_LIGHT_GRAY = '#CACACA';
+const CUSTOM_LIGHTEST_GRAY = '#9E9E9E';
+const menuItemsBySection: MenuItemsBySection = {
+    Documentation: [
+        {
+            title: '0x.js',
+            path: WebsitePaths.ZeroExJs,
+        },
+        {
+            title: '0x Smart Contracts',
+            path: WebsitePaths.SmartContracts,
+        },
+        {
+            title: 'Whitepaper',
+            path: WebsitePaths.Whitepaper,
+            isExternal: true,
+        },
+        {
+            title: 'Wiki',
+            path: WebsitePaths.Wiki,
+        },
+        {
+            title: 'FAQ',
+            path: WebsitePaths.FAQ,
+        },
+    ],
+    Community: [
+        {
+            title: 'Slack',
+            isExternal: true,
+            path: constants.SLACK_URL,
+            fileName: 'slack.png',
+        },
+        {
+            title: 'Blog',
+            isExternal: true,
+            path: constants.BLOG_URL,
+            fileName: 'medium.png',
+        },
+        {
+            title: 'Twitter',
+            isExternal: true,
+            path: constants.TWITTER_URL,
+            fileName: 'twitter.png',
+        },
+        {
+            title: 'Reddit',
+            isExternal: true,
+            path: constants.REDDIT_URL,
+            fileName: 'reddit.png',
+        },
+    ],
+    Organization: [
+        {
+            title: 'Team',
+            isExternal: false,
+            isHomepage: true,
+        },
+        {
+            title: 'Advisors',
+            isExternal: false,
+            isHomepage: true,
+        },
+        {
+            title: 'Contact',
+            isExternal: true,
+            path: 'mailto:team@0xproject.com',
+        },
+    ],
+};
+const linkStyle = {
+    color: 'white',
+    cursor: 'pointer',
+};
+
+const titleToIcon: {[title: string]: string} = {
+    Slack: 'slack.png',
+    Blog: 'medium.png',
+    Twitter: 'twitter.png',
+    Reddit: 'reddit.png',
+};
+
+export interface FooterProps {
+    location: Location;
+}
 
 interface FooterState {}
-
-const styles: Styles = {
-    icon: {
-        color: 'white',
-        fontSize: 20,
-    },
-    text: {
-        fontSize: 12,
-    },
-    slackIcon: {
-        backgroundColor: 'white',
-        width: 17,
-        height: 17,
-        marginTop: 1,
-        marginLeft: 9,
-    },
-};
 
 export class Footer extends React.Component<FooterProps, FooterState> {
     public render() {
         return (
-            <div className="relative" style={{backgroundColor: '#272727'}}>
-                <div className="mx-auto max-width-4 py3 center clearfix" style={{color: 'white'}}>
-                    <div
-                        className="sm-col sm-col-4 pt1 sm-center md-left-align lg-left-align sm-pb2"
-                        style={{...styles.text}}
-                    >
-                        Copyright © ZeroEx, Intl.
-                    </div>
-                    <div className="sm-col sm-col-4 clearfix sm-pb2">
-                        <div className="mx-auto" style={{width: 145}}>
-                            <div className="col col-3 pt1">
-                                <a href="https://github.com/0xProject" target="_blank">
-                                    <i className="zmdi zmdi-github-box" style={{...styles.icon}} />
-                                </a>
+            <div className="relative pb4 pt2" style={{backgroundColor: CUSTOM_DARK_GRAY}}>
+                <div className="mx-auto max-width-4 py4 clearfix" style={{color: 'white'}}>
+                    <div className="col lg-col-4 md-col-4 col-12 left">
+                        <div className="center sm-mx-auto" style={{width: 148}}>
+                            <div>
+                                <img src="/images/protocol_logo_white.png" height="30" />
                             </div>
-                            <div className="col col-3 pt1">
-                                <a href="https://twitter.com/0xproject" target="_blank">
-                                    <i className="zmdi zmdi-twitter-box" style={{...styles.icon}} />
-                                </a>
-                            </div>
-                            <div className="col col-3 pt1">
-                                <a href={constants.LINKEDIN_0X_URL} target="_blank">
-                                    <i className="zmdi zmdi-linkedin-box" style={{...styles.icon}} />
-                                </a>
-                            </div>
-                            <div className="col col-3 pt1">
-                                <a href="https://slack.0xproject.com/" target="_blank">
-                                    <div className="rounded" style={{...styles.slackIcon}}>
-                                        <img src="/images/slack_icon.png" style={{width: 13}} />
-                                    </div>
-                                </a>
+                            <div className="pt2" style={{fontSize: 11, color: CUSTOM_LIGHTEST_GRAY}}>
+                                Copyright © ZeroEx, Intl.
                             </div>
                         </div>
                     </div>
-                    <div
-                        className="sm-col sm-col-4 pt1 sm-center md-right-align lg-right-align"
-                        style={{...styles.text}}
-                    >
-                        <a
-                            href="mailto:team@0xproject.com"
-                            className="text-decoration-none"
-                            style={{color: 'white'}}
-                        >
-                            team@0xproject.com
-                        </a>
+                    <div className="col lg-col-8 md-col-8 col-12 lg-pl4 md-pl4">
+                        <div className="col lg-col-4 md-col-4 col-12">
+                            <div className="lg-right md-right sm-center">
+                                {this.renderHeader(Sections.Documentation)}
+                                {_.map(menuItemsBySection[Sections.Documentation], this.renderMenuItem.bind(this))}
+                            </div>
+                        </div>
+                        <div className="col lg-col-4 md-col-4 col-12 lg-pr2 md-pr2">
+                            <div className="lg-right md-right sm-center">
+                                {this.renderHeader(Sections.Community)}
+                                {_.map(menuItemsBySection[Sections.Community], this.renderMenuItem.bind(this))}
+                            </div>
+                        </div>
+                        <div className="col lg-col-4 md-col-4 col-12">
+                            <div className="lg-right md-right sm-center">
+                                {this.renderHeader(Sections.Organization)}
+                                {_.map(menuItemsBySection[Sections.Organization], this.renderMenuItem.bind(this))}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         );
+    }
+    private renderIcon(fileName: string) {
+        return (
+            <div style={{height: ICON_DIMENSION, width: ICON_DIMENSION}}>
+                <img src={`/images/social/${fileName}`} style={{width: ICON_DIMENSION}} />
+            </div>
+        );
+    }
+    private renderMenuItem(item: FooterMenuItem) {
+        const iconIfExists = titleToIcon[item.title];
+        return (
+            <div
+                key={item.title}
+                className="sm-center"
+                style={{fontSize: 13, paddingTop: 25}}
+            >
+                {item.isExternal ?
+                    <a
+                        className="text-decoration-none"
+                        style={linkStyle}
+                        target="_blank"
+                        href={item.path}
+                    >
+                        {!_.isUndefined(iconIfExists) ?
+                            <div className="mx-auto" style={{width: 65}}>
+                                <div className="flex">
+                                    <div className="pr1">
+                                        {this.renderIcon(iconIfExists)}
+                                    </div>
+                                    <div>{item.title}</div>
+                                </div>
+                            </div> :
+                            item.title
+                        }
+                    </a> :
+                    item.isHomepage ?
+                        this.renderHomepageLink(item.title) :
+                        <Link
+                            to={item.path}
+                            style={linkStyle}
+                            className="text-decoration-none"
+                        >
+                            <div>
+                                {!_.isUndefined(iconIfExists) &&
+                                    <div className="pr1">
+                                        {this.renderIcon(iconIfExists)}
+                                    </div>
+                                }
+                                {item.title}
+                            </div>
+                        </Link>
+                }
+            </div>
+        );
+    }
+    private renderHeader(title: string) {
+        const headerStyle = {
+            textTransform: 'uppercase',
+            color: CUSTOM_LIGHT_GRAY,
+            letterSpacing: 2,
+            fontFamily: 'Roboto Mono',
+            fontSize: 13,
+        };
+        return (
+            <div
+                className="lg-pb2 md-pb2 sm-pt4"
+                style={headerStyle}
+            >
+                {title}
+            </div>
+        );
+    }
+    private renderHomepageLink(title: string) {
+        const hash = title.toLowerCase();
+        if (this.props.location.pathname === WebsitePaths.Home) {
+            return (
+                <ScrollLink
+                    style={linkStyle}
+                    to={hash}
+                    smooth={true}
+                    offset={0}
+                    duration={constants.HOME_SCROLL_DURATION_MS}
+                    containerId="home"
+                >
+                    {title}
+                </ScrollLink>
+            );
+        } else {
+            return (
+                <HashLink
+                    to={`/#${hash}`}
+                    className="text-decoration-none"
+                    style={linkStyle}
+                >
+                    {title}
+                </HashLink>
+            );
+        }
     }
 }
