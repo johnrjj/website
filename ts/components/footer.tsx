@@ -122,7 +122,7 @@ export class Footer extends React.Component<FooterProps, FooterState> {
     public render() {
         return (
             <div className="relative pb4 pt2" style={{backgroundColor: CUSTOM_DARK_GRAY}}>
-                <div className="mx-auto max-width-4 py4 clearfix" style={{color: 'white'}}>
+                <div className="mx-auto max-width-4 md-px2 lg-px0 py4 clearfix" style={{color: 'white'}}>
                     <div className="col lg-col-4 md-col-4 col-12 left">
                         <div className="center sm-mx-auto" style={{width: 148}}>
                             <div>
@@ -180,7 +180,7 @@ export class Footer extends React.Component<FooterProps, FooterState> {
                         href={item.path}
                     >
                         {!_.isUndefined(iconIfExists) ?
-                            <div className="mx-auto" style={{width: 65}}>
+                            <div className="sm-mx-auto" style={{width: 65}}>
                                 <div className="flex">
                                     <div className="pr1">
                                         {this.renderIcon(iconIfExists)}
