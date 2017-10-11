@@ -170,6 +170,9 @@ export const constants = {
         'MethodOpts',
         'ValidateOrderFillableOpts',
         'OrderTransactionOpts',
+        'ContractEventArg',
+        'LogEvent',
+        'LogEntry',
     ],
     menuSmartContracts: {
         introduction: [
