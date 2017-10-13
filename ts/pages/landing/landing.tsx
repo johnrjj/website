@@ -22,6 +22,14 @@ interface AssetType {
     imageUrl: string;
     style?: React.CSSProperties;
 }
+interface UseCase {
+    project: string;
+    projectImageUrl: string;
+    type: string;
+    description: string;
+    classNames: string;
+    style?: React.CSSProperties;
+}
 
 const THROTTLE_TIMEOUT = 100;
 const CUSTOM_HERO_BACKGROUND_COLOR = '#404040';
@@ -51,6 +59,56 @@ const boxContents: BoxContent[] = [
                       Relayers built on 0x can optionally charge users fees (in ZRX).',
         imageUrl: '/images/landing/open_source.png',
         classNames: 'right',
+    },
+];
+
+const useCases: UseCase[] = [
+    {
+        project: 'Aragon',
+        projectImageUrl: '/images/landing/aragon.png',
+        type: 'Decentralized governance',
+        description: 'Decentralized organizations use tokens to represent ownership and \
+                      guide their governance logic. 0x allows decentralized organizations \
+                      to seamlessly and safely trade ownership for startup capital.',
+        classNames: 'lg-pr2 md-pr2',
+    },
+    {
+        project: 'Augur',
+        projectImageUrl: '/images/landing/augur.png',
+        type: 'Prediction markets',
+        description: 'Decentralized prediction market platforms generate sets of tokens that \
+                      represent a financial stake in the outcomes of real-world events. 0x allows \
+                      these tokens to be instantly tradable.',
+        classNames: 'lg-px2 md-px2',
+    },
+    {
+        project: 'Maker',
+        projectImageUrl: '/images/landing/maker.png',
+        type: 'Stable tokens',
+        description: 'Novel economic constructs such as stable coins require efficient, liquid \
+                      markets to succeed. 0x will facilitate the underlying economic mechanisms \
+                      that allow the dai token to remain stable.',
+        classNames: 'lg-pl2 md-pl2',
+    },
+    {
+        project: 'Dharma',
+        projectImageUrl: '/images/landing/dharma.png',
+        type: 'Decentralized loans',
+        description: 'Dharma requires liquid markets where investors can buy and re-sell loans. \
+                      0x enables an ecosystem of lenders to self-organize and efficiently determine \
+                      market prices for all outstanding loans.',
+        classNames: 'lg-pt3 md-pt3 lg-pr2 md-pr2 lg-col-6 md-col-6',
+        style: {width: 291, float: 'right'},
+    },
+    {
+        project: 'Melonport',
+        projectImageUrl: '/images/landing/melonport.png',
+        type: 'Fund management',
+        description: 'Decentralized fund management limits fund managers to investing in pre-agreed \
+                      upon asset classes. Embedding 0x into Melonport smart contracts enables them to \
+                      enforce these security constraints.',
+        classNames: 'lg-pt3 md-pt3 lg-pl2 md-pl2 lg-col-6 md-col-6',
+        style: {width: 291},
     },
 ];
 
@@ -93,6 +151,8 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                 {this.renderProtocolSection()}
                 {this.renderInfoBoxes()}
                 {this.renderBuildingBlocksSection()}
+                {this.renderUseCases()}
+                {this.renderCallToAction()}
                 <Footer location={this.props.location} />
             </div>
         );
@@ -139,7 +199,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                                 </div>
                                 <div
                                     className="pt2 h5 sm-mx-auto"
-                                    style={{maxWidth: 446, fontFamily: 'Roboto Mono', lineHeight: 1.7}}
+                                    style={{maxWidth: 446, fontFamily: 'Roboto Mono', lineHeight: 1.7, fontWeight: 300}}
                                 >
                                     0x is an open, permissionless protocol allowing for ERC20 tokens to
                                     be traded on the Ethereum blockchain.
@@ -260,7 +320,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                                 Off-chain order relay
                             </div>
                             <div>
-                                on-chain settlement
+                                On-chain settlement
                             </div>
                         </div>
                         <div
@@ -332,19 +392,20 @@ export class Landing extends React.Component<LandingProps, LandingState> {
             lineHeight: isSmallScreen ? 1.5 : 2,
             fontWeight: 300,
             fontSize: 15,
+            maxWidth: isSmallScreen ? 375 : 'none',
         };
         const callToActionStyle: React.CSSProperties = {
             fontFamily: 'Roboto Mono',
             fontSize: 15,
             fontWeight: 300,
-            maxWidth: isSmallScreen ? 322 : 441,
+            maxWidth: isSmallScreen ? 375 : 441,
         };
         return (
             <div
-                className="clearfix lg-py4 md-py4 sm-pb4"
+                className="clearfix lg-pt4 md-pt4"
                 style={{backgroundColor: CUSTOM_HERO_BACKGROUND_COLOR}}
             >
-                <div className="mx-auto max-width-4 lg-py4 md-py4 sm-pb4 lg-mb4 md-mb4 sm-mb2 clearfix">
+                <div className="mx-auto max-width-4 lg-pt4 md-pt4 lg-mb4 md-mb4 sm-mb2 clearfix">
                     {isSmallScreen &&
                         this.renderBlockChipImage()
                     }
@@ -479,7 +540,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
             height: 354,
             backgroundColor: '#F9F9F9',
             borderRadius: 5,
-            padding: '64px 38px 38px 38px',
+            padding: '58px 24px 24px',
         };
         const boxes = _.map(boxContents, (boxContent: BoxContent) => {
             return (
@@ -500,7 +561,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                         >
                             {boxContent.title}
                         </div>
-                        <div className="pt2" style={{fontFamily: 'Roboto Mono'}}>
+                        <div className="pt2" style={{fontFamily: 'Roboto Mono', fontSize: 14}}>
                             {boxContent.description}
                         </div>
                     </div>
@@ -510,14 +571,111 @@ export class Landing extends React.Component<LandingProps, LandingState> {
         });
         return (
             <div
-                className="clearfix py4"
+                className="clearfix"
                 style={{backgroundColor: CUSTOM_HERO_BACKGROUND_COLOR}}
             >
                 <div
                     className="mx-auto py4 sm-mt2 clearfix"
-                    style={{maxWidth: '65em'}}
+                    style={{maxWidth: '60em'}}
                 >
                     {boxes}
+                </div>
+            </div>
+        );
+    }
+    private renderUseCases() {
+        const isSmallScreen = this.state.screenWidth === ScreenWidths.SM;
+        const isMediumScreen = this.state.screenWidth === ScreenWidths.MD;
+        const cases = _.map(useCases, (useCase: UseCase) => {
+            const style = _.isUndefined(useCase.style) || isSmallScreen ? {} : useCase.style;
+            return (
+                <div
+                    className={`col lg-col-4 md-col-4 col-12 sm-px3 sm-pb3 ${!_.isUndefined(useCase.classNames) && useCase.classNames}`}
+                >
+                    <div
+                        className="relative p2 pb2 sm-mx-auto"
+                        style={{color: '#A2A2A2', border: '1px solid #565656', borderRadius: 4, height: 170, maxWidth: isSmallScreen ? 375 : 'none', ...style}}
+                    >
+                        <div
+                            className="absolute"
+                            style={{top: -26, left: 12}}
+                        >
+                            <img src={useCase.projectImageUrl} height="40" />
+                        </div>
+                        <div className="flex pt1">
+                            <div style={{color: 'white', fontSize: 18, fontWeight: 400}}>
+                                {useCase.project}
+                            </div>
+                            <div
+                                className="pl2"
+                                style={{lineHeight: 2, fontSize: isMediumScreen ? 10 : 12.5, textTransform: 'uppercase', fontFamily: 'Roboto Mono'}}
+                            >
+                                {useCase.type}
+                            </div>
+                        </div>
+                        <div
+                            className="pt2"
+                            style={{lineHeight: 1.5, fontSize: 14, overflow: 'hidden', height: 104}}
+                        >
+                            {useCase.description}
+                        </div>
+                    </div>
+                </div>
+            );
+        });
+        return (
+            <div
+                className="clearfix pb4 sm-pt4"
+                style={{backgroundColor: CUSTOM_HERO_BACKGROUND_COLOR}}
+            >
+                <div
+                    className="mx-auto max-width-4 pb4 pt3 mt1 sm-mt2 clearfix"
+                >
+                    {cases}
+                </div>
+            </div>
+        );
+    }
+    private renderCallToAction() {
+        const isSmallScreen = this.state.screenWidth === ScreenWidths.SM;
+        const buttonLabelStyle: React.CSSProperties = {
+            textTransform: 'none',
+            fontSize: 15,
+            fontWeight: 400,
+        };
+        const lightButtonStyle: React.CSSProperties = {
+            borderRadius: 6,
+            border: '1px solid #a0a0a0',
+            lineHeight: '33px',
+            height: 49,
+        };
+        return (
+            <div
+                className="clearfix pb4"
+                style={{backgroundColor: CUSTOM_HERO_BACKGROUND_COLOR}}
+            >
+                <div
+                    className="mx-auto max-width-4 pb4 mb3 clearfix"
+                >
+                    <div
+                        className="col lg-col-8 md-col-8 col-12 lg-pr4 md-pr4 lg-right-align md-right-align sm-center sm-px3 h4"
+                        style={{fontFamily: 'Roboto Mono', color: 'white', lineHeight: isSmallScreen ? 1.7 : 3}}
+                    >
+                        Get started building the decentralized future
+                    </div>
+                    <div className="col lg-col-4 md-col-4 col-12 sm-center sm-pt2">
+                        <Link to={WebsitePaths.ZeroExJs} className="text-decoration-none">
+                            <RaisedButton
+                                style={{borderRadius: 6, minWidth: 150}}
+                                buttonStyle={lightButtonStyle}
+                                labelColor="white"
+                                backgroundColor={CUSTOM_HERO_BACKGROUND_COLOR}
+                                labelStyle={buttonLabelStyle}
+                                label="Build on 0x"
+                                onClick={_.noop}
+                            />
+                        </Link>
+                    </div>
                 </div>
             </div>
         );
