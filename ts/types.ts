@@ -413,6 +413,7 @@ export interface BaseMethod {
 export interface TypescriptMethod extends BaseMethod {
     source?: Source;
     isStatic?: boolean;
+    typeParameter?: TypeParameter;
 }
 
 export interface SolidityMethod extends BaseMethod {
@@ -429,6 +430,11 @@ export interface Parameter {
     name: string;
     comment: string;
     isOptional: boolean;
+    type: Type;
+}
+
+export interface TypeParameter {
+    name: string;
     type: Type;
 }
 
