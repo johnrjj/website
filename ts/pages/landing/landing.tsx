@@ -320,7 +320,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                 className="clearfix lg-py4 md-py4 sm-pb4"
                 style={{backgroundColor: CUSTOM_HERO_BACKGROUND_COLOR}}
             >
-                <div className="mx-auto max-width-4 lg-py4 md-py4 sm-pb4 lg-my4 md-my4 sm-mb2 clearfix">
+                <div className="mx-auto max-width-4 lg-py4 md-py4 sm-pb4 lg-mb4 md-mb4 sm-mb2 clearfix">
                     {isSmallScreen &&
                         this.renderBlockChipImage()
                     }
