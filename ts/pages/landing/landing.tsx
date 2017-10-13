@@ -826,7 +826,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                             <RaisedButton
                                 style={{borderRadius: 6, minWidth: 150}}
                                 buttonStyle={lightButtonStyle}
-                                labelColor="white"
+                                labelColor={colors.white}
                                 backgroundColor={CUSTOM_HERO_BACKGROUND_COLOR}
                                 labelStyle={buttonLabelStyle}
                                 label="Build on 0x"
