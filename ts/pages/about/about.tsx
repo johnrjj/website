@@ -182,8 +182,10 @@ export class About extends React.Component<AboutProps, AboutState> {
                             className="pt3"
                             style={{fontSize: 17, color: CUSTOM_GRAY, lineHeight: 1.5}}
                         >
-                            A main office in SF and a team working internationally,
-                            0x is devoted to making the world’s value more liquid.
+                            Our team is a diverse and globally distributed group with backgrounds
+                            in engineering, research, business and design. We are passionate about
+                            decentralized technology and its potential to act as an equalizing force
+                            in the world.
                         </div>
                     </div>
                     <div className="pt3 md-px4 lg-px0">
@@ -216,14 +218,15 @@ export class About extends React.Component<AboutProps, AboutState> {
                             className="pb4 mb4"
                             style={{fontSize: 16, color: CUSTOM_GRAY, lineHeight: 1.5, letterSpacing: '0.5px'}}
                         >
-                            We’re actively looking for talented people from all around the world  to{' '}
+                            We are seeking outstanding candidates to{' '}
                             <a
                                 href={constants.ANGELLIST_URL}
                                 target="_blank"
                                 style={{color: 'black'}}
                             >
                                 join our team
-                            </a>.
+                            </a>
+                            . We value passion, diversity and unique perspectives.
                         </div>
                     </div>
                 </div>
