@@ -22,9 +22,22 @@ interface AssetType {
     imageUrl: string;
     style?: React.CSSProperties;
 }
+interface UseCase {
+    project: string;
+    projectImageUrl: string;
+    type: string;
+    description: string;
+    classNames: string;
+    style?: React.CSSProperties;
+}
+interface Project {
+    logoFileName: string;
+    projectUrl: string;
+}
 
 const THROTTLE_TIMEOUT = 100;
 const CUSTOM_HERO_BACKGROUND_COLOR = '#404040';
+const CUSTOM_PROJECTS_BACKGROUND_COLOR = '#343333';
 const CUSTOM_WHITE_BACKGROUND = 'rgb(245, 245, 245)';
 const CUSTOM_WHITE_TEXT = '#E4E4E4';
 const CUSTOM_GRAY_TEXT = '#919191';
@@ -32,25 +45,143 @@ const CUSTOM_GRAY_TEXT = '#919191';
 const boxContents: BoxContent[] = [
     {
         title: 'Trustless exchange',
-        description: 'The distributed network has no centralized point of failure, \
-                      allowing the peer-to-peer trading of tokens over the ethereum \
-                      blockchain.',
+        description: 'Built on Ethereum\'s distributed network with no centralized \
+                      point of failure and no down time, each trade is settled atomically \
+                      and without counterparty risk.',
         imageUrl: '/images/landing/distributed_network.png',
         classNames: '',
     },
     {
         title: 'Shared liquidity',
-        description: 'All relayers using 0x can share a liquidity pool, creating \
-                      network effects of increased liquidity as more relayers are built.',
+        description: 'By sharing a standard API, relayers can easily aggregate liquidity pools, \
+                      creating network effects around liquidity that compound as more relayers come online.',
         imageUrl: '/images/landing/liquidity.png',
         classNames: 'mx-auto',
     },
     {
         title: 'Open source',
-        description: '0x is an open source protocol which does not require fees to use. \
-                      Relayers built on 0x can optionally charge users fees (in ZRX).',
+        description: '0x is open source, permissionless and free to use. Trade directly with a known \
+                      counterparty for free or pay a relayer some ZRX tokens to access their liquidity \
+                      pool.',
         imageUrl: '/images/landing/open_source.png',
         classNames: 'right',
+    },
+];
+
+const useCases: UseCase[] = [
+    {
+        project: 'Aragon',
+        projectImageUrl: '/images/landing/aragon.png',
+        type: 'Decentralized governance',
+        description: 'Decentralized organizations use tokens to represent ownership and \
+                      guide their governance logic. 0x allows decentralized organizations \
+                      to seamlessly and safely trade ownership for startup capital.',
+        classNames: 'lg-pr2 md-pr2',
+    },
+    {
+        project: 'Augur',
+        projectImageUrl: '/images/landing/augur.png',
+        type: 'Prediction markets',
+        description: 'Decentralized prediction market platforms generate sets of tokens that \
+                      represent a financial stake in the outcomes of real-world events. 0x allows \
+                      these tokens to be instantly tradable.',
+        classNames: 'lg-px2 md-px2',
+    },
+    {
+        project: 'Maker',
+        projectImageUrl: '/images/landing/maker.png',
+        type: 'Stable tokens',
+        description: 'Novel economic constructs such as stable coins require efficient, liquid \
+                      markets to succeed. 0x will facilitate the underlying economic mechanisms \
+                      that allow the dai token to remain stable.',
+        classNames: 'lg-pl2 md-pl2',
+    },
+    {
+        project: 'Dharma',
+        projectImageUrl: '/images/landing/dharma.png',
+        type: 'Decentralized loans',
+        description: 'Dharma requires liquid markets where investors can buy and re-sell loans. \
+                      0x enables an ecosystem of lenders to self-organize and efficiently determine \
+                      market prices for all outstanding loans.',
+        classNames: 'lg-pt3 md-pt3 lg-pr2 md-pr2 lg-col-6 md-col-6',
+        style: {width: 291, float: 'right'},
+    },
+    {
+        project: 'Melonport',
+        projectImageUrl: '/images/landing/melonport.png',
+        type: 'Fund management',
+        description: 'Decentralized fund management limits fund managers to investing in pre-agreed \
+                      upon asset classes. Embedding 0x into Melonport smart contracts enables them to \
+                      enforce these security constraints.',
+        classNames: 'lg-pt3 md-pt3 lg-pl2 md-pl2 lg-col-6 md-col-6',
+        style: {width: 291},
+    },
+];
+
+const projects: Project[] = [
+    {
+        logoFileName: 'ethfinex-top.png',
+        projectUrl: constants.ETHFINEX_URL,
+    },
+    {
+        logoFileName: 'radar_relay_top.png',
+        projectUrl: constants.RADAR_RELAY_URL,
+    },
+    {
+        logoFileName: 'paradex_top.png',
+        projectUrl: constants.PARADEX_URL,
+    },
+    {
+        logoFileName: 'dydx.png',
+        projectUrl: constants.DYDX_URL,
+    },
+    {
+        logoFileName: 'melonport.png',
+        projectUrl: constants.MELONPORT_URL,
+    },
+    {
+        logoFileName: 'maker.png',
+        projectUrl: constants.MAKER_URL,
+    },
+    {
+        logoFileName: 'dharma.png',
+        projectUrl: constants.DHARMA_URL,
+    },
+    {
+        logoFileName: 'lendroid.png',
+        projectUrl: constants.LENDROID_URL,
+    },
+    {
+        logoFileName: 'district0x.png',
+        projectUrl: constants.DISTRICT_0X_URL,
+    },
+    {
+        logoFileName: 'aragon.png',
+        projectUrl: constants.ARAGON_URL,
+    },
+    {
+        logoFileName: 'blocknet.png',
+        projectUrl: constants.BLOCKNET_URL,
+    },
+    {
+        logoFileName: 'status.png',
+        projectUrl: constants.STATUS_URL,
+    },
+    {
+        logoFileName: 'augur.png',
+        projectUrl: constants.AUGUR_URL,
+    },
+    {
+        logoFileName: 'ethix.png',
+        projectUrl: constants.ETHIX_URL,
+    },
+    {
+        logoFileName: 'anx.png',
+        projectUrl: constants.OPEN_ANX_URL,
+    },
+    {
+        logoFileName: 'auctus.png',
+        projectUrl: constants.AUCTUS_URL,
     },
 ];
 
@@ -89,10 +220,13 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                     style={{backgroundColor: CUSTOM_HERO_BACKGROUND_COLOR}}
                 />
                 {this.renderHero()}
+                {this.renderProjects()}
                 {this.renderTokenizationSection()}
                 {this.renderProtocolSection()}
                 {this.renderInfoBoxes()}
                 {this.renderBuildingBlocksSection()}
+                {this.renderUseCases()}
+                {this.renderCallToAction()}
                 <Footer location={this.props.location} />
             </div>
         );
@@ -139,7 +273,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                                 </div>
                                 <div
                                     className="pt2 h5 sm-mx-auto"
-                                    style={{maxWidth: 446, fontFamily: 'Roboto Mono', lineHeight: 1.7}}
+                                    style={{maxWidth: 446, fontFamily: 'Roboto Mono', lineHeight: 1.7, fontWeight: 300}}
                                 >
                                     0x is an open, permissionless protocol allowing for ERC20 tokens to
                                     be traded on the Ethereum blockchain.
@@ -176,6 +310,70 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    private renderProjects() {
+        const isSmallScreen = this.state.screenWidth === ScreenWidths.SM;
+        const isMediumScreen = this.state.screenWidth === ScreenWidths.MD;
+        const projectList = _.map(projects, (project: Project, i: number) => {
+            const colWidth = isSmallScreen ? 3 : isMediumScreen ? 4 : 2 - (i % 2);
+            return (
+                <div
+                    key={`project-${project.logoFileName}`}
+                    className={`col col-${colWidth} center`}
+                >
+                    <div>
+                        <a
+                            href={project.projectUrl}
+                            target="_blank"
+                            className="text-decoration-none"
+                        >
+                            <img
+                                src={`/images/landing/project_logos/${project.logoFileName}`}
+                                height={isSmallScreen ? 60 : 92}
+                            />
+                        </a>
+                    </div>
+                </div>
+            );
+        });
+        const titleStyle: React.CSSProperties = {
+            fontFamily: 'Roboto Mono',
+            color: '#A4A4A4',
+            textTransform: 'uppercase',
+            fontWeight: 300,
+            letterSpacing: 3,
+        };
+        return (
+            <div
+                className="clearfix py4"
+                style={{backgroundColor: CUSTOM_PROJECTS_BACKGROUND_COLOR}}
+            >
+                <div className="mx-auto max-width-4 clearfix sm-px3">
+                    <div
+                        className="h4 pb3 md-pl3 sm-pl2"
+                        style={titleStyle}
+                    >
+                        Projects building on 0x
+                    </div>
+                    <div className="clearfix">
+                        {projectList}
+                    </div>
+                    <div
+                        className="pt3 mx-auto center"
+                        style={{color: CUSTOM_GRAY_TEXT, fontFamily: 'Roboto Mono', maxWidth: 300, fontSize: 14}}
+                    >
+                        view the{' '}
+                        <Link
+                            to={`${WebsitePaths.Wiki}#List-of-Projects-Using-0x-Protocol`}
+                            className="text-decoration-none underline"
+                            style={{color: CUSTOM_GRAY_TEXT}}
+                        >
+                            full list
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -260,7 +458,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                                 Off-chain order relay
                             </div>
                             <div>
-                                on-chain settlement
+                                On-chain settlement
                             </div>
                         </div>
                         <div
@@ -332,19 +530,20 @@ export class Landing extends React.Component<LandingProps, LandingState> {
             lineHeight: isSmallScreen ? 1.5 : 2,
             fontWeight: 300,
             fontSize: 15,
+            maxWidth: isSmallScreen ? 375 : 'none',
         };
         const callToActionStyle: React.CSSProperties = {
             fontFamily: 'Roboto Mono',
             fontSize: 15,
             fontWeight: 300,
-            maxWidth: isSmallScreen ? 322 : 441,
+            maxWidth: isSmallScreen ? 375 : 441,
         };
         return (
             <div
-                className="clearfix lg-py4 md-py4 sm-pb4"
+                className="clearfix lg-pt4 md-pt4"
                 style={{backgroundColor: CUSTOM_HERO_BACKGROUND_COLOR}}
             >
-                <div className="mx-auto max-width-4 lg-py4 md-py4 sm-pb4 lg-mb4 md-mb4 sm-mb2 clearfix">
+                <div className="mx-auto max-width-4 lg-pt4 md-pt4 lg-mb4 md-mb4 sm-mb2 clearfix">
                     {isSmallScreen &&
                         this.renderBlockChipImage()
                     }
@@ -476,10 +675,10 @@ export class Landing extends React.Component<LandingProps, LandingState> {
         const isSmallScreen = this.state.screenWidth === ScreenWidths.SM;
         const boxStyle: React.CSSProperties = {
             maxWidth: 252,
-            height: 354,
+            height: 386,
             backgroundColor: '#F9F9F9',
             borderRadius: 5,
-            padding: '64px 38px 38px 38px',
+            padding: '10px 24px 24px',
         };
         const boxes = _.map(boxContents, (boxContent: BoxContent) => {
             return (
@@ -491,16 +690,19 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                         className={`center sm-mx-auto ${!isSmallScreen && boxContent.classNames}`}
                         style={boxStyle}
                     >
-                        <div className="pb1">
-                            <img src={boxContent.imageUrl} style={{height: 145}} />
+                        <div>
+                            <img src={boxContent.imageUrl} style={{height: 210}} />
                         </div>
                         <div
-                            className="pt3 h3"
+                            className="h3"
                             style={{color: 'black', fontFamily: 'Roboto Mono'}}
                         >
                             {boxContent.title}
                         </div>
-                        <div className="pt2" style={{fontFamily: 'Roboto Mono'}}>
+                        <div
+                            className="pt2 pb2"
+                            style={{fontFamily: 'Roboto Mono', fontSize: 14}}
+                        >
                             {boxContent.description}
                         </div>
                     </div>
@@ -510,14 +712,128 @@ export class Landing extends React.Component<LandingProps, LandingState> {
         });
         return (
             <div
-                className="clearfix py4"
+                className="clearfix"
                 style={{backgroundColor: CUSTOM_HERO_BACKGROUND_COLOR}}
             >
                 <div
                     className="mx-auto py4 sm-mt2 clearfix"
-                    style={{maxWidth: '65em'}}
+                    style={{maxWidth: '60em'}}
                 >
                     {boxes}
+                </div>
+            </div>
+        );
+    }
+    private renderUseCases() {
+        const isSmallScreen = this.state.screenWidth === ScreenWidths.SM;
+        const isMediumScreen = this.state.screenWidth === ScreenWidths.MD;
+        const cases = _.map(useCases, (useCase: UseCase) => {
+            const style = _.isUndefined(useCase.style) || isSmallScreen ? {} : useCase.style;
+            const useCaseBoxStyle = {
+                color: '#A2A2A2',
+                border: '1px solid #565656',
+                borderRadius: 4,
+                height: 170,
+                maxWidth: isSmallScreen ? 375 : 'none',
+                ...style,
+            };
+            const typeStyle = {
+                lineHeight: 2,
+                fontSize: isMediumScreen ? 10 : 12.5,
+                textTransform: 'uppercase',
+                fontFamily: 'Roboto Mono',
+            };
+            return (
+                <div
+                    key={`useCase-${useCase.project}`}
+                    className={`col lg-col-4 md-col-4 col-12 sm-px3 sm-pb3 ${useCase.classNames}`}
+                >
+                    <div
+                        className="relative p2 pb2 sm-mx-auto"
+                        style={useCaseBoxStyle}
+                    >
+                        <div
+                            className="absolute"
+                            style={{top: -26, left: 12}}
+                        >
+                            <img src={useCase.projectImageUrl} height="40" />
+                        </div>
+                        <div className="flex pt1">
+                            <div style={{color: 'white', fontSize: 18, fontWeight: 400}}>
+                                {useCase.project}
+                            </div>
+                            <div
+                                className="pl2"
+                                style={typeStyle}
+                            >
+                                {useCase.type}
+                            </div>
+                        </div>
+                        <div
+                            className="pt2"
+                            style={{lineHeight: 1.5, fontSize: 14, overflow: 'hidden', height: 104}}
+                        >
+                            {useCase.description}
+                        </div>
+                    </div>
+                </div>
+            );
+        });
+        return (
+            <div
+                className="clearfix pb4 sm-pt4"
+                style={{backgroundColor: CUSTOM_HERO_BACKGROUND_COLOR}}
+            >
+                <div
+                    className="mx-auto max-width-4 pb4 pt3 mt1 sm-mt2 clearfix"
+                >
+                    {cases}
+                </div>
+            </div>
+        );
+    }
+    private renderCallToAction() {
+        const isSmallScreen = this.state.screenWidth === ScreenWidths.SM;
+        const buttonLabelStyle: React.CSSProperties = {
+            textTransform: 'none',
+            fontSize: 15,
+            fontWeight: 400,
+        };
+        const lightButtonStyle: React.CSSProperties = {
+            borderRadius: 6,
+            border: '1px solid #a0a0a0',
+            lineHeight: '33px',
+            height: 49,
+        };
+        const callToActionClassNames = 'col lg-col-8 md-col-8 col-12 lg-pr4 md-pr4 \
+                                        lg-right-align md-right-align sm-center sm-px3 h4';
+        return (
+            <div
+                className="clearfix pb4"
+                style={{backgroundColor: CUSTOM_HERO_BACKGROUND_COLOR}}
+            >
+                <div
+                    className="mx-auto max-width-4 pb4 mb3 clearfix"
+                >
+                    <div
+                        className={callToActionClassNames}
+                        style={{fontFamily: 'Roboto Mono', color: 'white', lineHeight: isSmallScreen ? 1.7 : 3}}
+                    >
+                        Get started building the decentralized future
+                    </div>
+                    <div className="col lg-col-4 md-col-4 col-12 sm-center sm-pt2">
+                        <Link to={WebsitePaths.ZeroExJs} className="text-decoration-none">
+                            <RaisedButton
+                                style={{borderRadius: 6, minWidth: 150}}
+                                buttonStyle={lightButtonStyle}
+                                labelColor={colors.white}
+                                backgroundColor={CUSTOM_HERO_BACKGROUND_COLOR}
+                                labelStyle={buttonLabelStyle}
+                                label="Build on 0x"
+                                onClick={_.noop}
+                            />
+                        </Link>
+                    </div>
                 </div>
             </div>
         );
