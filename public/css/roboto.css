@@ -5,12 +5,12 @@
   font-style: normal;
 }
 
-@font-face {
+/*@font-face {
   font-family: 'Roboto';
   src: url('../fonts/Roboto-ThinItalic.ttf') format('truetype');
   font-weight: 100;
   font-style: italic;
-}
+}*/
 
 @font-face {
   font-family: 'Roboto';
@@ -19,12 +19,12 @@
   font-style: normal;
 }
 
-@font-face {
+/*@font-face {
   font-family: 'Roboto';
   src: url('../fonts/Roboto-LightItalic.ttf') format('truetype');
   font-weight: 300;
   font-style: italic;
-}
+}*/
 
 @font-face {
   font-family: 'Roboto';
@@ -33,14 +33,14 @@
   font-style: normal;
 }
 
-@font-face {
+/*@font-face {
   font-family: 'Roboto';
   src: url('../fonts/Roboto-RegularItalic.ttf') format('truetype');
   font-weight: 400;
   font-style: italic;
-}
+}*/
 
-@font-face {
+/*@font-face {
   font-family: 'Roboto';
   src: url('../fonts/Roboto-Medium.ttf') format('truetype');
   font-weight: 500;
@@ -80,4 +80,4 @@
   src: url('../fonts/Roboto-BlackItalic.ttf') format('truetype');
   font-weight: 900;
   font-style: italic;
-}
+}*/
