@@ -315,7 +315,7 @@ export enum Environments {
 export type ContractInstance = any; // TODO: add type definition for Contract
 
 export interface TypeDocType {
-    type: string;
+    type: TypeDocTypes;
     value: string;
     name: string;
     types: TypeDocType[];
