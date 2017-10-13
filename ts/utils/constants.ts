@@ -90,10 +90,10 @@ export const constants = {
     MAKER_URL: 'https://makerdao.com',
     ARAGON_URL: 'https://aragon.one',
     BLOCKNET_URL: 'https://blocknet.co',
-    ETHIX_URL: 'http://ethix.network',
+    OCEAN_URL: 'http://the0cean.com',
     STATUS_URL: 'https://status.im',
     AUGUR_URL: 'https://augur.net',
-    AUCTUS_URL: 'https://auctus.org/',
+    AUCTUS_URL: 'https://auctus.org',
     OPEN_ANX_URL: 'https://www.openanx.org',
 
     iconUrlBySymbol: {

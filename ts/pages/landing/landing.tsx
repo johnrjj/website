@@ -132,6 +132,10 @@ const projects: Project[] = [
         projectUrl: constants.PARADEX_URL,
     },
     {
+        logoFileName: 'the_ocean.png',
+        projectUrl: constants.OCEAN_URL,
+    },
+    {
         logoFileName: 'dydx.png',
         projectUrl: constants.DYDX_URL,
     },
@@ -170,10 +174,6 @@ const projects: Project[] = [
     {
         logoFileName: 'augur.png',
         projectUrl: constants.AUGUR_URL,
-    },
-    {
-        logoFileName: 'ethix.png',
-        projectUrl: constants.ETHIX_URL,
     },
     {
         logoFileName: 'anx.png',
