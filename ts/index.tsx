@@ -7,7 +7,7 @@ import {Provider} from 'react-redux';
 import {createStore, Store as ReduxStore} from 'redux';
 import * as BigNumber from 'bignumber.js';
 import {constants} from 'ts/utils/constants';
-import {Home} from 'ts/pages/home/home';
+import {Landing} from 'ts/pages/landing/landing';
 import {FAQ} from 'ts/pages/faq/faq';
 import {About} from 'ts/pages/about/about';
 import {Wiki} from 'ts/pages/wiki/wiki';
@@ -94,7 +94,7 @@ render(
                 <Provider store={store}>
                     <div>
                         <Switch>
-                            <Route exact={true} path="/" component={Home as any} />
+                            <Route exact={true} path="/" component={Landing as any} />
                             <Redirect from="/otc" to={`${WebsitePaths.Portal}`}/>
                             <Route path={`${WebsitePaths.Portal}`} component={LazyPortal} />
                             <Route path={`${WebsitePaths.FAQ}`} component={FAQ as any} />

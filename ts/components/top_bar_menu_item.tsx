@@ -8,22 +8,13 @@ const DEFAULT_STYLE = {
     color: CUSTOM_DARK_GRAY,
 };
 
-const styles: Styles = {
-    primary: {
-        borderRadius: 4,
-        border: '2px solid rgb(230, 229, 229)',
-        marginTop: 15,
-        paddingLeft: 9,
-        paddingRight: 9,
-    },
-};
-
 interface TopBarMenuItemProps {
     title: string;
     path?: string;
     isPrimary?: boolean;
     style?: React.CSSProperties;
     className?: string;
+    isNightVersion?: boolean;
 }
 
 interface TopBarMenuItemState {}
@@ -33,16 +24,24 @@ export class TopBarMenuItem extends React.Component<TopBarMenuItemProps, TopBarM
         isPrimary: false,
         style: DEFAULT_STYLE,
         className: '',
+        isNightVersion: false,
     };
     public render() {
-        const primaryStyles = this.props.isPrimary ? styles.primary : {};
-        const linkColor = _.isUndefined(this.props.style.color) ?
+        const primaryStyles = this.props.isPrimary ? {
+            borderRadius: 4,
+            border: `2px solid ${this.props.isNightVersion ? '#979797' : 'rgb(230, 229, 229)'}`,
+            marginTop: 15,
+            paddingLeft: 9,
+            paddingRight: 9,
+        } : {};
+        const menuItemColor = this.props.isNightVersion ? 'white' : this.props.style.color;
+        const linkColor = _.isUndefined(menuItemColor) ?
             CUSTOM_DARK_GRAY :
-            this.props.style.color;
+            menuItemColor;
         return (
             <div
                 className={`center ${this.props.className}`}
-                style={{...this.props.style, ...primaryStyles}}
+                style={{...this.props.style, ...primaryStyles, color: menuItemColor}}
             >
                 <Link to={this.props.path} className="text-decoration-none" style={{color: linkColor}}>
                     {this.props.title}

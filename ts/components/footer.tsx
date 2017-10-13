@@ -19,7 +19,6 @@ interface FooterMenuItem {
     path?: string;
     isExternal?: boolean;
     fileName?: string;
-    isHomepage?: boolean;
 }
 
 enum Sections {
@@ -84,14 +83,14 @@ const menuItemsBySection: MenuItemsBySection = {
     ],
     Organization: [
         {
-            title: 'Team',
+            title: 'About',
             isExternal: false,
-            isHomepage: true,
+            path: WebsitePaths.About,
         },
         {
-            title: 'Advisors',
-            isExternal: false,
-            isHomepage: true,
+            title: 'Careers',
+            isExternal: true,
+            path: constants.ANGELLIST_URL,
         },
         {
             title: 'Contact',
@@ -191,22 +190,20 @@ export class Footer extends React.Component<FooterProps, FooterState> {
                             item.title
                         }
                     </a> :
-                    item.isHomepage ?
-                        this.renderHomepageLink(item.title) :
-                        <Link
-                            to={item.path}
-                            style={linkStyle}
-                            className="text-decoration-none"
-                        >
-                            <div>
-                                {!_.isUndefined(iconIfExists) &&
-                                    <div className="pr1">
-                                        {this.renderIcon(iconIfExists)}
-                                    </div>
-                                }
-                                {item.title}
-                            </div>
-                        </Link>
+                    <Link
+                        to={item.path}
+                        style={linkStyle}
+                        className="text-decoration-none"
+                    >
+                        <div>
+                            {!_.isUndefined(iconIfExists) &&
+                                <div className="pr1">
+                                    {this.renderIcon(iconIfExists)}
+                                </div>
+                            }
+                            {item.title}
+                        </div>
+                    </Link>
                 }
             </div>
         );
