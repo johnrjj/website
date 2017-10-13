@@ -131,7 +131,7 @@ export const typeDocUtils = {
                 packageComment = !_.isUndefined(commentObj) ? commentObj.shortText : packageComment;
             }
 
-            const docSection = this._convertEntitiesToDocSection(entities, sectionName);
+            const docSection = typeDocUtils._convertEntitiesToDocSection(entities, sectionName);
             docSection.comment = packageComment;
             docAgnosticFormat[sectionName] = docSection;
         });
@@ -151,21 +151,21 @@ export const typeDocUtils = {
             switch (entity.kindString) {
                 case KindString.Constructor:
                     isConstructor = true;
-                    const constructor = this._convertMethod(entity, isConstructor, sectionName);
+                    const constructor = typeDocUtils._convertMethod(entity, isConstructor, sectionName);
                     docSection.constructors.push(constructor);
                     break;
 
                 case KindString.Method:
                     if (entity.flags.isPublic) {
                         isConstructor = false;
-                        const method = this._convertMethod(entity, isConstructor, sectionName);
+                        const method = typeDocUtils._convertMethod(entity, isConstructor, sectionName);
                         docSection.methods.push(method);
                     }
                     break;
 
                 case KindString.Property:
-                    if (!this.isPrivateOrProtectedProperty(entity.name)) {
-                        const property = this._convertProperty(entity, sectionName);
+                    if (!typeDocUtils.isPrivateOrProtectedProperty(entity.name)) {
+                        const property = typeDocUtils._convertProperty(entity, sectionName);
                         docSection.properties.push(property);
                     }
                     break;
@@ -176,7 +176,7 @@ export const typeDocUtils = {
                 case KindString.Enumeration:
                 case KindString['Type alias']:
                     if (typeDocUtils.isPublicType(entity.name)) {
-                        const customType = this._convertCustomType(entity, sectionName);
+                        const customType = typeDocUtils._convertCustomType(entity, sectionName);
                         docSection.types.push(customType);
                     }
                     break;
@@ -188,13 +188,15 @@ export const typeDocUtils = {
         return docSection;
     },
     _convertCustomType(entity: TypeDocNode, sectionName: string): CustomType {
-        const typeIfExists = !_.isUndefined(entity.type) ? this._convertType(entity.type, sectionName) : undefined;
+        const typeIfExists = !_.isUndefined(entity.type) ?
+                             typeDocUtils._convertType(entity.type, sectionName) :
+                             undefined;
         const isConstructor = false;
         const methodIfExists = !_.isUndefined(entity.declaration) ?
-            this._convertMethod(entity.declaration, isConstructor, sectionName) :
+            typeDocUtils._convertMethod(entity.declaration, isConstructor, sectionName) :
             undefined;
         const indexSignatureIfExists = !_.isUndefined(entity.indexSignature) ?
-            this._convertIndexSignature(entity.indexSignature[0], sectionName) :
+            typeDocUtils._convertIndexSignature(entity.indexSignature[0], sectionName) :
             undefined;
         const commentIfExists = !_.isUndefined(entity.comment) && !_.isUndefined(entity.comment.shortText) ?
             entity.comment.shortText :
@@ -203,7 +205,7 @@ export const typeDocUtils = {
         const childrenIfExist = !_.isUndefined(entity.children) ?
             _.map(entity.children, (child: TypeDocNode) => {
                 const childTypeIfExists = !_.isUndefined(child.type) ?
-                    this._convertType(child.type, sectionName) :
+                    typeDocUtils._convertType(child.type, sectionName) :
                     undefined;
                 const c: CustomTypeChild = {
                     name: child.name,
@@ -230,7 +232,7 @@ export const typeDocUtils = {
         const key = entity.parameters[0];
         const indexSignature = {
             keyName: key.name,
-            keyType: this._convertType(key.type, sectionName),
+            keyType: typeDocUtils._convertType(key.type, sectionName),
             valueName: entity.type.name,
         };
         return indexSignature;
@@ -240,7 +242,7 @@ export const typeDocUtils = {
         const commentIfExists = !_.isUndefined(entity.comment) ? entity.comment.shortText : undefined;
         const property = {
             name: entity.name,
-            type: this._convertType(entity.type, sectionName),
+            type: typeDocUtils._convertType(entity.type, sectionName),
             source: {
                 fileName: source.fileName,
                 line: source.line,
@@ -264,9 +266,9 @@ export const typeDocUtils = {
         callPath = isConstructor ? '' : callPath;
 
         const parameters = _.map(signature.parameters, param => {
-            return this._convertParameter(param, sectionName);
+            return typeDocUtils._convertParameter(param, sectionName);
         });
-        const returnType = this._convertType(signature.type, sectionName);
+        const returnType = typeDocUtils._convertType(signature.type, sectionName);
 
         const method = {
             isConstructor,
@@ -296,7 +298,7 @@ export const typeDocUtils = {
             entity.flags.isOptional :
             false;
 
-        const type = this._convertType(entity.type, sectionName);
+        const type = typeDocUtils._convertType(entity.type, sectionName);
 
         const parameter = {
             name: entity.name,
@@ -308,15 +310,15 @@ export const typeDocUtils = {
     },
     _convertType(entity: TypeDocType, sectionName: string): Type {
         const typeArguments = _.map(entity.typeArguments, typeArgument => {
-            return this._convertType(typeArgument, sectionName);
+            return typeDocUtils._convertType(typeArgument, sectionName);
         });
         const types = _.map(entity.types, t => {
-            return this._convertType(t, sectionName);
+            return typeDocUtils._convertType(t, sectionName);
         });
 
         const isConstructor = false;
         const methodIfExists = !_.isUndefined(entity.declaration) ?
-            this._convertMethod(entity.declaration, isConstructor, sectionName) :
+            typeDocUtils._convertMethod(entity.declaration, isConstructor, sectionName) :
             undefined;
 
         const elementTypeIfExists = !_.isUndefined(entity.elementType) ?
