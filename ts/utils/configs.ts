@@ -9,7 +9,7 @@ const isDevelopment = _.includes(BASE_URL, 'https://0xproject.dev:3572') ||
 export const configs = {
     BASE_URL,
     ENVIRONMENT: isDevelopment ? Environments.DEVELOPMENT : Environments.PRODUCTION,
-    BACKEND_BASE_URL: isDevelopment ? 'https://localhost:3001' : 'https://api.0xproject.com',
+    BACKEND_BASE_URL: isDevelopment ? 'https://localhost:3001' : 'https://website-api.0xproject.com',
     symbolsOfMintableTokens: ['MKR', 'MLN', 'GNT', 'DGD', 'REP'],
     // WARNING: ZRX & WETH MUST always be default trackedTokens
     defaultTrackedTokenSymbols: ['WETH', 'ZRX'],
