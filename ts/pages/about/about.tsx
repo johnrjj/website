@@ -207,10 +207,10 @@ export class About extends React.Component<AboutProps, AboutState> {
                             {this.renderProfiles(advisors)}
                         </div>
                     </div>
-                    <div className="mx-auto py4 sm-px3" style={{maxWidth: 325}}>
+                    <div className="mx-auto py4 sm-px3" style={{maxWidth: 308}}>
                         <div
                             className="pb2"
-                            style={{fontSize: 30, color: CUSTOM_GRAY, fontFamily: 'Roboto Mono', letterSpacing: 8.5}}
+                            style={{fontSize: 30, color: CUSTOM_GRAY, fontFamily: 'Roboto Mono', letterSpacing: 7.5}}
                         >
                             WE'RE HIRING
                         </div>
