@@ -5,11 +5,17 @@ import {utils} from 'ts/utils/utils';
 import {Element as ScrollElement} from 'react-scroll';
 import {Styles, ProfileInfo} from 'ts/types';
 
+const IMAGE_DIMENSION = 149;
 const styles: Styles = {
     subheader: {
         textTransform: 'uppercase',
         fontSize: 32,
         margin: 0,
+    },
+    imageContainer: {
+        width: IMAGE_DIMENSION,
+        height: IMAGE_DIMENSION,
+        boxShadow: 'rgba(0, 0, 0, 0.19) 2px 5px 10px',
     },
 };
 
@@ -21,31 +27,43 @@ interface ProfileProps {
 export function Profile(props: ProfileProps) {
     return (
         <div
-            className={`sm-col sm-col-${props.colSize}`}
+            key={props.profileInfo.name}
+            className={`lg-col md-col lg-col-${props.colSize} md-col-6`}
         >
-            <div className="mx-auto" style={{width: 200}}>
-                <div>
-                    <img src={props.profileInfo.image} />
+            <div
+                style={{maxWidth: 300}}
+                className="mx-auto lg-px3 md-px3 sm-px4 sm-pb3"
+            >
+                <div
+                    className="circle overflow-hidden mx-auto"
+                    style={styles.imageContainer}
+                >
+                    <img
+                        width={IMAGE_DIMENSION}
+                        src={props.profileInfo.image}
+                    />
                 </div>
                 <div
-                    className="pt1"
-                    style={{fontSize: 18, fontWeight: 'bold'}}
+                    className="center"
+                    style={{fontSize: 18, fontWeight: 'bold', paddingTop: 20}}
                 >
                     {props.profileInfo.name}
                 </div>
+                {!_.isUndefined(props.profileInfo.title) &&
+                    <div
+                        className="pt1 center"
+                        style={{fontSize: 14, fontFamily: 'Roboto Mono', color: '#818181'}}
+                    >
+                        {props.profileInfo.title.toUpperCase()}
+                    </div>
+                }
                 <div
-                    className="pb2 pt1 thin"
-                    style={{fontSize: 16}}
-                >
-                    {props.profileInfo.title}
-                </div>
-                <div
-                    style={{fontSize: 13, minHeight: 60}}
-                    className="pb2 thin"
+                    style={{minHeight: 60, lineHeight: 1.4}}
+                    className="pt1 pb2 mx-auto lg-h6 md-h6 sm-h5 sm-center"
                 >
                     {props.profileInfo.description}
                 </div>
-                <div className="flex pb3">
+                <div className="flex pb3 mx-auto sm-hide xs-hide" style={{width: 180, opacity: 0.5}}>
                     {renderSocialMediaIcons(props.profileInfo)}
                 </div>
             </div>
@@ -68,7 +86,7 @@ function renderSocialMediaIcon(iconName: string, url: string) {
     }
 
     return (
-        <div key={url} className="pr2">
+        <div key={url} className="pr1">
             <a
                 href={url}
                 style={{color: 'inherit'}}

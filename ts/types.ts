@@ -198,7 +198,7 @@ export interface Styles {
 
 export interface ProfileInfo {
     name: string;
-    title: string;
+    title?: string;
     description: string;
     image: string;
     linkedIn?: string;
@@ -687,6 +687,7 @@ export enum WebsitePaths {
     ZeroExJs = '/docs/0xjs',
     Home = '/',
     FAQ = '/faq',
+    About = '/about',
     Whitepaper = '/pdfs/0x_white_paper.pdf',
     SmartContracts = '/docs/contracts',
 }

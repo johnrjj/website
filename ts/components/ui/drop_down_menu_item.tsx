@@ -20,6 +20,7 @@ interface DropDownMenuItemProps {
     subMenuItems: React.ReactNode[];
     style?: React.CSSProperties;
     menuItemStyle?: React.CSSProperties;
+    isNightVersion?: boolean;
 }
 
 interface DropDownMenuItemState {
@@ -31,6 +32,7 @@ export class DropDownMenuItem extends React.Component<DropDownMenuItemProps, Dro
     public static defaultProps: Partial<DropDownMenuItemProps> = {
         style: DEFAULT_STYLE,
         menuItemStyle: DEFAULT_STYLE,
+        isNightVersion: false,
     };
     private isHovering: boolean;
     private popoverCloseCheckIntervalId: number;
@@ -49,9 +51,10 @@ export class DropDownMenuItem extends React.Component<DropDownMenuItemProps, Dro
         window.clearInterval(this.popoverCloseCheckIntervalId);
     }
     public render() {
+        const colorStyle = this.props.isNightVersion ? 'white' : this.props.style.color;
         return (
             <div
-                style={this.props.style}
+                style={{...this.props.style, color: colorStyle}}
                 onMouseEnter={this.onHover.bind(this)}
                 onMouseLeave={this.onHoverOff.bind(this)}
             >

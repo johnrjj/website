@@ -13,6 +13,7 @@ import * as BigNumber from 'bignumber.js';
 const INFURA_API_KEY = 'T5WSC8cautR4KXyYgsRs';
 
 export const constants = {
+    ANGELLIST_URL: 'https://angel.co/0xproject/jobs',
     STAGING_DOMAIN: 'staging-0xproject.s3-website-us-east-1.amazonaws.com',
     PRODUCTION_DOMAIN: '0xproject.com',
     DEVELOPMENT_DOMAIN: '0xproject.dev:3572',
@@ -23,6 +24,7 @@ export const constants = {
     CUSTOM_BLUE: '#60a4f4',
     DEFAULT_DERIVATION_PATH: `44'/60'/0'`,
     ETHER_FAUCET_ENDPOINT: 'https://faucet.0xproject.com',
+    ETHFINEX_URL: 'https://www.bitfinex.com/ethfinex',
     FEE_RECIPIENT_ADDRESS: '0x0000000000000000000000000000000000000000',
     FIREFOX_U2F_ADDON: 'https://addons.mozilla.org/en-US/firefox/addon/u2f-support-add-on/',
     GITHUB_0X_JS_URL: 'https://github.com/0xProject/0x.js',
@@ -56,8 +58,10 @@ export const constants = {
     METAMASK_CHROME_STORE_URL: 'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn',
     // tslint:disable-next-line:max-line-length
     PARITY_CHROME_STORE_URL: 'https://chrome.google.com/webstore/detail/parity-ethereum-integrati/himekenlppkgeaoeddcliojfddemadig',
+    PARADEX_URL: 'https://paradex.io',
     MIST_DOWNLOAD_URL: 'https://github.com/ethereum/mist/releases',
     NULL_ADDRESS: '0x0000000000000000000000000000000000000000',
+    RADAR_RELAY_URL: 'https://radarrelay.com',
     ROLLBAR_ACCESS_TOKEN: 'a6619002b51c4464928201e6ea94de65',
     DOCS_SCROLL_DURATION_MS: 0,
     DOCS_CONTAINER_ID: 'documentation',
