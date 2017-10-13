@@ -91,6 +91,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
         };
     }
     public render() {
+        const isNightVersion = this.props.isNightVersion;
         const isFullWidthPage = this.props.shouldFullWidth;
         const parentClassNames = `flex mx-auto ${isFullWidthPage ? 'pl2' : 'max-width-4'}`;
         const developerSectionMenuItems = [
@@ -119,7 +120,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
         ];
         const bottomBorderStyle = this.shouldDisplayBottomBar() ? styles.bottomBar : {};
         const fullWithClassNames = isFullWidthPage ? 'pr4' : '';
-        const logoUrl = this.props.isNightVersion ? '/images/protocol_logo_white.png' : '/images/top_bar_logo.png';
+        const logoUrl = isNightVersion ? '/images/protocol_logo_white.png' : '/images/top_bar_logo.png';
         return (
             <div style={{...styles.topBar, ...bottomBorderStyle, ...this.props.style}} className="pb1">
                 <div className={parentClassNames}>
@@ -137,19 +138,19 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                                     title="Developers"
                                     subMenuItems={developerSectionMenuItems}
                                     style={styles.menuItem}
-                                    isNightVersion={this.props.isNightVersion}
+                                    isNightVersion={isNightVersion}
                                 />
                                 <TopBarMenuItem
                                     title="Wiki"
                                     path={`${WebsitePaths.Wiki}`}
                                     style={styles.menuItem}
-                                    isNightVersion={this.props.isNightVersion}
+                                    isNightVersion={isNightVersion}
                                 />
                                 <TopBarMenuItem
-                                    title="FAQ"
-                                    path={`${WebsitePaths.FAQ}`}
+                                    title="About"
+                                    path={`${WebsitePaths.About}`}
                                     style={styles.menuItem}
-                                    isNightVersion={this.props.isNightVersion}
+                                    isNightVersion={isNightVersion}
                                 />
                                 <TopBarMenuItem
                                     title="Portal DApp"
@@ -157,7 +158,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                                     isPrimary={true}
                                     style={styles.menuItem}
                                     className={`${isFullWidthPage && 'md-hide'}`}
-                                    isNightVersion={this.props.isNightVersion}
+                                    isNightVersion={isNightVersion}
                                 />
                             </div>
                         </div>
@@ -172,7 +173,7 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                             className={`col ${isFullWidthPage ? 'col-2 pl2' : 'col-1'} md-hide lg-hide`}
                         >
                             <div
-                                style={{fontSize: 25, color: 'black', cursor: 'pointer', paddingTop: 16}}
+                                style={{fontSize: 25, color: isNightVersion ? 'white' : 'black', cursor: 'pointer', paddingTop: 16}}
                             >
                                 <i
                                     className="zmdi zmdi-menu"
@@ -198,7 +199,9 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 {this.renderDocsMenu()}
                 {this.renderWiki()}
                 <div className="pl1 py1 mt3" style={{backgroundColor: SECTION_HEADER_COLOR}}>Website</div>
-                {this.renderHomepageMenuItem('home')}
+                <Link to={WebsitePaths.Home} className="text-decoration-none">
+                    <MenuItem className="py2">Home</MenuItem>
+                </Link>
                 <Link to={`${WebsitePaths.Wiki}`} className="text-decoration-none">
                     <MenuItem className="py2">Wiki</MenuItem>
                 </Link>
@@ -224,7 +227,9 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 >
                     <MenuItem className="py2">Whitepaper</MenuItem>
                 </a>
-                {this.renderHomepageMenuItem('team')}
+                <Link to={`${WebsitePaths.About}`} className="text-decoration-none">
+                    <MenuItem className="py2">About</MenuItem>
+                </Link>
                 <a
                     className="text-decoration-none"
                     target="_blank"
@@ -299,36 +304,6 @@ export class TopBar extends React.Component<TopBarProps, TopBarState> {
                 />
             </div>
         );
-    }
-    private renderHomepageMenuItem(location: string) {
-        if (this.props.location.pathname === WebsitePaths.Home) {
-            return (
-                <ScrollLink
-                    to={location}
-                    smooth={true}
-                    offset={0}
-                    duration={constants.HOME_SCROLL_DURATION_MS}
-                >
-                    <MenuItem
-                        className="py2"
-                        onTouchTap={this.onMenuButtonClick.bind(this)}
-                    >
-                        {_.capitalize(location)}
-                    </MenuItem>
-                </ScrollLink>
-            );
-        } else {
-            return (
-                <HashLink to={`/#${location}`} className="text-decoration-none">
-                    <MenuItem
-                        className="py2"
-                        onTouchTap={this.onMenuButtonClick.bind(this)}
-                    >
-                        {_.capitalize(location)}
-                    </MenuItem>
-                </HashLink>
-            );
-        }
     }
     private renderUser() {
         const userAddress = this.props.userAddress;
