@@ -353,6 +353,7 @@ export interface TypeDocNode {
     indexSignature?: TypeDocNode[];
     signatures?: TypeDocNode[];
     parameters?: TypeDocNode[];
+    typeParameter?: TypeDocNode[];
     sources?: TypeDocNode[];
     children?: TypeDocNode[];
     groups?: TypeDocGroup[];
