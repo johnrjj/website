@@ -11,6 +11,7 @@ import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
 import {colors} from 'material-ui/styles';
 import {GenerateOrderForm} from 'ts/containers/generate_order_form';
+import {Market} from 'ts/containers/market';
 import {TokenBalances} from 'ts/components/token_balances';
 import {PortalDisclaimerDialog} from 'ts/components/dialogs/portal_disclaimer_dialog';
 import {FillOrder} from 'ts/components/fill_order';
@@ -214,6 +215,10 @@ export class Portal extends React.Component<PortalAllProps, PortalAllState> {
                                                     component={this.renderTradeHistory.bind(this)}
                                                 />
                                                 <Route
+                                                    path={`${WebsitePaths.Portal}/market`}
+                                                    render={this.renderMarket.bind(this)}
+                                                />
+                                                <Route
                                                     path={`${WebsitePaths.Home}`}
                                                     render={this.renderGenerateOrderForm.bind(this)}
                                                 />
@@ -293,6 +298,15 @@ export class Portal extends React.Component<PortalAllProps, PortalAllState> {
     private renderGenerateOrderForm(match: any, location: Location, history: History) {
         return (
             <GenerateOrderForm
+                blockchain={this.blockchain}
+                hashData={this.props.hashData}
+                dispatcher={this.props.dispatcher}
+            />
+        );
+    }
+    private renderMarket(match: any, location: Location, history: History) {
+        return (
+            <Market
                 blockchain={this.blockchain}
                 hashData={this.props.hashData}
                 dispatcher={this.props.dispatcher}
