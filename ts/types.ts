@@ -359,15 +359,15 @@ export interface TypeDocNode {
     groups?: TypeDocGroup[];
 }
 
-export const TypeDocTypes = strEnum([
-  'intrinsic',
-  'reference',
-  'array',
-  'stringLiteral',
-  'reflection',
-  'union',
-]);
-export type TypeDocTypes = keyof typeof TypeDocTypes;
+export enum TypeDocTypes {
+    Intrinsic = 'intrinsic',
+    Reference = 'reference',
+    Array = 'array',
+    StringLiteral = 'stringLiteral',
+    Reflection = 'reflection',
+    Union = 'union',
+    TypeParameter = 'typeParameter',
+}
 
 export interface DocAgnosticFormat {
     [sectionName: string]: DocSection;
