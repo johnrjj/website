@@ -14,7 +14,7 @@ export function Interface(props: InterfaceProps) {
         return (
             <span key={`property-${property.name}-${property.type}-${type.name}`}>
                 {property.name}:{' '}
-                {property.type.typeDocType !== TypeDocTypes.reflection ?
+                {property.type.typeDocType !== TypeDocTypes.Reflection ?
                     <Type type={property.type} /> :
                     <MethodSignature
                         method={property.type.method}

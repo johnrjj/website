@@ -37,23 +37,23 @@ interface TypeProps {
 // <Type /> components (e.g when rendering the union type).
 export function Type(props: TypeProps): any {
     const type = props.type;
-    const isIntrinsic = type.typeDocType === TypeDocTypes.intrinsic;
-    const isReference = type.typeDocType === TypeDocTypes.reference;
-    const isArray = type.typeDocType === TypeDocTypes.array;
-    const isStringLiteral = type.typeDocType === TypeDocTypes.stringLiteral;
+    const isIntrinsic = type.typeDocType === TypeDocTypes.Intrinsic;
+    const isReference = type.typeDocType === TypeDocTypes.Reference;
+    const isArray = type.typeDocType === TypeDocTypes.Array;
+    const isStringLiteral = type.typeDocType === TypeDocTypes.StringLiteral;
     let typeNameColor = 'inherit';
     let typeName: string|React.ReactNode;
     let typeArgs: React.ReactNode[] = [];
     switch (type.typeDocType) {
-        case TypeDocTypes.intrinsic:
+        case TypeDocTypes.Intrinsic:
             typeName = type.name;
             typeNameColor = BUILT_IN_TYPE_COLOR;
             break;
 
-        case TypeDocTypes.reference:
+        case TypeDocTypes.Reference:
             typeName = type.name;
             typeArgs = _.map(type.typeArguments, (arg: TypeDef) => {
-                if (arg.typeDocType === TypeDocTypes.array) {
+                if (arg.typeDocType === TypeDocTypes.Array) {
                     const key = `type-${arg.elementType.name}-${arg.elementType.typeDocType}`;
                     return (
                         <span>
@@ -77,16 +77,16 @@ export function Type(props: TypeProps): any {
             });
             break;
 
-        case TypeDocTypes.stringLiteral:
+        case TypeDocTypes.StringLiteral:
             typeName = `'${type.value}'`;
             typeNameColor = STRING_LITERAL_COLOR;
             break;
 
-        case TypeDocTypes.array:
+        case TypeDocTypes.Array:
             typeName = type.elementType.name;
             break;
 
-        case TypeDocTypes.union:
+        case TypeDocTypes.Union:
             const unionTypes = _.map(type.types, t => {
                 return (
                     <Type
@@ -99,6 +99,10 @@ export function Type(props: TypeProps): any {
             typeName = _.reduce(unionTypes, (prev: React.ReactNode, curr: React.ReactNode) => {
                 return [prev, '|', curr];
             });
+            break;
+
+        case TypeDocTypes.TypeParameter:
+            typeName = type.name;
             break;
 
         default:

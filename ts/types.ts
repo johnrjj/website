@@ -315,7 +315,7 @@ export enum Environments {
 export type ContractInstance = any; // TODO: add type definition for Contract
 
 export interface TypeDocType {
-    type: string;
+    type: TypeDocTypes;
     value: string;
     name: string;
     types: TypeDocType[];
@@ -353,20 +353,21 @@ export interface TypeDocNode {
     indexSignature?: TypeDocNode[];
     signatures?: TypeDocNode[];
     parameters?: TypeDocNode[];
+    typeParameter?: TypeDocNode[];
     sources?: TypeDocNode[];
     children?: TypeDocNode[];
     groups?: TypeDocGroup[];
 }
 
-export const TypeDocTypes = strEnum([
-  'intrinsic',
-  'reference',
-  'array',
-  'stringLiteral',
-  'reflection',
-  'union',
-]);
-export type TypeDocTypes = keyof typeof TypeDocTypes;
+export enum TypeDocTypes {
+    Intrinsic = 'intrinsic',
+    Reference = 'reference',
+    Array = 'array',
+    StringLiteral = 'stringLiteral',
+    Reflection = 'reflection',
+    Union = 'union',
+    TypeParameter = 'typeParameter',
+}
 
 export interface DocAgnosticFormat {
     [sectionName: string]: DocSection;
@@ -412,6 +413,7 @@ export interface BaseMethod {
 export interface TypescriptMethod extends BaseMethod {
     source?: Source;
     isStatic?: boolean;
+    typeParameter?: TypeParameter;
 }
 
 export interface SolidityMethod extends BaseMethod {
@@ -428,6 +430,11 @@ export interface Parameter {
     name: string;
     comment: string;
     isOptional: boolean;
+    type: Type;
+}
+
+export interface TypeParameter {
+    name: string;
     type: Type;
 }
 
