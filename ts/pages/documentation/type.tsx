@@ -101,6 +101,10 @@ export function Type(props: TypeProps): any {
             });
             break;
 
+        case TypeDocTypes.TypeParameter:
+            typeName = type.name;
+            break;
+
         default:
             throw utils.spawnSwitchErr('type.typeDocType', type.typeDocType);
     }
