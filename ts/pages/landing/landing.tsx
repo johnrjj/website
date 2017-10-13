@@ -340,6 +340,13 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                 </div>
             );
         });
+        const titleStyle: React.CSSProperties = {
+            fontFamily: 'Roboto Mono',
+            color: '#A4A4A4',
+            textTransform: 'uppercase',
+            fontWeight: 300,
+            letterSpacing: 3,
+        };
         return (
             <div
                 className="clearfix py4"
@@ -348,7 +355,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                 <div className="mx-auto max-width-4 clearfix sm-px3">
                     <div
                         className="h4 pb3 md-pl3 sm-pl2"
-                        style={{fontFamily: 'Roboto Mono', color: '#A4A4A4', textTransform: 'uppercase', fontWeight: 300, letterSpacing: 3}}
+                        style={titleStyle}
                     >
                         Projects building on 0x
                     </div>
@@ -722,14 +729,28 @@ export class Landing extends React.Component<LandingProps, LandingState> {
         const isMediumScreen = this.state.screenWidth === ScreenWidths.MD;
         const cases = _.map(useCases, (useCase: UseCase) => {
             const style = _.isUndefined(useCase.style) || isSmallScreen ? {} : useCase.style;
+            const useCaseBoxStyle = {
+                color: '#A2A2A2',
+                border: '1px solid #565656',
+                borderRadius: 4,
+                height: 170,
+                maxWidth: isSmallScreen ? 375 : 'none',
+                ...style,
+            };
+            const typeStyle = {
+                lineHeight: 2,
+                fontSize: isMediumScreen ? 10 : 12.5,
+                textTransform: 'uppercase',
+                fontFamily: 'Roboto Mono',
+            };
             return (
                 <div
                     key={`useCase-${useCase.project}`}
-                    className={`col lg-col-4 md-col-4 col-12 sm-px3 sm-pb3 ${!_.isUndefined(useCase.classNames) && useCase.classNames}`}
+                    className={`col lg-col-4 md-col-4 col-12 sm-px3 sm-pb3 ${useCase.classNames}`}
                 >
                     <div
                         className="relative p2 pb2 sm-mx-auto"
-                        style={{color: '#A2A2A2', border: '1px solid #565656', borderRadius: 4, height: 170, maxWidth: isSmallScreen ? 375 : 'none', ...style}}
+                        style={useCaseBoxStyle}
                     >
                         <div
                             className="absolute"
@@ -743,7 +764,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                             </div>
                             <div
                                 className="pl2"
-                                style={{lineHeight: 2, fontSize: isMediumScreen ? 10 : 12.5, textTransform: 'uppercase', fontFamily: 'Roboto Mono'}}
+                                style={typeStyle}
                             >
                                 {useCase.type}
                             </div>
@@ -784,6 +805,8 @@ export class Landing extends React.Component<LandingProps, LandingState> {
             lineHeight: '33px',
             height: 49,
         };
+        const callToActionClassNames = 'col lg-col-8 md-col-8 col-12 lg-pr4 md-pr4 \
+                                        lg-right-align md-right-align sm-center sm-px3 h4';
         return (
             <div
                 className="clearfix pb4"
@@ -793,7 +816,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                     className="mx-auto max-width-4 pb4 mb3 clearfix"
                 >
                     <div
-                        className="col lg-col-8 md-col-8 col-12 lg-pr4 md-pr4 lg-right-align md-right-align sm-center sm-px3 h4"
+                        className={callToActionClassNames}
                         style={{fontFamily: 'Roboto Mono', color: 'white', lineHeight: isSmallScreen ? 1.7 : 3}}
                     >
                         Get started building the decentralized future
