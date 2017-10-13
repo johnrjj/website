@@ -79,7 +79,6 @@ export class Landing extends React.Component<LandingProps, LandingState> {
         window.removeEventListener('resize', this.throttledScreenWidthUpdate);
     }
     public render() {
-        console.log('screenWidth', this.state.screenWidth);
         return (
             <div id="landing" className="clearfix" style={{color: colors.grey800}}>
                 <DocumentTitle title="0x Protocol"/>
@@ -100,6 +99,18 @@ export class Landing extends React.Component<LandingProps, LandingState> {
     }
     private renderHero() {
         const isSmallScreen = this.state.screenWidth === ScreenWidths.SM;
+        const buttonLabelStyle: React.CSSProperties = {
+            textTransform: 'none',
+            fontSize: isSmallScreen ? 12 : 14,
+            fontWeight: 400,
+        };
+        const lightButtonStyle: React.CSSProperties = {
+            borderRadius: 6,
+            border: '1px solid #D8D8D8',
+            lineHeight: '33px',
+            height: 38,
+        };
+        const left  = 'col lg-col-7 md-col-7 col-12 lg-pt4 md-pt4 sm-pt0 mt1 lg-pl4 md-pl4 sm-pl0 sm-px3 sm-center';
         return (
             <div
                 className="clearfix py4"
@@ -116,7 +127,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                             />
                         </div>
                         <div
-                            className="col lg-col-7 md-col-7 col-12 lg-pt4 md-pt4 sm-pt0 mt1 lg-pl4 md-pl4 sm-pl0 sm-px3 sm-center"
+                            className={left}
                             style={{color: 'white'}}
                         >
                             <div style={{paddingLeft: isSmallScreen ? 0 : 12}}>
@@ -139,7 +150,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                                             <RaisedButton
                                                 style={{borderRadius: 6, minWidth: 150}}
                                                 buttonStyle={{borderRadius: 6}}
-                                                labelStyle={{textTransform: 'none', fontSize: isSmallScreen ? 12 : 14, fontWeight: 400}}
+                                                labelStyle={buttonLabelStyle}
                                                 label="Build on 0x"
                                                 onClick={_.noop}
                                             />
@@ -153,10 +164,10 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                                         >
                                             <RaisedButton
                                                 style={{borderRadius: 6, minWidth: 150}}
-                                                buttonStyle={{borderRadius: 6, border: '1px solid #D8D8D8', lineHeight: '33px', height: 38}}
+                                                buttonStyle={lightButtonStyle}
                                                 labelColor="white"
                                                 backgroundColor={CUSTOM_HERO_BACKGROUND_COLOR}
-                                                labelStyle={{textTransform: 'none', fontSize: isSmallScreen ? 12 : 14, fontWeight: 400}}
+                                                labelStyle={buttonLabelStyle}
                                                 label="Join the community"
                                                 onClick={_.noop}
                                             />
@@ -201,11 +212,12 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                                     </span> :
                                     <div>
                                         <div>
-                                            The Ethereum blockchain is an open, borderless financial system that represents
+                                            The Ethereum blockchain is an open, borderless
+                                            financial system that represents
                                         </div>
                                         <div>
-                                            a wide variety of assets as cryptographic tokens. In the future, most digital
-                                            assets and goods will be tokenized.
+                                            a wide variety of assets as cryptographic tokens.
+                                            In the future, most digital assets and goods will be tokenized.
                                         </div>
                                     </div>
                                 }
@@ -315,6 +327,18 @@ export class Landing extends React.Component<LandingProps, LandingState> {
             lineHeight: 'none',
             borderBottom: '2px solid #979797',
         };
+        const descriptionStyle: React.CSSProperties = {
+            fontFamily: 'Roboto Mono',
+            lineHeight: isSmallScreen ? 1.5 : 2,
+            fontWeight: 300,
+            fontSize: 15,
+        };
+        const callToActionStyle: React.CSSProperties = {
+            fontFamily: 'Roboto Mono',
+            fontSize: 15,
+            fontWeight: 300,
+            maxWidth: isSmallScreen ? 322 : 441,
+        };
         return (
             <div
                 className="clearfix lg-py4 md-py4 sm-pb4"
@@ -336,7 +360,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                         </div>
                         <div
                             className="pb3 pt2 sm-mx-auto sm-center"
-                            style={{fontFamily: 'Roboto Mono', lineHeight: isSmallScreen ? 1.5 : 2, fontWeight: 300, fontSize: 15}}
+                            style={descriptionStyle}
                         >
                             0x protocol is a pluggable building block for dApps that require exchange functionality.
                             Join the many developers that are already using 0x in their web applications and smart
@@ -344,7 +368,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                         </div>
                         <div
                             className="sm-mx-auto sm-center"
-                            style={{fontFamily: 'Roboto Mono', fontSize: 15, fontWeight: 300, maxWidth: isSmallScreen ? 322 : 441}}
+                            style={callToActionStyle}
                         >
                             Learn how in our{' '}
                             <Link
@@ -450,6 +474,13 @@ export class Landing extends React.Component<LandingProps, LandingState> {
     }
     private renderInfoBoxes() {
         const isSmallScreen = this.state.screenWidth === ScreenWidths.SM;
+        const boxStyle: React.CSSProperties = {
+            maxWidth: 252,
+            height: 354,
+            backgroundColor: '#F9F9F9',
+            borderRadius: 5,
+            padding: '64px 38px 38px 38px',
+        };
         const boxes = _.map(boxContents, (boxContent: BoxContent) => {
             return (
                 <div
@@ -458,7 +489,7 @@ export class Landing extends React.Component<LandingProps, LandingState> {
                 >
                     <div
                         className={`center sm-mx-auto ${!isSmallScreen && boxContent.classNames}`}
-                        style={{maxWidth: 252, height: 354, backgroundColor: '#F9F9F9', borderRadius: 5, padding: '64px 38px 38px 38px'}}
+                        style={boxStyle}
                     >
                         <div className="pb1">
                             <img src={boxContent.imageUrl} style={{height: 145}} />
