@@ -54,7 +54,7 @@ function renderTypeParameter(method: TypescriptMethod, typeDefinitionByName?: Ty
     const typeParam = (
         <span>
             {`<${typeParameter.name} extends `}
-            <Type type={typeParameter.type} typeDefinitionByName={typeDefinitionByName}/>
+                <Type type={typeParameter.type} typeDefinitionByName={typeDefinitionByName}/>
             {`>`}
         </span>
     );
