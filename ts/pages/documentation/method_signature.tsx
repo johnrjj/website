@@ -21,9 +21,13 @@ export const MethodSignature: React.SFC<MethodSignatureProps> = (props: MethodSi
         return [prev, ', ', curr];
     });
     const methodName = props.shouldHideMethodName ? '' : props.method.name;
+    const typeParameterIfExists = _.isUndefined((props.method as TypescriptMethod).typeParameter) ?
+                                  undefined :
+                                  renderTypeParameter(props.method, props.typeDefinitionByName);
     return (
         <span>
-            {props.method.callPath}{methodName}({paramString}){props.shouldUseArrowSyntax ? ' => ' : ': '}
+            {props.method.callPath}{methodName}{typeParameterIfExists}({paramString})
+            {props.shouldUseArrowSyntax ? ' => ' : ': '}
             {' '}
             {props.method.returnType &&
                 <Type type={props.method.returnType} typeDefinitionByName={props.typeDefinitionByName}/>
@@ -43,4 +47,16 @@ function renderParameters(method: TypescriptMethod|SolidityMethod, typeDefinitio
         );
     });
     return params;
+}
+
+function renderTypeParameter(method: TypescriptMethod, typeDefinitionByName?: TypeDefinitionByName) {
+    const typeParameter = method.typeParameter;
+    const typeParam = (
+        <span>
+            {`<${typeParameter.name} extends `}
+                <Type type={typeParameter.type} typeDefinitionByName={typeDefinitionByName}/>
+            {`>`}
+        </span>
+    );
+    return typeParam;
 }

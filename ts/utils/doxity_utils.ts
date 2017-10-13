@@ -119,7 +119,7 @@ export const doxityUtils = {
     _convertType(typeName: string): Type {
         const type = {
             name: typeName,
-            typeDocType: TypeDocTypes.intrinsic,
+            typeDocType: TypeDocTypes.Intrinsic,
         };
         return type;
     },

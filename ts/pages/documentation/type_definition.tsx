@@ -80,7 +80,7 @@ export class TypeDefinition extends React.Component<TypeDefinitionProps, TypeDef
                 codeSnippet = (
                     <span>
                         <span style={{color: KEYWORD_COLOR}}>type</span> {customType.name} ={' '}
-                        {customType.type.typeDocType !== TypeDocTypes.reflection ?
+                        {customType.type.typeDocType !== TypeDocTypes.Reflection ?
                             <Type type={customType.type} /> :
                             <MethodSignature
                                 method={customType.type.method}
