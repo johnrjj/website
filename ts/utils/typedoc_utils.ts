@@ -17,6 +17,8 @@ import {
     CustomType,
     IndexSignature,
     CustomTypeChild,
+    TypeParameter,
+    TypeDocTypes,
 } from 'ts/types';
 
 const TYPES_MODULE_PATH = '"src/types"';
@@ -269,6 +271,9 @@ export const typeDocUtils = {
             return typeDocUtils._convertParameter(param, sectionName);
         });
         const returnType = typeDocUtils._convertType(signature.type, sectionName);
+        const typeParameter = _.isUndefined(signature.typeParameter) ?
+                              undefined :
+                              typeDocUtils._convertTypeParameter(signature.typeParameter[0], sectionName);
 
         const method = {
             isConstructor,
@@ -283,8 +288,17 @@ export const typeDocUtils = {
             callPath,
             parameters,
             returnType,
+            typeParameter,
         };
         return method;
+    },
+    _convertTypeParameter(entity: TypeDocNode, sectionName: string): TypeParameter {
+        const type = typeDocUtils._convertType(entity.type, sectionName);
+        const parameter = {
+            name: entity.name,
+            type,
+        };
+        return parameter;
     },
     _convertParameter(entity: TypeDocNode, sectionName: string): Parameter {
         let comment = '<No comment>';
